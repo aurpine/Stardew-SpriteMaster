@@ -1,6 +1,6 @@
 ﻿using JetBrains.Annotations;
 using LinqFasterer;
-using Microsoft.Toolkit.HighPerformance;
+using CommunityToolkit.HighPerformance;
 using Pastel;
 using SpriteMaster.Extensions;
 using SpriteMaster.Harmonize;

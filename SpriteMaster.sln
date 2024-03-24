@@ -17,8 +17,8 @@ Global
 		ShippingAsserts|Any CPU = ShippingAsserts|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{C270B7AD-DA11-4176-83B9-8998FE58A601}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C270B7AD-DA11-4176-83B9-8998FE58A601}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C270B7AD-DA11-4176-83B9-8998FE58A601}.Debug|Any CPU.ActiveCfg = Shipping|Any CPU
+		{C270B7AD-DA11-4176-83B9-8998FE58A601}.Debug|Any CPU.Build.0 = Shipping|Any CPU
 		{C270B7AD-DA11-4176-83B9-8998FE58A601}.Development|Any CPU.ActiveCfg = Development|Any CPU
 		{C270B7AD-DA11-4176-83B9-8998FE58A601}.Development|Any CPU.Build.0 = Development|Any CPU
 		{C270B7AD-DA11-4176-83B9-8998FE58A601}.Release|Any CPU.ActiveCfg = Release|Any CPU

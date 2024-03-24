@@ -21,7 +21,7 @@ internal static class PCustomNPCFixes {
 			return true;
 		}
 
-		List<NPC?> allCharacters = Utility.getAllCharacters(new())!;
+		List<NPC?> allCharacters = Utility.getAllCharacters()!;
 		var processedSet = new ConcurrentDictionary<NPC, byte>();
 
 		Parallel.ForEach(allCharacters, npc => {
@@ -34,7 +34,7 @@ internal static class PCustomNPCFixes {
 			}
 
 			try {
-				npc.Schedule = npc.getSchedule(Game1.dayOfMonth);
+				npc.TryLoadSchedule();
 				npc.checkSchedule(Game1.timeOfDay);
 			}
 			catch (Exception ex) {

@@ -1,4 +1,4 @@
-﻿using Microsoft.Toolkit.HighPerformance;
+﻿using CommunityToolkit.HighPerformance;
 using SpriteMaster.Extensions;
 using System;
 using System.Runtime.CompilerServices;

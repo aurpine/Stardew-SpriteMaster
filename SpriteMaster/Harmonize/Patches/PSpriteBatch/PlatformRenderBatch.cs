@@ -235,6 +235,8 @@ internal static class PlatformRenderBatch {
 
 	private static bool EnsureArrayCapacityEnabled = true;
 
+	private static FieldInfo? SpriteBatcher__index = typeof(SpriteBatcher).GetField("_index", BindingFlags.NonPublic | BindingFlags.Instance);
+
 	[Harmonize(
 		"Microsoft.Xna.Framework.Graphics",
 		"Microsoft.Xna.Framework.Graphics.SpriteBatcher",
@@ -245,8 +247,11 @@ internal static class PlatformRenderBatch {
 	)]
 	public static bool OnEnsureArrayCapacity(SpriteBatcher __instance, int numBatchItems) {
 		if (!Config.IsEnabled || !EnsureArrayCapacityEnabled) {
-			if (__instance._index == GL.GraphicsDeviceExt.SpriteBatcherValues.Indices16) {
-				__instance._index = null;
+			//var field = typeof(SpriteBatcher).GetField("_index", BindingFlags.NonPublic | BindingFlags.Instance);
+			//short[] _index = (short[]) field?.GetValue(__instance);
+			if (((short[])SpriteBatcher__index?.GetValue(__instance)) == GL.GraphicsDeviceExt.SpriteBatcherValues.Indices16) {
+				//field?.SetValue(__instance, null);
+				SpriteBatcher__index.SetValue(__instance, null);
 			}
 			return true;
 		}
@@ -260,8 +265,9 @@ internal static class PlatformRenderBatch {
 		catch (Exception ex) when (ex is MemberAccessException or InvalidCastException) {
 			Debug.Error($"Disabling {nameof(OnEnsureArrayCapacity)} patch", ex);
 			EnsureArrayCapacityEnabled = false;
-			if (__instance._index == GL.GraphicsDeviceExt.SpriteBatcherValues.Indices16) {
-				__instance._index = null;
+
+			if (((short[])SpriteBatcher__index?.GetValue(__instance)) == GL.GraphicsDeviceExt.SpriteBatcherValues.Indices16) {
+				SpriteBatcher__index?.SetValue(__instance, null);
 			}
 			return true;
 		}
@@ -269,17 +275,28 @@ internal static class PlatformRenderBatch {
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static void EnsureIndexCapacity(SpriteBatcher @this, int numBatchItems) {
-		@this._index = GL.GraphicsDeviceExt.SpriteBatcherValues.Indices16;
+		SpriteBatcher__index?.SetValue(@this, GL.GraphicsDeviceExt.SpriteBatcherValues.Indices16);
 	}
+
+	private static FieldInfo? SpriteBatcher__batcher = typeof(SpriteBatcher).GetField("_batcher", BindingFlags.NonPublic | BindingFlags.Instance);
+	private static FieldInfo? SpriteBatcher__vertexArray = typeof(SpriteBatcher).GetField("_vertexArray", BindingFlags.NonPublic | BindingFlags.Instance);
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static void EnsureVertexCapacity(SpriteBatcher @this, int numBatchItems) {
-		if (Game1.spriteBatch is null || @this == Game1.spriteBatch._batcher) {
-			numBatchItems = SpriteBatcher.MaxBatchSize;
+		if (Game1.spriteBatch is null || @this == SpriteBatcher__batcher?.GetValue(Game1.spriteBatch)) {
+		//if (Game1.spriteBatch is null || @this == ((dynamic) Game1.spriteBatch)._batcher) {
+			numBatchItems = 5461;
 		}
 		int neededCapacity = (int)((uint)numBatchItems * 4u);
-		if (@this._vertexArray is null || @this._vertexArray.Length < neededCapacity) {
-			@this._vertexArray = GC.AllocateUninitializedArray<VertexPositionColorTexture>(neededCapacity, pinned: true);
+
+		//var _vertexArrayField = typeof(SpriteBatcher).GetField("_vertexArray", BindingFlags.NonPublic | BindingFlags.Instance);
+		//var _vertexArray = _vertexArrayField?.GetValue(@this);
+
+		var _vertexArray = SpriteBatcher__vertexArray?.GetValue(@this);
+
+		if (_vertexArray is null || ((VertexPositionColorTexture[])_vertexArray).Length < neededCapacity) {
+			//((dynamic)@this)._vertexArray = GC.AllocateUninitializedArray<VertexPositionColorTexture>(neededCapacity, pinned: true);
+			SpriteBatcher__vertexArray?.SetValue(@this, GC.AllocateUninitializedArray<VertexPositionColorTexture>(neededCapacity, pinned: true));
 		}
 	}
 }

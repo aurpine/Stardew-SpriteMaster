@@ -1,4 +1,4 @@
-﻿using Microsoft.Toolkit.HighPerformance;
+﻿using CommunityToolkit.HighPerformance;
 using Microsoft.Xna.Framework.Graphics;
 using Pastel;
 using SpriteMaster.Tasking;

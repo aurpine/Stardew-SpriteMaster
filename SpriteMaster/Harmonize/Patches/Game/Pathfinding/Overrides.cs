@@ -2,7 +2,7 @@
 
 using HarmonyLib;
 using LinqFasterer;
-using Microsoft.Toolkit.HighPerformance.Helpers;
+using CommunityToolkit.HighPerformance.Helpers;
 using SpriteMaster.Configuration;
 using SpriteMaster.Extensions.Reflection;
 using SpriteMaster.Types.Exceptions;
@@ -158,166 +158,166 @@ internal static partial class Pathfinding {
 		}
 	}
 
-	[Harmonize(
-		typeof(NPC),
-		"populateRoutesFromLocationToLocationList",
-		Harmonize.Fixation.Prefix,
-		Harmonize.PriorityLevel.Last,
-		instance: false,
-		critical: false
-	)]
-	public static bool PopulateRoutesFromLocationToLocationListPrefix() {
-		if (!Config.IsUnconditionallyEnabled || !Config.Extras.Pathfinding.OptimizeWarpPoints) {
-			return true;
-		}
+//	[Harmonize(
+//		typeof(NPC),
+//		"populateRoutesFromLocationToLocationList",
+//		Harmonize.Fixation.Prefix,
+//		Harmonize.PriorityLevel.Last,
+//		instance: false,
+//		critical: false
+//	)]
+//	public static bool PopulateRoutesFromLocationToLocationListPrefix() {
+//		if (!Config.IsUnconditionallyEnabled || !Config.Extras.Pathfinding.OptimizeWarpPoints) {
+//			return true;
+//		}
 
-#if VALIDATE_ROUTES
-		RealPopulate = true;
-		try {
-			PopulateRoutesFromLocationToLocationListReverse();
-		}
-		finally {
-			RealPopulate = false;
-		}
+//#if VALIDATE_ROUTES
+//		RealPopulate = true;
+//		try {
+//			PopulateRoutesFromLocationToLocationListReverse();
+//		}
+//		finally {
+//			RealPopulate = false;
+//		}
 
-		var referenceRoutes = RoutesFromLocationToLocation!?.Value!;
-#endif
+//		var referenceRoutes = RoutesFromLocationToLocation!?.Value!;
+//#endif
 
-		var locations = new Dictionary<string, GameLocation>(Game1.locations.WhereF(location => location is not null).SelectF(location => new KeyValuePair<string, GameLocation>(location.Name, location)));
+//		var locations = new Dictionary<string, GameLocation>(Game1.locations.WhereF(location => location is not null).SelectF(location => new KeyValuePair<string, GameLocation>(location.Name, location)));
 
-		var routeList = new RouteList(locations.Count);
+//		var routeList = new RouteList(locations.Count);
 
-		GameLocation? backwoodsLocation = Game1.locations.FirstOrDefaultF(location => location.Name == "Backwoods");
+//		GameLocation? backwoodsLocation = Game1.locations.FirstOrDefaultF(location => location.Name == "Backwoods");
 
-		GenderedTuple<ConcurrentDictionary<RouteKey, List<string>>>? concurrentRoutes =
-			SMConfig.Extras.Pathfinding.EnableCrossThreadOptimizations ?
-				new(new(), new(), new()) :
-				null;
+//		GenderedTuple<ConcurrentDictionary<RouteKey, List<string>>>? concurrentRoutes =
+//			SMConfig.Extras.Pathfinding.EnableCrossThreadOptimizations ?
+//				new(new(), new(), new()) :
+//				null;
 
-		// Iterate over every location in parallel, and collect all paths to every other location.
-		Parallel.ForEach(Game1.locations, location => {
-			if (location is not Farm && !ReferenceEquals(location, backwoodsLocation)) {
-				ExploreWarpPointsImpl(location, in routeList, locations, concurrentRoutes);
-			}
-		});
+//		// Iterate over every location in parallel, and collect all paths to every other location.
+//		Parallel.ForEach(Game1.locations, location => {
+//			if (location is not Farm && !ReferenceEquals(location, backwoodsLocation)) {
+//				ExploreWarpPointsImpl(location, in routeList, locations, concurrentRoutes);
+//			}
+//		});
 
-		// Set the RoutesFromLocationToLocation list, and also generate a faster 'FasterRouteMap' to perform path lookups.
-		FasterRouteMap.Clear();
-		var allRoutes = FasterRouteMap.Add(in routeList);
-		RoutesFromLocationToLocationSet(allRoutes);
+//		// Set the RoutesFromLocationToLocation list, and also generate a faster 'FasterRouteMap' to perform path lookups.
+//		FasterRouteMap.Clear();
+//		var allRoutes = FasterRouteMap.Add(in routeList);
+//		RoutesFromLocationToLocationSet(allRoutes);
 
-#if VALIDATE_ROUTES
-		ValidateRoutes(referenceRoutes, routeList.General.Concat(routeList.Male).Concat(routeList.Female).ToList());
-#endif
+//#if VALIDATE_ROUTES
+//		ValidateRoutes(referenceRoutes, routeList.General.Concat(routeList.Male).Concat(routeList.Female).ToList());
+//#endif
 
-		return false;
-	}
+//		return false;
+//	}
 
-	[Harmonize(
-		typeof(NPC),
-		"populateRoutesFromLocationToLocationList",
-		Harmonize.Fixation.Postfix,
-		Harmonize.PriorityLevel.Last,
-		instance: false,
-		critical: false
-	)]
-	public static void PopulateRoutesFromLocationToLocationListPostfix() {
-		if (!Config.IsUnconditionallyEnabled || !Config.Extras.Pathfinding.OptimizeWarpPoints) {
-			return;
-		}
+//	[Harmonize(
+//		typeof(NPC),
+//		"populateRoutesFromLocationToLocationList",
+//		Harmonize.Fixation.Postfix,
+//		Harmonize.PriorityLevel.Last,
+//		instance: false,
+//		critical: false
+//	)]
+//	public static void PopulateRoutesFromLocationToLocationListPostfix() {
+//		if (!Config.IsUnconditionallyEnabled || !Config.Extras.Pathfinding.OptimizeWarpPoints) {
+//			return;
+//		}
 
-		UpdateWarpPointsReverse(null);
-	}
+//		UpdateWarpPointsReverse(null);
+//	}
 
-	[Harmonize(
-		typeof(NPC),
-		"exploreWarpPoints",
-		Harmonize.Fixation.Prefix,
-		Harmonize.PriorityLevel.Last,
-		instance: false,
-		critical: false
-	)]
-	public static bool ExploreWarpPointsPre(ref bool __result, GameLocation l, List<string> route) {
-		if (!Config.IsUnconditionallyEnabled || !Config.Extras.Pathfinding.OptimizeWarpPoints) {
-			return true;
-		}
+//	[Harmonize(
+//		typeof(NPC),
+//		"exploreWarpPoints",
+//		Harmonize.Fixation.Prefix,
+//		Harmonize.PriorityLevel.Last,
+//		instance: false,
+//		critical: false
+//	)]
+//	public static bool ExploreWarpPointsPre(ref bool __result, GameLocation l, List<string> route) {
+//		if (!Config.IsUnconditionallyEnabled || !Config.Extras.Pathfinding.OptimizeWarpPoints) {
+//			return true;
+//		}
 
-#if VALIDATE_ROUTES
-		if (RealPopulate) {
-			return true;
-		}
-#endif
+//#if VALIDATE_ROUTES
+//		if (RealPopulate) {
+//			return true;
+//		}
+//#endif
 
-		// RoutesFromLocationToLocation is always a new list when first entering this method
+//		// RoutesFromLocationToLocation is always a new list when first entering this method
 
-		var locations = new Dictionary<string, GameLocation>(
-			Game1.locations
-				.WhereF(location => location is not null)
-				.SelectF(location => new KeyValuePair<string, GameLocation>(location.Name, location))
-		);
+//		var locations = new Dictionary<string, GameLocation>(
+//			Game1.locations
+//				.WhereF(location => location is not null)
+//				.SelectF(location => new KeyValuePair<string, GameLocation>(location.Name, location))
+//		);
 
-		var routeList = new RouteList(locations.Count);
+//		var routeList = new RouteList(locations.Count);
 
-		// Single location pathing search.
-		__result = ExploreWarpPointsImpl(l, in routeList, locations);
-		route.Clear();
+//		// Single location pathing search.
+//		__result = ExploreWarpPointsImpl(l, in routeList, locations);
+//		route.Clear();
 
-		FasterRouteMap.Clear(l.Name);
-		var allRoutes = FasterRouteMap.Add(in routeList);
-		RoutesFromLocationToLocationSet(allRoutes);
+//		FasterRouteMap.Clear(l.Name);
+//		var allRoutes = FasterRouteMap.Add(in routeList);
+//		RoutesFromLocationToLocationSet(allRoutes);
 
-		return false;
-	}
+//		return false;
+//	}
 
-	[Harmonize(
-		typeof(NPC),
-		"exploreWarpPoints",
-		Harmonize.Fixation.Postfix,
-		Harmonize.PriorityLevel.Last,
-		instance: false,
-		critical: false
-	)]
-	public static void ExploreWarpPointsPost(ref bool __result, GameLocation l, List<string> route) {
-		if (!Config.IsUnconditionallyEnabled || !Config.Extras.Pathfinding.OptimizeWarpPoints) {
-			return;
-		}
+//	[Harmonize(
+//		typeof(NPC),
+//		"exploreWarpPoints",
+//		Harmonize.Fixation.Postfix,
+//		Harmonize.PriorityLevel.Last,
+//		instance: false,
+//		critical: false
+//	)]
+//	public static void ExploreWarpPointsPost(ref bool __result, GameLocation l, List<string> route) {
+//		if (!Config.IsUnconditionallyEnabled || !Config.Extras.Pathfinding.OptimizeWarpPoints) {
+//			return;
+//		}
 
-#if VALIDATE_ROUTES
-		if (RealPopulate) {
-			return;
-		}
-#endif
+//#if VALIDATE_ROUTES
+//		if (RealPopulate) {
+//			return;
+//		}
+//#endif
 
-		UpdateWarpPointsReverse(l);
-		route.Clear();
-	}
+//		UpdateWarpPointsReverse(l);
+//		route.Clear();
+//	}
 
-	private static void UpdateWarpPointsReverse(GameLocation? l) {
-		if (RoutesFromLocationToLocation is not { HasGetter: true } routes) {
-			return;
-		}
+//	private static void UpdateWarpPointsReverse(GameLocation? l) {
+//		if (RoutesFromLocationToLocation is not { HasGetter: true } routes) {
+//			return;
+//		}
 
-		bool honorGender = SMConfig.Extras.Pathfinding.HonorGenderLocking;
+//		bool honorGender = SMConfig.Extras.Pathfinding.HonorGenderLocking;
 
-		var gameRoutes = routes.Value;
+//		var gameRoutes = routes.Value;
 
-		foreach (var route in gameRoutes.ReverseF()) {
-			if (l is not null && route[0] != l.Name) {
-				continue;
-			}
-			bool male = honorGender && MaleLocations.AnyF(route.Contains);
-			bool female = honorGender && FemaleLocations.AnyF(route.Contains);
-			switch (male, female) {
-				case (true, false):
-					RouteMap.Add(FasterRouteMap.Male, route, route);
-					break;
-				case (false, true):
-					RouteMap.Add(FasterRouteMap.Female, route, route);
-					break;
-				default:
-					RouteMap.Add(FasterRouteMap.General, route, route);
-					break;
-			}
-		}
-	}
+//		foreach (var route in gameRoutes.ReverseF()) {
+//			if (l is not null && route[0] != l.Name) {
+//				continue;
+//			}
+//			bool male = honorGender && MaleLocations.AnyF(route.Contains);
+//			bool female = honorGender && FemaleLocations.AnyF(route.Contains);
+//			switch (male, female) {
+//				case (true, false):
+//					RouteMap.Add(FasterRouteMap.Male, route, route);
+//					break;
+//				case (false, true):
+//					RouteMap.Add(FasterRouteMap.Female, route, route);
+//					break;
+//				default:
+//					RouteMap.Add(FasterRouteMap.General, route, route);
+//					break;
+//			}
+//		}
+//	}
 }

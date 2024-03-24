@@ -5,6 +5,7 @@ using MusicMaster.Types;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
+using StardewValley.GameData;
 using StardewValley.Monsters;
 using System;
 using System.Collections.Generic;
@@ -121,7 +122,7 @@ internal static class MusicManager {
 			return;
 		}
 
-		if (args.Location.getCharacters().AnyF(npc => npc is Monster {IsMonster: true})) {
+		if (args.Location.characters.AnyF(npc => npc is Monster {IsMonster: true})) {
 			return;
 		}
 
@@ -239,7 +240,7 @@ internal static class MusicManager {
 			return true;
 		}
 
-		if (!__instance.currentLocation.getCharacters().AnyF(npc => npc is Monster { IsMonster: true })) {
+		if (!__instance.currentLocation.characters.AnyF(npc => npc is Monster { IsMonster: true })) {
 			return true;
 		}
 
@@ -276,7 +277,7 @@ internal static class MusicManager {
 			return;
 		}
 
-		if (!who.currentLocation.getCharacters().AnyF(npc => npc is Monster {IsMonster: true})) {
+		if (!who.currentLocation.characters.AnyF(npc => npc is Monster {IsMonster: true})) {
 			return;
 		}
 

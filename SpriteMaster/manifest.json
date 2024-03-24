@@ -1,1 +1,13 @@
-{"Name":"SpriteMaster","Author":"mkukli","Version":"0.15.0-beta.16.0","Description":"Resamples sprites on the fly using xBRZ to improve resolution and crispness.","UniqueID":"DigitalCarbide.SpriteMaster","EntryDll":"SpriteMaster.dll","MinimumApiVersion":"3.15.0","UpdateKeys":["Nexus:4922","GitHub:ameisen/SV-SpriteMaster"]}
+{
+  "Name": "SpriteMaster",
+  "Author": "aurpine",
+  "Version": "0.16.1",
+  "Description": "Resamples sprites on the fly using xBRZ to improve resolution and crispness.",
+  "UniqueID": "aurpine.SpriteMaster",
+  "EntryDll": "SpriteMaster.dll",
+  "MinimumApiVersion": "4.0.0",
+  "UpdateKeys": [
+    "Nexus:20914",
+    "GitHub:aurpine/Stardew-SpriteMaster"
+  ]
+}

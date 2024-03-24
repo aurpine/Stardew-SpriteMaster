@@ -1,6 +1,6 @@
 ﻿using HarmonyLib;
 using LinqFasterer;
-using Microsoft.Toolkit.HighPerformance;
+using CommunityToolkit.HighPerformance;
 using Microsoft.Xna.Framework.Graphics;
 using SpriteMaster.Configuration;
 using SpriteMaster.Extensions;
@@ -20,6 +20,8 @@ using System.Text;
 using System.Threading;
 using static Microsoft.Xna.Framework.Graphics.Texture2D;
 using static SpriteMaster.Harmonize.Harmonize;
+using Microsoft.Xna.Framework;
+using StardewValley;
 
 namespace SpriteMaster.Harmonize.Patches;
 
@@ -240,7 +242,7 @@ internal static class PTexture2D {
 				var fullBounds = __instance.Bounds;
 				var recacheData = GC.AllocateUninitializedArray<byte>(__instance.Format.SizeBytes(new Vector2I(fullBounds.Width, fullBounds.Height)));
 				try {
-					__instance.PlatformGetData(level, arraySlice, fullBounds, recacheData, 0, recacheData.Length);
+					__instance.GetData(level, arraySlice, fullBounds, recacheData, 0, recacheData.Length);
 					_ = OnPlatformSetDataPre(__instance, level, arraySlice, fullBounds, recacheData, 0, recacheData.Length);
 
 					if (!GetCachedData<T>(__instance, level, arraySlice, rect, data, startIndex, elementCount).IsEmpty) {

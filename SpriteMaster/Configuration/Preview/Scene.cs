@@ -1,4 +1,4 @@
-﻿using Microsoft.Toolkit.HighPerformance;
+﻿using CommunityToolkit.HighPerformance;
 using Microsoft.Xna.Framework.Graphics;
 using SpriteMaster.Extensions;
 using SpriteMaster.Extensions.Reflection;
@@ -56,7 +56,7 @@ internal abstract class Scene : IDisposable {
 	[StructLayout(LayoutKind.Auto)]
 	protected readonly ref struct TempValue<T> {
 		private readonly T? OriginalValue;
-		private readonly Ref<T?> ReferenceValue;
+		private readonly Microsoft.Toolkit.HighPerformance.Ref<T?> ReferenceValue;
 
 		internal TempValue(ref T? value, in T? newValue) {
 			OriginalValue = value;

@@ -88,7 +88,7 @@ internal sealed class Track {
 			}
 
 			var instance = effect.CreateInstance();
-			instance.IsLooped = true;
+			instance.LoopCount = 1000;
 
 			return new(this, instance);
 		}

@@ -2,14 +2,16 @@
 // #define ENABLE_VBO_MULTI
 // #define CHECK_DRAW_RANGE_ELEMENTS
 
-using Microsoft.Toolkit.HighPerformance;
+using CommunityToolkit.HighPerformance;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.OpenGL;
 using SpriteMaster.Extensions;
+using SpriteMaster.Extensions.Reflection;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -44,8 +46,8 @@ internal static partial class GraphicsDeviceExt {
 	}
 
 	internal static unsafe class SpriteBatcherValues {
-		internal const int MaxBatchSize = SpriteBatcher.MaxBatchSize;
-		internal const int MaxIndicesCount = MaxBatchSize * 6;
+		internal static int MaxBatchSize = (int) typeof(SpriteBatcher).GetField("MaxBatchSize", BindingFlags.Static | BindingFlags.NonPublic)?.GetValue(null); //6000;//5461;
+		internal static int MaxIndicesCount = MaxBatchSize * 6;
 		internal static readonly short[] Indices16 = GC.AllocateUninitializedArray<short>(MaxIndicesCount);
 
 		internal static readonly Lazy<GLExt.ObjectId> IndexBuffer16 = new(() => GetIndexBuffer(Indices16), mode: LazyThreadSafetyMode.None);
@@ -374,7 +376,7 @@ internal static partial class GraphicsDeviceExt {
 	private static unsafe bool BindBufferInternalResult(GraphicsDevice device, BufferTarget target, GLExt.ObjectId obj) {
 		int offset = (int)target - (int)BufferTarget.ArrayBuffer;
 
-		if (PrimaryBufferBindings[offset] == obj && device._indexBuffer is null) {
+		if (PrimaryBufferBindings[offset] == obj && device.Indices is null) {
 			return false;
 		}
 
@@ -499,7 +501,7 @@ internal static partial class GraphicsDeviceExt {
 
 #endregion
 
-	private const uint MaxSpriteBatchCount = SpriteBatcher.MaxBatchSize * 4u;
+	private const uint MaxSpriteBatchCount = 5461 * 4u;
 	private const uint MaxSequentialBufferCount = MaxSpriteBatchCount * 64u;
 
 	private static GLExt.ObjectId MakeTransientVertexBuffer() {
@@ -577,12 +579,15 @@ internal static partial class GraphicsDeviceExt {
 	) {
 		// Setup the vertex declaration to point at the VB data.
 		declaration.GraphicsDevice = @this;
+
+		var hash = typeof(GraphicsDevice).GetProperty("ShaderProgramHash", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(@this);
+
 		// Use our optimized version.
 		VertexDeclarationApply(
 			declaration,
-			shader: @this._vertexShader,
+			shader: @this.VertexShader,
 			offset: vertexPointer,
-			programHash: @this.ShaderProgramHash
+			programHash: hash == null? 0: (int) hash
 		);
 	}
 
@@ -788,12 +793,15 @@ internal static partial class GraphicsDeviceExt {
 
 			GLExt.BindBuffer(BufferTarget.ArrayBuffer, 0);
 			GLExt.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
-			@this._indexBufferDirty = true;
+			@this.Indices = @this.Indices;
+
+			var hash = typeof(GraphicsDevice).GetProperty("ShaderProgramHash", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(@this);
+
 			fixed (TVertex* vertexPtr = vertexData) {
 				fixed (TIndex* indexPtr = indexData) {
 					nint offset = (nint)vertexPtr + (vertexDeclaration.VertexStride * vertexOffset);
 					vertexDeclaration.GraphicsDevice = @this;
-					vertexDeclaration.Apply(@this._vertexShader, offset, @this.ShaderProgramHash);
+					vertexDeclaration.Apply(@this.VertexShader, offset, hash == null? 0: (int) hash);
 					GLExt.DrawElements(
 						primitiveType.GetGl(),
 						primitiveType.GetElementCountArray(primitiveCount),
@@ -939,7 +947,7 @@ internal static partial class GraphicsDeviceExt {
 			BindBufferInternal(BufferTarget.ArrayBuffer, vbo);
 			GraphicsExtensions.CheckGLError();
 			if (BindBufferInternalResult(@this, BufferTarget.ElementArrayBuffer, ibo)) {
-				@this._indexBufferDirty = true;
+				@this.Indices = @this.Indices;
 			}
 			GraphicsExtensions.CheckGLError();
 

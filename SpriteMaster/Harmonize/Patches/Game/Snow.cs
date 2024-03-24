@@ -297,8 +297,8 @@ internal static class Snow {
 			Game1.spriteBatch.End();
 			Game1.spriteBatch.Begin(batchSortMode, batchBlendState, batchSamplerState);
 		}
-
-		var locationWeather = Game1.netWorldState.Value.GetWeatherForLocation(GameLocation.LocationContext.Default);
+		
+		var locationWeather = Game1.netWorldState.Value.GetWeatherForLocation(LocationContexts.DefaultId);
 
 		__state = new(true, true, PrecipitationPatches.PrecipitationOverride, locationWeather.isSnowing.Value);
 		PrecipitationPatches.PrecipitationOverride = PrecipitationType.None;
@@ -324,7 +324,7 @@ internal static class Snow {
 		}
 
 		PrecipitationPatches.PrecipitationOverride = __state.PreviousOverride;
-		Game1.netWorldState.Value.GetWeatherForLocation(GameLocation.LocationContext.Default).isSnowing.Value = __state.PreviousSnowValue;
+		Game1.netWorldState.Value.GetWeatherForLocation(LocationContexts.DefaultId).isSnowing.Value = __state.PreviousSnowValue;
 	}
 
 	private static float PreviousWind = 0.0f;
@@ -404,7 +404,7 @@ internal static class Snow {
 		instance: false,
 		critical: false
 	)]
-	public static bool UpdateRainDropPositionForPlayerMovement(int direction, bool overrideConstraints, float speed) {
+	public static bool UpdateRainDropPositionForPlayerMovement(int direction, float speed) {
 		if (!Config.IsEnabled || !Config.Extras.Snow.IsEnabled) {
 			return true;
 		}
@@ -414,23 +414,21 @@ internal static class Snow {
 		}
 
 		if (
-			!overrideConstraints && (
-				!PrecipitationPatches.IsSnowingHereExt() ||
-				!Game1.currentLocation.IsOutdoors ||
-				direction is not (0 or 2) &&
-				(
-					Game1.player.getStandingX() < Game1.viewport.Width / 2 ||
-					Game1.player.getStandingX() > Game1.currentLocation.Map.DisplayWidth - Game1.viewport.Width / 2) ||
-					direction is not (1 or 3) && (
-						Game1.player.getStandingY() < Game1.viewport.Height / 2 ||
-						Game1.player.getStandingY() > Game1.currentLocation.Map.DisplayHeight - Game1.viewport.Height / 2
-					)
+			!PrecipitationPatches.IsSnowingHereExt() ||
+			!Game1.currentLocation.IsOutdoors ||
+			direction is not (0 or 2) &&
+			(
+				Game1.player.getStandingPosition().X < Game1.viewport.Width / 2 ||
+				Game1.player.getStandingPosition().X > Game1.currentLocation.Map.DisplayWidth - Game1.viewport.Width / 2) ||
+				direction is not (1 or 3) && (
+					Game1.player.getStandingPosition().Y < Game1.viewport.Height / 2 ||
+					Game1.player.getStandingPosition().Y > Game1.currentLocation.Map.DisplayHeight - Game1.viewport.Height / 2
 				)
 			) {
 			return true;
 		}
 
-		Game1.updateDebrisWeatherForMovement(AllWeatherDebris, direction, overrideConstraints, speed);
+		Game1.updateDebrisWeatherForMovement(AllWeatherDebris, direction, speed);
 		return true;
 	}
 

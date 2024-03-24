@@ -1,5 +1,5 @@
 ﻿using JetBrains.Annotations;
-using Microsoft.Toolkit.HighPerformance;
+using CommunityToolkit.HighPerformance;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -81,7 +81,7 @@ internal sealed class ConcurrentLinkedListSlim<T> {
 
 	[StructLayout(LayoutKind.Auto)]
 	private ref struct NodePair {
-		private readonly Ref<Node> RefNode;
+		private readonly Microsoft.Toolkit.HighPerformance.Ref<Node> RefNode;
 		internal ref Node Node => ref RefNode.Value;
 		internal readonly NodeRef Ref;
 

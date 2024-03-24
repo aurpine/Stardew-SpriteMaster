@@ -29,7 +29,8 @@ internal static class Line {
 		instance: false,
 		critical: false
 	)]
-	public static bool DrawLineWithScreenCoordinates(int x1, int y1, int x2, int y2, XSpriteBatch b, XColor color1, float layerDepth) {
+	public static bool DrawLineWithScreenCoordinates(int x1, int y1, int x2, int y2, XSpriteBatch b, XColor color1, float layerDepth, int thickness) {
+		// TODO(aurpine): account for thickness
 		if (!Config.IsEnabled || !Config.Extras.SmoothLines || !Config.Resample.IsEnabled) {
 			return true;
 		}

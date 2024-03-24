@@ -1,4 +1,4 @@
-﻿using Microsoft.Toolkit.HighPerformance;
+﻿using CommunityToolkit.HighPerformance;
 using MonoGame.Framework.Utilities;
 using SpriteMaster.Extensions;
 using SpriteMaster.Types;

@@ -1,5 +1,5 @@
 ﻿using JetBrains.Annotations;
-using Microsoft.Toolkit.HighPerformance;
+using CommunityToolkit.HighPerformance;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;

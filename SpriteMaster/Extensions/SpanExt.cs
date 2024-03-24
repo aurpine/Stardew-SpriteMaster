@@ -1,5 +1,5 @@
 ﻿using JetBrains.Annotations;
-using Microsoft.Toolkit.HighPerformance;
+using CommunityToolkit.HighPerformance;
 #if !SHIPPING
 using SpriteMaster.Resample.Scalers.SuperXBR.Cg;
 #endif

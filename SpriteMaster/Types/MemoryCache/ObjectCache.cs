@@ -1,5 +1,5 @@
 ﻿using JetBrains.Annotations;
-using Microsoft.Toolkit.HighPerformance;
+using CommunityToolkit.HighPerformance;
 using SpriteMaster.Extensions;
 using System;
 using System.Collections.Generic;

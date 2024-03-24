@@ -1,7 +1,7 @@
 ﻿using Ionic.Zlib;
 using JetBrains.Annotations;
 using LinqFasterer;
-using Microsoft.Toolkit.HighPerformance;
+using CommunityToolkit.HighPerformance;
 using SpriteMaster.Extensions;
 using SpriteMaster.Extensions.Reflection;
 using System;

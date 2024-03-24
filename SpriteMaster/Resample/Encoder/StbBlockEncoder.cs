@@ -1,5 +1,5 @@
 ﻿using JetBrains.Annotations;
-using Microsoft.Toolkit.HighPerformance;
+using CommunityToolkit.HighPerformance;
 using SpriteMaster.Extensions;
 using SpriteMaster.Types.Spans;
 using SpriteMaster.Types;

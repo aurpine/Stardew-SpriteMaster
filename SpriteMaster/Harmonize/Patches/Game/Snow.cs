@@ -196,7 +196,6 @@ internal static class Snow {
 		var batchBlendState = DrawState.CurrentBlendState;
 		var batchSamplerState = DrawState.CurrentSamplerState;
 
-		Game1.spriteBatch.End();
 		Game1.spriteBatch.Begin(
 			sortMode: (IsPuffersnow || !additive) ? SpriteSortMode.Texture : SpriteSortMode.Deferred,
 			blendState: (IsPuffersnow || !additive) ? BlendState.AlphaBlend : BlendState.Additive,
@@ -295,7 +294,6 @@ internal static class Snow {
 		}
 		finally {
 			Game1.spriteBatch.End();
-			Game1.spriteBatch.Begin(batchSortMode, batchBlendState, batchSamplerState);
 		}
 		
 		var locationWeather = Game1.netWorldState.Value.GetWeatherForLocation(LocationContexts.DefaultId);

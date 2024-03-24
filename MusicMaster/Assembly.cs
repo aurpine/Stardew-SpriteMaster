@@ -17,9 +17,9 @@ using System.Security;
 [assembly: InternalsVisibleTo("Strings")]
 [assembly: InternalsVisibleTo("Math")]
 [assembly: SecurityRules(SecurityRuleSet.Level2, SkipVerificationInFullTrust = true)]
-[assembly: ChangeList("cb3cf6c:0.15.0-beta.16-1-gcb3cf6c")]
-[assembly: BuildComputerName("Palatinate")]
-[assembly: FullVersion("0.15.0.116.0-beta.16.0")]
+[assembly: ChangeList("0.16.1")]
+[assembly: BuildComputerName("aurpine")]
+[assembly: FullVersion("0.16.1")]
 
 [module: CLSCompliant(false)]
 [module: SkipLocalsInit]

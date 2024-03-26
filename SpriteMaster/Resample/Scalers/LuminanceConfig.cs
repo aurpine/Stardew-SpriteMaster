@@ -12,11 +12,15 @@ internal abstract class LuminanceConfig : Config {
 		Vector2B wrapped,
 		bool hasAlpha,
 		bool gammaCorrected,
-		double luminanceWeight
+		double luminanceWeight,
+		int saturation,
+		int lightness
 	) : base(
 		wrapped,
 		hasAlpha,
-		gammaCorrected
+		gammaCorrected,
+		saturation,
+		lightness
 	) {
 		LuminanceWeight = luminanceWeight;
 

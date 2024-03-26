@@ -197,6 +197,19 @@ internal readonly struct Color16 : IEquatable<Color16>, IEquatable<ulong>, ILong
 		return destination;
 	}
 
+	// From https://www.w3.org/TR/filter-effects-1/#element-attrdef-fecolormatrix-values
+	// Copyright © 2018 World Wide Web Consortium. All Rights Reserved. This work is distributed under the W3C® Software and Document License [1] in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+	// [1] https://www.w3.org/Consortium/Legal/copyright-software
+	public void Saturate(double amount) {
+		var r = R.Real;
+		var g = G.Real;
+		var b = B.Real;
+
+		R = Fixed16.FromReal(Math.Clamp(((0.213 + 0.787 * amount) * r + (0.715 - 0.715 * amount) * g + (0.072 - 0.072 * amount) * b), 0.0, 1.0));
+		G = Fixed16.FromReal(Math.Clamp(((0.213 - 0.213 * amount) * r + (0.715 + 0.285 * amount) * g + (0.072 - 0.072 * amount) * b), 0.0, 1.0));
+		B = Fixed16.FromReal(Math.Clamp(((0.213 - 0.213 * amount) * r + (0.715 - 0.715 * amount) * g + (0.072 + 0.928 * amount) * b), 0.0, 1.0));
+	}
+
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public override readonly int GetHashCode() => Packed.GetHashCode();
 

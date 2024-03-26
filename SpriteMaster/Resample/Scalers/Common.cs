@@ -56,4 +56,14 @@ internal static class Common {
 			}
 		}
 	}
+
+	internal static void Saturate(Span<Color16> destination, int saturation) {
+		if (saturation == 0) {
+			return;
+		}
+		double s = 1 + saturation / 100.0;
+		for (int i = 0; i < destination.Length; i++) {
+			destination[i].Saturate(s);
+		}
+	}
 }

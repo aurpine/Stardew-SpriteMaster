@@ -35,6 +35,7 @@ internal sealed partial class Scaler : AbstractScaler<Config, Scaler.ValueScale>
 		);
 
 		scalerInstance.Scale(sourceData, targetData);
+		Common.Saturate(targetData, config.Saturation);
 		return targetData;
 	}
 
@@ -55,7 +56,9 @@ internal sealed partial class Scaler : AbstractScaler<Config, Scaler.ValueScale>
 			var config = scaler.CreateConfig(
 				wrapped: Configuration.Wrapped,
 				hasAlpha: Configuration.HasAlpha,
-				gammaCorrected: Configuration.GammaCorrected
+				gammaCorrected: Configuration.GammaCorrected,
+				saturation: Configuration.Saturation,
+				lightness: Configuration.Lightness
 			);
 
 			destination = scaler.Apply(
@@ -75,7 +78,9 @@ internal sealed partial class Scaler : AbstractScaler<Config, Scaler.ValueScale>
 			var config = scaler.CreateConfig(
 				wrapped: Configuration.Wrapped,
 				hasAlpha: Configuration.HasAlpha,
-				gammaCorrected: Configuration.GammaCorrected
+				gammaCorrected: Configuration.GammaCorrected,
+				saturation: Configuration.Saturation,
+				lightness: Configuration.Lightness
 			);
 
 			epxData = scaler.Apply(

@@ -56,7 +56,7 @@ internal abstract class Scene : IDisposable {
 	[StructLayout(LayoutKind.Auto)]
 	protected readonly ref struct TempValue<T> {
 		private readonly T? OriginalValue;
-		private readonly Microsoft.Toolkit.HighPerformance.Ref<T?> ReferenceValue;
+		private readonly Ref<T?> ReferenceValue;
 
 		internal TempValue(ref T? value, in T? newValue) {
 			OriginalValue = value;

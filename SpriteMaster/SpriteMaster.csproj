@@ -3,8 +3,8 @@
 	<Import Project="$(SolutionDir)SpriteMasterCommon.props" />
 
 	<PropertyGroup>
-		<AssemblyName>SpriteMaster</AssemblyName>
-		<PackageId>SpriteMaster-SV</PackageId>
+		<AssemblyName>ClearGlasses</AssemblyName>
+		<PackageId>Clear Glasses</PackageId>
 		<ProjectGuid>C270B7AD-DA11-4176-83B9-8998FE58A601</ProjectGuid>
 		<EnableHarmony>true</EnableHarmony>
 		<RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
@@ -15,7 +15,7 @@
 		<RunAnalyzersDuringBuild>False</RunAnalyzersDuringBuild>
 		<PackageProjectUrl>https://github.com/ameisen/SV-SpriteMaster</PackageProjectUrl>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
-		<RepositoryUrl>https://github.com/ameisen/SV-SpriteMaster</RepositoryUrl>
+		<RepositoryUrl>https://github.com/aurpine/Stardew-SpriteMaster</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<Nullable>enable</Nullable>
 		<DebugSymbols>true</DebugSymbols>

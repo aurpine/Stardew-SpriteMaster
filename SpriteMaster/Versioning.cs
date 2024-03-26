@@ -60,5 +60,5 @@ internal static class Versioning {
 	}
 
 	internal static string StringHeader =>
-		$"SpriteMaster {FullVersion} build {AssemblyVersion.Revision} ({Config.BuildConfiguration}, {ChangeList}, {BuildComputerName})";
+		$"Clear Glasses {FullVersion} build {AssemblyVersion.Revision} ({Config.BuildConfiguration}, {ChangeList}, {BuildComputerName})";
 }

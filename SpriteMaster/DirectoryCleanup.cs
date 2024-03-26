@@ -18,7 +18,7 @@ internal static class DirectoryCleanup {
 			"CommunityToolkit.HighPerformance",
 			"Pastel",
 			"PriorityQueue",
-			"SpriteMaster",
+			"ClearGlasses",
 			"Tomlyn",
 			"ZstdNet"
 		};

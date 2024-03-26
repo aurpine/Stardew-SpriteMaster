@@ -30,7 +30,7 @@ namespace SpriteMaster;
 
 public sealed class SpriteMaster : Mod {
 	internal static Assembly Assembly => typeof(SpriteMaster).Assembly;
-	private const string UniqueId = "DigitalCarbide.SpriteMaster";
+	private const string UniqueId = "aurpine.ClearGlasses";
 	private static string ModDirectory => Self?.Helper?.DirectoryPath ?? Path.GetDirectoryName(Assembly.Location) ?? Assembly.Location;
 
 	internal static SpriteMaster Self { get; private set; } = default!;
@@ -227,8 +227,8 @@ public sealed class SpriteMaster : Mod {
 
 		Serialize.Save(Config.Path);
 
-		foreach (var prefix in new[] { "spritemaster", "sm" }) {
-			_ = TryAddConsoleCommand(prefix, "SpriteMaster Commands", ConsoleSupport.Invoke);
+		foreach (var prefix in new[] { "clearglasses", "cg" }) {
+			_ = TryAddConsoleCommand(prefix, "ClearGlasses Commands", ConsoleSupport.Invoke);
 		}
 
 		InitializeEvents();

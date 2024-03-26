@@ -64,7 +64,7 @@ internal static partial class Debug {
 		};
 
 		try {
-			return getMonitorInfo.Invoke(logManagerInfo, new object[] { "SpriteMaster" }) as IMonitor;
+			return getMonitorInfo.Invoke(logManagerInfo, new object[] { "ClearGlasses" }) as IMonitor;
 		}
 		catch {
 			return null;

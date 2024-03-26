@@ -82,8 +82,8 @@ internal static class Config {
 
 	[Attributes.Ignore] internal static bool ToggledEnable = true;
 
-	[Attributes.Comment("Should SpriteMaster be enabled? Unsetting this will disable _all_ SpriteMaster functionality.")]
-	[Attributes.MenuName("Enable SpriteMaster")]
+	[Attributes.Comment("Should Clear Glasses be enabled? Unsetting this will disable _all_ Clear Glasses functionality.")]
+	[Attributes.MenuName("Enable Clear Glasses")]
 	[Obsolete($"Use {nameof(IsEnabled)}")]
 	internal static bool Enabled = true;
 
@@ -94,7 +94,7 @@ internal static class Config {
 	internal static bool IsEnabled => ToggledEnable && IsUnconditionallyEnabled;
 #pragma warning restore CS0618 // Type or member is obsolete
 
-	[Attributes.Comment("Button to toggle SpriteMaster")]
+	[Attributes.Comment("Button to toggle Clear Glasses")]
 	internal static SButton ToggleButton = SButton.F11;
 
 	[Attributes.Ignore]
@@ -887,7 +887,7 @@ internal static class Config {
 		internal static class ModPatches {
 			[Attributes.Comment("Patch CustomNPCFixes in order to improve load times?")]
 			internal static bool PatchCustomNPCFixes = true;
-			[Attributes.Comment("Disable unnecessary PyTK mitigation for SpriteMaster?")]
+			[Attributes.Comment("Disable unnecessary PyTK mitigation for Clear Glasses?")]
 			[Attributes.MenuName("Disable PyTK Mitigation")]
 			internal static bool DisablePyTKMitigation = true;
 		}

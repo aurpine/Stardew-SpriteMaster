@@ -1,13 +1,13 @@
 {
-  "Name": "SpriteMaster",
+  "Name": "Clear Glasses",
   "Author": "aurpine",
-  "Version": "0.16.1",
-  "Description": "Resamples sprites on the fly using xBRZ to improve resolution and crispness.",
-  "UniqueID": "aurpine.SpriteMaster",
-  "EntryDll": "SpriteMaster.dll",
+  "Version": "0.1.0",
+  "Description": "Steps up the visuals of your game by using pixel scaling techniques and filters.",
+  "UniqueID": "aurpine.ClearGlasses",
+  "EntryDll": "ClearGlasses.dll",
   "MinimumApiVersion": "4.0.0",
   "UpdateKeys": [
-    "Nexus:20914",
+    "Nexus:21090",
     "GitHub:aurpine/Stardew-SpriteMaster"
   ]
 }

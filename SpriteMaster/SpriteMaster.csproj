@@ -62,7 +62,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="CommunityToolkit.HighPerformance" Version="8.2.2" />
+		<PackageReference Include="CommunityToolkit.HighPerformance" Version="8.0.0" />
 		<PackageReference Include="FastExpressionCompiler.LightExpression" Version="4.1.0" />
 		<PackageReference Include="IgnoresAccessChecksToGenerator" Version="0.7.0">
 		  <PrivateAssets>all</PrivateAssets>
@@ -79,7 +79,6 @@
 		</PackageReference>
 		-->
 		<PackageReference Include="LinqFasterer" Version="2.1.0" />
-		<PackageReference Include="Microsoft.Toolkit.HighPerformance" Version="7.1.2" />
 		<PackageReference Include="OptimizedPriorityQueue" Version="5.1.0" />
 		<PackageReference Include="Pastel" Version="5.0.0" />
 		<PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="4.1.1" />

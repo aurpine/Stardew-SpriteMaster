@@ -15,7 +15,7 @@ internal static class DirectoryCleanup {
 			"FastExpressionCompiler.LightExpression",
 			"libzstd",
 			"LinqFasterer",
-			"Microsoft.Toolkit.HighPerformance",
+			"CommunityToolkit.HighPerformance",
 			"Pastel",
 			"PriorityQueue",
 			"SpriteMaster",

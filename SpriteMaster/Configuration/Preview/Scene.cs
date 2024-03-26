@@ -250,19 +250,8 @@ internal abstract class Scene : IDisposable {
 	}
 
 	private void DrawPrecipitation(XSpriteBatch batch, in Override overrideState, in DrawState drawState) {
-		batch.Begin(
-			sortMode: SpriteSortMode.FrontToBack,
-			rasterizerState: State,
-			samplerState: drawState.SamplerState,
-			depthStencilState: drawState.DepthStencilState
-		);
-		try {
-			Game1.snowPos = XVector2.Zero;
-			Game1.game1.drawWeather(Game1.currentGameTime, null);
-		}
-		finally {
-			batch.End();
-		}
+		Game1.snowPos = XVector2.Zero;
+		Game1.game1.drawWeather(Game1.currentGameTime, null);
 	}
 
 	private void DrawOverlay(XSpriteBatch batch, in Override overrideState, in DrawState drawState) {

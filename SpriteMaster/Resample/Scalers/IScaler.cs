@@ -9,7 +9,9 @@ internal interface IScaler {
 	Config CreateConfig(
 		Vector2B wrapped,
 		bool hasAlpha,
-		bool gammaCorrected
+		bool gammaCorrected,
+		int saturation,
+		int lightness
 	);
 
 	IScalerInfo Info { get; }

@@ -5,6 +5,7 @@ using SpriteMaster.Resample.Scalers.xBRZ.Common;
 using SpriteMaster.Resample.Scalers.xBRZ.Scalers;
 using SpriteMaster.Resample.Scalers.xBRZ.Structures;
 using SpriteMaster.Types;
+using SpriteMaster.Types.Fixed;
 using System;
 using System.Runtime.CompilerServices;
 
@@ -42,6 +43,7 @@ internal sealed partial class Scaler : AbstractScaler<Config, Scaler.ValueScale>
 		);
 
 		scalerInstance.Scale(sourceData, targetData);
+		Resample.Scalers.Common.Saturate(targetData, config.Saturation);
 		return targetData;
 	}
 

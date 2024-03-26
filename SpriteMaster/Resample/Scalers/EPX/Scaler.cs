@@ -35,6 +35,7 @@ internal sealed partial class Scaler : AbstractScaler<Config, Scaler.ValueScale>
 		);
 
 		scalerInstance.Scale(sourceData, targetData);
+		Common.Saturate(targetData, config.Saturation);
 		return targetData;
 	}
 

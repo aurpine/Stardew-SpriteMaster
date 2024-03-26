@@ -431,7 +431,9 @@ internal sealed class Resampler {
 				var scalerConfig = scaler.CreateConfig(
 					wrapped: doWrap,
 					hasAlpha: true,
-					gammaCorrected: currentGammaState == GammaState.Gamma
+					gammaCorrected: currentGammaState == GammaState.Gamma,
+					saturation: SMConfig.Resample.Saturation,
+					lightness: SMConfig.Resample.Lightness
 				);
 
 				bitmapDataWide = scaler.Apply(

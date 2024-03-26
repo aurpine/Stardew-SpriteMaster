@@ -395,6 +395,13 @@ internal static class Config {
 		[Attributes.OptionsAttribute(Attributes.OptionsAttribute.Flag.FlushAllRenderingCaches)]
 		[Attributes.Advanced]
 		internal static bool UseRedmean = false;
+		[Attributes.Comment("RGB Saturation adjustment (-100 to 100)")]
+		[Attributes.OptionsAttribute(Attributes.OptionsAttribute.Flag.FlushAllRenderingCaches)]
+		internal static int Saturation = -20;
+		[Attributes.Comment("Lightness adjustment (UNUSED)")]
+		[Attributes.OptionsAttribute(Attributes.OptionsAttribute.Flag.FlushAllRenderingCaches)]
+		[Attributes.GMCMHidden]
+		internal static int Lightness = 0;
 		[Attributes.Comment("What textures are drawn in 'slices' and thus should be special-cased to be resampled as one texture?")]
 		[Attributes.OptionsAttribute(Attributes.OptionsAttribute.Flag.FlushAllRenderingCaches)]
 		[Attributes.GMCMHidden]

@@ -76,7 +76,6 @@ public sealed class SpriteMaster : Mod {
 		Config.SetPath(Path.Combine(ModDirectory, ConfigName));
 
 		Config.DefaultConfig = new MemoryStream();
-		Serialize.Save(Config.DefaultConfig, leaveOpen: true);
 
 		if (!Config.IgnoreConfig) {
 			Serialize.Load(Config.Path);

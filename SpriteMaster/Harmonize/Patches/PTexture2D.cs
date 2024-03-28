@@ -128,6 +128,7 @@ internal static class PTexture2D {
 					// If an exception occurred, we cannot use cached data. We should also report the parameters.
 					using var resultPooled = ObjectPoolExt.Take<StringBuilder>(builder => builder.Clear());
 					var result = resultPooled.Value;
+					result.AppendLine($"Texture name: {instance.NormalizedName()}");
 					result.AppendLine($"Array Length: {cachedData.Length}");
 					result.AppendLine($"T: {typeof(T).Name} ({sizeof(T)} bytes)");
 					result.AppendLine($"Offset: {startIndex} ({startIndex * sizeof(T)})");

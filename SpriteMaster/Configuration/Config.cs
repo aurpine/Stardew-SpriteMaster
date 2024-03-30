@@ -76,7 +76,7 @@ internal static class Config {
 	[Attributes.GMCMHidden] internal static string ConfigVersion = "";
 
 	[Attributes.Ignore]
-	internal static string ClearConfigBefore = "0.1.0";
+	internal static string ClearConfigBefore = "0.1.3";
 
 	[Attributes.Ignore] internal static bool ForcedDisable = false;
 
@@ -395,13 +395,6 @@ internal static class Config {
 		[Attributes.OptionsAttribute(Attributes.OptionsAttribute.Flag.FlushAllRenderingCaches)]
 		[Attributes.Advanced]
 		internal static bool UseRedmean = false;
-		[Attributes.Comment("RGB Saturation adjustment (-100 to 100)")]
-		[Attributes.OptionsAttribute(Attributes.OptionsAttribute.Flag.FlushAllRenderingCaches)]
-		internal static int Saturation = -20;
-		[Attributes.Comment("Lightness adjustment (UNUSED)")]
-		[Attributes.OptionsAttribute(Attributes.OptionsAttribute.Flag.FlushAllRenderingCaches)]
-		[Attributes.GMCMHidden]
-		internal static int Lightness = 0;
 		[Attributes.Comment("What textures are drawn in 'slices' and thus should be special-cased to be resampled as one texture?")]
 		[Attributes.OptionsAttribute(Attributes.OptionsAttribute.Flag.FlushAllRenderingCaches)]
 		[Attributes.GMCMHidden]
@@ -542,6 +535,20 @@ internal static class Config {
 			SurfaceFormat.Dxt1SRgb,
 			SurfaceFormat.Dxt1a,
 		};
+
+		[Attributes.MenuName("Colour Adjustment Filters")]
+		[Attributes.Comment("Additional effects after scaling sprites")]
+		internal static class Filters {
+			[Attributes.OptionsAttribute(Attributes.OptionsAttribute.Flag.FlushAllRenderingCaches)]
+			[Attributes.LimitsInt(-100, 100)]
+			internal static int Saturation = -20;
+			[Attributes.OptionsAttribute(Attributes.OptionsAttribute.Flag.FlushAllRenderingCaches)]
+			[Attributes.LimitsInt(-99, 100)]
+			internal static int Brightness = 0;
+			[Attributes.OptionsAttribute(Attributes.OptionsAttribute.Flag.FlushAllRenderingCaches)]
+			[Attributes.LimitsInt(-100, 100)]
+			internal static int Temperature = 0;
+		}
 
 		[Attributes.Comment("Experimental resample-based recolor support")]
 		[Attributes.Advanced]

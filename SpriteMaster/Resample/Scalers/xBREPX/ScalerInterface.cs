@@ -25,15 +25,13 @@ internal sealed partial class Scaler {
 		) =>
 			Scaler.Apply((Config)configuration, scaleMultiplier, sourceData, sourceSize, targetData, targetSize);
 
-		public Resample.Scalers.Config CreateConfig(Vector2B wrapped, bool hasAlpha, bool gammaCorrected, int saturation, int lightness) => new Config(
+		public Resample.Scalers.Config CreateConfig(Vector2B wrapped, bool hasAlpha, bool gammaCorrected) => new Config(
 			wrapped: wrapped,
 			hasAlpha: hasAlpha,
 			luminanceWeight: SMConfig.Resample.Common.LuminanceWeight,
 			gammaCorrected: gammaCorrected,
 			equalColorTolerance: SMConfig.Resample.Common.EqualColorTolerance,
-			useRedmean: SMConfig.Resample.UseRedmean,
-			saturation: saturation,
-			lightness: lightness
+			useRedmean: SMConfig.Resample.UseRedmean
 		);
 	}
 }

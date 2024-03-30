@@ -24,16 +24,12 @@ internal sealed class Config : Resample.Scalers.LuminanceConfig {
 		double steepDirectionThreshold = 2.2,
 		double centerDirectionBias = 4.0,
 		bool gammaCorrected = true,
-		bool useRedmean = false,
-		int saturation = -30,
-		int lightness = 10
+		bool useRedmean = false
 	) : base(
 		wrapped: wrapped,
 		hasAlpha: hasAlpha,
 		gammaCorrected: gammaCorrected,
-		luminanceWeight: luminanceWeight,
-		saturation: saturation,
-		lightness: lightness
+		luminanceWeight: luminanceWeight
 	) {
 		EqualColorTolerance = equalColorTolerance << 8;
 		DominantDirectionThreshold = dominantDirectionThreshold;

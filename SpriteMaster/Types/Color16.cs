@@ -205,9 +205,26 @@ internal readonly struct Color16 : IEquatable<Color16>, IEquatable<ulong>, ILong
 		var g = G.Real;
 		var b = B.Real;
 
-		R = Fixed16.FromReal(Math.Clamp(((0.213 + 0.787 * amount) * r + (0.715 - 0.715 * amount) * g + (0.072 - 0.072 * amount) * b), 0.0, 1.0));
-		G = Fixed16.FromReal(Math.Clamp(((0.213 - 0.213 * amount) * r + (0.715 + 0.285 * amount) * g + (0.072 - 0.072 * amount) * b), 0.0, 1.0));
-		B = Fixed16.FromReal(Math.Clamp(((0.213 - 0.213 * amount) * r + (0.715 - 0.715 * amount) * g + (0.072 + 0.928 * amount) * b), 0.0, 1.0));
+		R = Fixed16.FromReal(Math.Clamp(((0.2126 + 0.7874 * amount) * r + (0.7152 - 0.7152 * amount) * g + (0.0722 - 0.0722 * amount) * b), 0.0, 1.0));
+		G = Fixed16.FromReal(Math.Clamp(((0.2126 - 0.2126 * amount) * r + (0.7152 + 0.2848 * amount) * g + (0.0722 - 0.0722 * amount) * b), 0.0, 1.0));
+		B = Fixed16.FromReal(Math.Clamp(((0.2126 - 0.2126 * amount) * r + (0.7152 - 0.7152 * amount) * g + (0.0722 + 0.9278 * amount) * b), 0.0, 1.0));
+	}
+
+	public void Brighten(double amount) {
+		if (amount >= 0) {
+			R = R.AddClamped((Fixed16)(amount * R.Value));
+			G = G.AddClamped((Fixed16)(amount * G.Value));
+			B = B.AddClamped((Fixed16)(amount * B.Value));
+		} else {
+			R = R.SubtractClamped((Fixed16)(-amount * R.Value));
+			G = G.SubtractClamped((Fixed16)(-amount * G.Value));
+			B = B.SubtractClamped((Fixed16)(-amount * B.Value));
+		}
+	}
+
+	public void AdjustTemperature(int amount) {
+		if (amount > 0) R = R.AddClamped((Fixed16) (amount * 100));
+		else B = B.AddClamped((Fixed16) (-amount * 100));
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -431,9 +431,7 @@ internal sealed class Resampler {
 				var scalerConfig = scaler.CreateConfig(
 					wrapped: doWrap,
 					hasAlpha: true,
-					gammaCorrected: currentGammaState == GammaState.Gamma,
-					saturation: SMConfig.Resample.Saturation,
-					lightness: SMConfig.Resample.Lightness
+					gammaCorrected: currentGammaState == GammaState.Gamma
 				);
 
 				bitmapDataWide = scaler.Apply(
@@ -444,6 +442,8 @@ internal sealed class Resampler {
 					targetSize: scaledSize,
 					targetData: bitmapDataWide
 				);
+
+				ApplyFilters(bitmapDataWide);
 
 				if (Config.Resample.Deposterization.PostEnabled) {
 					bitmapDataWide = Deposterize.Enhance(bitmapDataWide, scaledSize, doWrap);
@@ -1134,5 +1134,14 @@ internal sealed class Resampler {
 
 		//TextureCache.Add(hash, output);
 		return null;
+	}
+	internal static void ApplyFilters(Span<Color16> destination) {
+		double s = 1 + Config.Resample.Filters.Saturation / 100.0;
+		double b = Config.Resample.Filters.Brightness / 100.0;
+		for (int i = 0; i < destination.Length; i++) {
+			destination[i].Saturate(s);
+			destination[i].Brighten(b);
+			destination[i].AdjustTemperature(Config.Resample.Filters.Temperature);
+		}
 	}
 }

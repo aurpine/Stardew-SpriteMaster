@@ -9,22 +9,16 @@ internal abstract class Config : IEquatable<Config> {
 	internal readonly Vector2B Wrapped;
 	internal readonly bool HasAlpha;
 	internal readonly bool GammaCorrected;
-	internal readonly int Saturation;
-	internal readonly int Lightness;
 
 	[MethodImpl(Runtime.MethodImpl.Inline)]
 	protected Config(
 		Vector2B wrapped,
 		bool hasAlpha,
-		bool gammaCorrected,
-		int saturation,
-		int lightness
+		bool gammaCorrected
 	) {
 		Wrapped = wrapped;
 		HasAlpha = hasAlpha;
 		GammaCorrected = gammaCorrected;
-		Saturation = saturation;
-		Lightness = lightness;
 	}
 
 	public bool Equals(Config? other) {

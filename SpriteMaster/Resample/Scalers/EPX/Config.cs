@@ -19,16 +19,12 @@ internal sealed class Config : Resample.Scalers.LuminanceConfig {
 		bool gammaCorrected = true,
 		byte equalColorTolerance = 30,
 		bool useRedmean = false,
-		bool smoothCompare = true,
-		int saturation = -30,
-		int lightness = 10
+		bool smoothCompare = true
 	) : base(
 		wrapped: wrapped,
 		hasAlpha: hasAlpha,
 		gammaCorrected: gammaCorrected,
-		luminanceWeight: luminanceWeight,
-		saturation: saturation,
-		lightness: lightness
+		luminanceWeight: luminanceWeight
 	) {
 		EqualColorTolerance = (uint)equalColorTolerance << 8;
 		UseRedmean = useRedmean;

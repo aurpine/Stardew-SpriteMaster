@@ -215,8 +215,8 @@ internal sealed class Texture2DMeta : IDisposable {
 	internal InterlockedULong LastAccessFrame { get; private set; } = DrawState.CurrentFrame;
 	internal InterlockedULong Hash { get; private set; } = 0;
 	internal readonly Vector2I Size;
-	internal readonly uint ExpectedByteSizeRaw;
-	internal readonly uint ExpectedByteSize;
+	internal uint ExpectedByteSizeRaw;
+	internal uint ExpectedByteSize;
 	internal ReportOnceErrors ReportedErrors = 0;
 	internal readonly SurfaceFormat Format;
 
@@ -523,11 +523,12 @@ internal sealed class Texture2DMeta : IDisposable {
 				}
 				else {
 					if (ExpectedByteSizeRaw != (uint)value.Length) {
-						Console.Error.WriteLine($"Cached Raw Data length mismatch: {ExpectedByteSizeRaw} != {value.Length}");
 						Debug.Break();
-						Debug.Error(Environment.StackTrace);
+						Debug.Trace($"Cached Raw Data length mismatch ({MetaId}): {ExpectedByteSizeRaw} != {value.Length} but continuing");
 						InvalidateCachedRawData();
-						return;
+
+						ExpectedByteSize = (uint)value.Length;
+						ExpectedByteSizeRaw = (uint)value.Length;
 					}
 
 					using (Lock.Write) {
@@ -590,7 +591,7 @@ internal sealed class Texture2DMeta : IDisposable {
 				}
 
 				if (target is not null && target.Length != ExpectedByteSize) {
-					Debug.Error($"Size Mismatch in target pull: {target.Length} != {ExpectedByteSize}");
+					Debug.Error($"Size Mismatch in target pull ({MetaId}): {target.Length} != {ExpectedByteSize}");
 					InvalidateCachedRawData();
 				}
 

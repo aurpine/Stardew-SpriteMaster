@@ -140,7 +140,7 @@ internal static class PTexture2D {
 					result.AppendLine($"ElementCount: {elementCount}");
 					result.AppendLine($"Level: {level}");
 					result.AppendLine($"ArraySlice: {arraySlice}");
-					Debug.Warning(result.ToString(), ex);
+					Debug.Trace(result.ToString(), ex);
 					return true;
 				}
 

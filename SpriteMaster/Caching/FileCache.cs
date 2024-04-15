@@ -158,7 +158,7 @@ internal static class FileCache {
 	}
 	private static readonly Profiler CacheProfiler = Config.FileCache.Profile && Config.FileCache.Enabled ? new() : null!;
 
-	private static readonly ConcurrentDictionary<string, SaveState> SavingMap = Config.FileCache.Enabled ? new() : null!;
+	private static readonly ConcurrentDictionary<string, SaveState> SavingMap = new();
 
 	internal static bool Fetch(
 		string path,
@@ -247,7 +247,7 @@ internal static class FileCache {
 					}
 
 					if (Config.FileCache.Profile) {
-						var meanTicks = CacheProfiler.AddFetchTime((ulong)(DateTime.Now.Ticks - startTime));
+						var meanTicks = CacheProfiler?.AddFetchTime((ulong)(DateTime.Now.Ticks - startTime));
 						Debug.Info($"Mean Time Per Fetch: {(double)meanTicks / TimeSpan.TicksPerMillisecond} ms");
 					}
 
@@ -346,7 +346,7 @@ internal static class FileCache {
 						SavingMap.TryUpdate(path, SaveState.Saved, SaveState.Saving);
 
 						if (Config.FileCache.Profile) {
-							var meanTicks = CacheProfiler.AddStoreTime((ulong)(DateTime.Now.Ticks - startTime));
+							var meanTicks = CacheProfiler?.AddStoreTime((ulong)(DateTime.Now.Ticks - startTime));
 							Debug.Info($"Mean Time Per Store: {(double)meanTicks / TimeSpan.TicksPerMillisecond} ms");
 						}
 					}

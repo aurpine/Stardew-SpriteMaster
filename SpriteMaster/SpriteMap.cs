@@ -120,6 +120,12 @@ internal static class SpriteMap {
 		try {
 			using (meta.Lock.ReadWrite) {
 				if (spriteTable.TryGetValue(rectangleHash, out var spriteInstance)) {
+					if (!texture.NormalizedName().Equals(spriteInstance.NormalizedName())) {
+						Debug.Warning($"Applying fix for detected cache mismatch: Expected \"{texture.NormalizedName()}\" but got \"{spriteInstance.NormalizedName()}\"");
+						meta.RemoveFromSpriteInstanceTable(rectangleHash, true, out _);
+						result = null;
+						return false;
+					}
 					if (spriteInstance.Texture?.IsDisposed == true) {
 						instanceDisposeList = ObjectPoolExt.Take<List<ManagedSpriteInstance>>(list => list.Clear());
 						using var removeListValue = ObjectPoolExt.Take<List<ulong>>(list => list.Clear());

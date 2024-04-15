@@ -76,7 +76,7 @@ internal static class Config {
 	[Attributes.GMCMHidden] internal static string ConfigVersion = "";
 
 	[Attributes.Ignore]
-	internal static string ClearConfigBefore = "0.1.3";
+	internal static string ClearConfigBefore = "0.1.5";
 
 	[Attributes.Ignore] internal static bool ForcedDisable = false;
 
@@ -906,7 +906,7 @@ internal static class Config {
 		[Attributes.Comment("Should the file cache be enabled?")]
 		[Attributes.OptionsAttribute(Attributes.OptionsAttribute.Flag.FlushFileCache)]
 		internal static bool Enabled = DevEnabled && true;
-		private const bool DevEnabled = true;
+		private const bool DevEnabled = false;
 		internal const int LockRetries = 32;
 		internal const int LockSleepMilliseconds = 32;
 		[Attributes.Comment("What compression algorithm should be used?")]

@@ -473,7 +473,6 @@ internal static class Config {
 			@"TerrainFeatures\Stalagmite_Frost",
 			@"TerrainFeatures\Stalagmite_Lava",
 			@"TileSheets\Fireball",
-			@"TileSheets\rain",
 			@"TileSheets\animations"
 		};
 

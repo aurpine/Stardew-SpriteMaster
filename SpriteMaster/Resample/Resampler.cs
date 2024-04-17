@@ -167,7 +167,7 @@ internal sealed class Resampler {
 
 		// Water in the game is pre-upscaled by 4... which is weird.
 		int blockSize = 1;
-		if (input.IsWater || input.Reference == StardewValley.Game1.rainTexture) {
+		if (input.IsWater) {
 			blockSize = WaterBlock;
 		}
 		/*

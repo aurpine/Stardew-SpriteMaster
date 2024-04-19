@@ -389,6 +389,7 @@ public sealed class SpriteMaster : Mod {
 	}
 
 	private void OnGameLaunched() {
+		Configuration.ConfigMenu.Setup.Helper = Helper;
 		var waiters = new WaitWrapper[] {
 			new(Task.Run(CheckMods)),
 			new(FileCache.Initialized),

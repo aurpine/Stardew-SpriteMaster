@@ -536,7 +536,6 @@ internal static class Config {
 		};
 
 		[Attributes.MenuName("Colour Adjustment Filters")]
-		[Attributes.Comment("Additional effects after scaling sprites")]
 		internal static class Filters {
 			[Attributes.OptionsAttribute(Attributes.OptionsAttribute.Flag.FlushAllRenderingCaches)]
 			[Attributes.LimitsInt(-100, 100)]
@@ -616,7 +615,6 @@ internal static class Config {
 			[Attributes.Comment("Should unknown (unnamed) sprites be ignored by the padding system?")]
 			[Attributes.OptionsAttribute(Attributes.OptionsAttribute.Flag.FlushAllRenderingCaches)]
 			internal static bool IgnoreUnknown = false;
-			[Attributes.Comment("Should solid edges be padded?")]
 			[Attributes.OptionsAttribute(Attributes.OptionsAttribute.Flag.FlushAllRenderingCaches)]
 			internal static bool PadSolidEdges = false;
 
@@ -759,7 +757,7 @@ internal static class Config {
 		[Attributes.OptionsAttribute(Attributes.OptionsAttribute.Flag.FlushTextureFileCache)]
 		internal static bool Enabled = DevEnabled && true;
 		private const bool DevEnabled = true;
-		[Attributes.Comment("What is the maximum size of the resident cache?")]
+		[Attributes.Comment("What is the maximum size of the texture file cache?")]
 		[Attributes.OptionsAttribute(Attributes.OptionsAttribute.Flag.FlushTextureFileCache)]
 		[Attributes.LimitsInt(0, long.MaxValue)]
 		internal static long MaxSize = SizesExt.AsGiB(2);
@@ -783,7 +781,7 @@ internal static class Config {
 	internal static class SMAPI {
 		[Attributes.Comment("Should the ApplyPatch method be patched?")]
 		internal static bool ApplyPatchEnabled = true;
-		[Attributes.Comment("Should 'GetData' be patched to use SM caches?")]
+		[Attributes.Comment("Should 'GetData' be patched to use caches?")]
 		internal static bool ApplyGetDataPatch = true;
 	}
 
@@ -799,12 +797,6 @@ internal static class Config {
 		[Attributes.Comment("Should shadowed text be stroked instead?")]
 		[Attributes.Experimental]
 		internal static bool StrokeShadowedText = false;
-
-		[Attributes.Comment("Should the game's 'parseMasterSchedule' method be fixed and optimized?")]
-		internal static bool FixMasterSchedule = true;
-
-		[Attributes.Comment("Should the game's 'getSchedule' method be fixed and optimized?")]
-		internal static bool FixGetSchedule = true;
 
 		[Attributes.Advanced]
 		internal static class Pathfinding {
@@ -855,7 +847,7 @@ internal static class Config {
 				internal static bool UseIndexBufferObjects = true;
 			}
 
-			[Attributes.Comment("Should glCopyTexture by used?")]
+			[Attributes.Comment("Should glCopyTexture be used?")]
 			internal static bool UseCopyTexture = true;
 
 			[Attributes.Comment("Should glTexStorage be used?")]
@@ -886,7 +878,6 @@ internal static class Config {
 			[Attributes.Comment("Maximum Snow Scale")]
 			[Attributes.LimitsReal(0.0001f, float.MaxValue)]
 			internal static float MaximumScale = 3.0f;
-			[Attributes.Comment("Puffersnow Chance")]
 			[Attributes.LimitsReal(0.0f, 1.0f)]
 			internal static float PuffersnowChance = 0.0f;
 		}

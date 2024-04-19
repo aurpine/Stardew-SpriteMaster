@@ -29,6 +29,8 @@ internal static class Setup {
 
 	private const int RowHeight = 0;
 
+	internal static IModHelper Helper;
+
 	internal static void Initialize() {
 		if (Initialized) {
 			ThrowHelper.ThrowInvalidOperationException("GMCM already initialized");
@@ -279,40 +281,54 @@ internal static class Setup {
 		if (splitOffset != -1) {
 			combinedName = combinedName[..splitOffset];
 		}
+		Debug.Warning($"Type ({enumType}): {combinedName}");
 		return (T)Enum.Parse(enumType, combinedName);
 	}
 
 	private static T ExtractCombinedEnum<T>(string combinedName) where T : unmanaged, Enum =>
 		ExtractCombinedEnum<T>(typeof(T), combinedName);
 
-	private static string GetFieldName(FieldInfo field) {
-		var attribute = field.GetCustomAttribute<Attributes.MenuNameAttribute>();
-		return attribute?.Name ?? FormatName(field.Name);
+	private static Translation GetTranslation(Serialize.Category category,  FieldInfo field, string suffix) {
+		return Helper.Translation.Get($"{GetCategoryName(category)?.ToLower()}.{field.Name.ToLower()}.{suffix}");
 	}
 
-	private static void ProcessField(FieldInfo field, bool advanced, IManifest manifest, IGenericModConfigMenuApi config) {
+	private static string GetFieldName(Serialize.Category category, FieldInfo field) {
+		var attribute = field.GetCustomAttribute<Attributes.MenuNameAttribute>();
+		var t = GetTranslation(category, field, "name");
+		return t.HasValue() ? t : attribute?.Name ?? FormatName(field.Name);
+	}
+
+	private static string? GetComments(Serialize.Category category, FieldInfo field) {
+		var comments = field.GetCustomAttributes<Attributes.CommentAttribute>();
+		var t = GetTranslation(category, field, "comment");
+		string? comment = t.HasValue() ? t.ToString() : null;
+		if (comment == null) {
+			var commentAttributes = comments.AsArray();
+			if (commentAttributes.Length != 0) {
+				comment = string.Join(
+					Environment.NewLine,
+					commentAttributes.SelectF(attr => attr.Message)
+				);
+			}
+		}
+		return comment;
+	}
+
+	private static void ProcessField(Serialize.Category category, FieldInfo field, bool advanced, IManifest manifest, IGenericModConfigMenuApi config) {
 		if (Hidden(field, advanced)) {
 			return;
 		}
 
-		var comments = field.GetCustomAttributes<Attributes.CommentAttribute>();
-		string? comment = null;
-		var commentAttributes = comments.AsArray();
-		if (commentAttributes.Length != 0) {
-			comment = string.Join(
-				Environment.NewLine,
-				commentAttributes.SelectF(attr => attr.Message)
-			);
-		}
+		string? comment = GetComments(category, field);
 
 		var fieldType = field.FieldType;
 		var fieldId = $"{field.ReflectedType?.FullName ?? "unknown"}.{field.Name}";
-		string FieldName() => GetFieldName(field);
+		string FieldName() => GetFieldName(category, field);
 		Func<string>? tooltip = null;
 		if (comment is not null) {
-			tooltip = () => comment;
+			tooltip = () => GetComments(category, field)!;
 		}
-
+		
 		if (fieldType == typeof(bool)) {
 			config.AddBoolOption(
 				mod: manifest,
@@ -408,7 +424,10 @@ internal static class Setup {
 				name: FieldName,
 				tooltip: tooltip,
 				allowedValues: enumMap.Values.AsArray(),
-				formatAllowedValue: null,
+				formatAllowedValue: (string s) => {
+					var t = Helper.Translation.Get($"enum.{fieldType.Name}.{s}");
+					return t.HasValue() ? t : s;
+				},
 				fieldId: fieldId
 			);
 		}
@@ -508,6 +527,12 @@ internal static class Setup {
 		names.Value.Reverse();
 
 		return string.Join('.', names.Value);
+	}
+
+	private static string GetCategoryNameTranslated(Serialize.Category category) {
+		var s = GetCategoryName(category)!;
+		var t = Helper.Translation.Get(s?.ToLower() + ".title");
+		return t.HasValue() ? t : s ?? "";
 	}
 
 	private static bool IsCategoryValid(Serialize.Category category, bool advanced) {
@@ -610,24 +635,16 @@ internal static class Setup {
 			config.AddPage(
 				mod: manifest,
 				pageId: "advanced",
-				pageTitle: () => "Advanced Settings"
+				pageTitle: () => Helper.Translation.Get("advanced_settings")
 			);
 		}
 
 		if (category.Name.Length != 0) {
-			var categoryName = GetCategoryName(category);
-			if (categoryName.IsBlank()) {
-				if (!first && (!isRoot || advanced)) {
-					config.AddSectionTitle(manifest, () => "");
-				}
+			if (category.Type.GetAttribute<Attributes.CommentAttribute>(out var commentAttribute)) {
+				config.AddSectionTitle(manifest, () => GetCategoryNameTranslated(category), () => commentAttribute.Message);
 			}
 			else {
-				if (category.Type.GetAttribute<Attributes.CommentAttribute>(out var commentAttribute)) {
-					config.AddSectionTitle(manifest, () => categoryName, () => commentAttribute.Message);
-				}
-				else {
-					config.AddSectionTitle(manifest, () => categoryName);
-				}
+				config.AddSectionTitle(manifest, () => GetCategoryNameTranslated(category));
 			}
 		}
 
@@ -662,8 +679,8 @@ internal static class Setup {
 				config.AddPageLink(
 					mod: manifest,
 					pageId: "advanced",
-					text: () => "[ Advanced Settings ]",
-					tooltip: () => "Display Advanced Settings"
+					text: () => $"> [ {Helper.Translation.Get("advanced_settings")} ]",
+					tooltip: () => Helper.Translation.Get("advanced_settings_tooltip")
 				);
 			}
 
@@ -671,7 +688,7 @@ internal static class Setup {
 		}
 
 		foreach (var field in category.Fields.Values) {
-			ProcessField(field, advanced, manifest, config);
+			ProcessField(category, field, advanced, manifest, config);
 		}
 
 		first = true;

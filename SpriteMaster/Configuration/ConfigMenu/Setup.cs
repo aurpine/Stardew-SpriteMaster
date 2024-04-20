@@ -281,7 +281,6 @@ internal static class Setup {
 		if (splitOffset != -1) {
 			combinedName = combinedName[..splitOffset];
 		}
-		Debug.Warning($"Type ({enumType}): {combinedName}");
 		return (T)Enum.Parse(enumType, combinedName);
 	}
 

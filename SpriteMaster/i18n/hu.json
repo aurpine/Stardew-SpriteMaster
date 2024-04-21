@@ -29,6 +29,8 @@
   "resample.maxscale.name": "Maximális skála",
   "resample.maxscale.comment": "A sprite-ok maximális léptéktényezője",
   "resample.filters.title": "Színszűrők",
+  "resample.filters.enabled.name": "Engedélyezze",
+  "resample.filters.enabled.comment": "Alkalmazzon színszűrőket az újramintavétel előtt.",
   "resample.filters.saturation.name": "Telítettség",
   "resample.filters.saturation.comment": "A színtelítettség beállításához szükséges mennyiség. ",
   "resample.filters.brightness.name": "Fényerősség",

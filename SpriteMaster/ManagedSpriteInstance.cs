@@ -44,7 +44,7 @@ internal sealed class ManagedSpriteInstance : IByteSize, IDisposable {
 
 	internal static bool Validate(XTexture2D texture, bool clean = false) {
 		var meta = texture.Meta();
-		if (meta.Validation.HasValue && !meta.CheckNameChange(texture)) {
+		if (meta.Validation.HasValue && meta.ValidationTime != null && meta.ValidationTime > Metadata.Metadata.LastFlushed && !meta.CheckNameChange(texture)) {
 			return meta.Validation.Value;
 		}
 
@@ -245,6 +245,7 @@ internal sealed class ManagedSpriteInstance : IByteSize, IDisposable {
 
 			if (!disableValidation && (isText || !isAnonymous || isAnonymous != isManaged)) {
 				meta.Validation = true;
+				meta.ValidationTime = DateTime.Now;
 			}
 
 			return true;
@@ -252,6 +253,7 @@ internal sealed class ManagedSpriteInstance : IByteSize, IDisposable {
 
 		if (!InnerValidate()) {
 			meta.Validation = false;
+			meta.ValidationTime = DateTime.Now;
 			if (clean || forceClean) {
 				PurgeInvalidated(topTexture);
 			}

@@ -29,6 +29,8 @@
   "resample.maxscale.name": "Échelle maximale",
   "resample.maxscale.comment": "Facteur d'échelle maximum des sprites",
   "resample.filters.title": "Filtres de couleur",
+  "resample.filters.enabled.name": "Activer",
+  "resample.filters.enabled.comment": "Appliquez des filtres de couleur avant le rééchantillonnage.",
   "resample.filters.saturation.name": "Saturation",
   "resample.filters.saturation.comment": "Montant pour ajuster la saturation des couleurs. ",
   "resample.filters.brightness.name": "Luminosité",

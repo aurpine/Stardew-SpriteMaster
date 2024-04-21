@@ -29,6 +29,8 @@
   "resample.maxscale.name": "최대 규모",
   "resample.maxscale.comment": "스프라이트의 최대 배율 인자",
   "resample.filters.title": "컬러 필터",
+  "resample.filters.enabled.name": "할 수 있게 하다",
+  "resample.filters.enabled.comment": "리샘플링이 발생하기 전에 컬러 필터를 적용합니다.",
   "resample.filters.saturation.name": "포화",
   "resample.filters.saturation.comment": "채도를 조정하는 양입니다. ",
   "resample.filters.brightness.name": "명도",

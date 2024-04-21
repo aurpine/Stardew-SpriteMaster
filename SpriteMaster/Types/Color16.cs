@@ -200,7 +200,7 @@ internal readonly struct Color16 : IEquatable<Color16>, IEquatable<ulong>, ILong
 	// From https://www.w3.org/TR/filter-effects-1/#element-attrdef-fecolormatrix-values
 	// Copyright © 2018 World Wide Web Consortium. All Rights Reserved. This work is distributed under the W3C® Software and Document License [1] in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 	// [1] https://www.w3.org/Consortium/Legal/copyright-software
-	public void Saturate(double amount) {
+	public Color16 Saturate(double amount) {
 		var r = R.Real;
 		var g = G.Real;
 		var b = B.Real;
@@ -208,9 +208,10 @@ internal readonly struct Color16 : IEquatable<Color16>, IEquatable<ulong>, ILong
 		R = Fixed16.FromReal(Math.Clamp(((0.2126 + 0.7874 * amount) * r + (0.7152 - 0.7152 * amount) * g + (0.0722 - 0.0722 * amount) * b), 0.0, 1.0));
 		G = Fixed16.FromReal(Math.Clamp(((0.2126 - 0.2126 * amount) * r + (0.7152 + 0.2848 * amount) * g + (0.0722 - 0.0722 * amount) * b), 0.0, 1.0));
 		B = Fixed16.FromReal(Math.Clamp(((0.2126 - 0.2126 * amount) * r + (0.7152 - 0.7152 * amount) * g + (0.0722 + 0.9278 * amount) * b), 0.0, 1.0));
+		return this;
 	}
 
-	public void Brighten(double amount) {
+	public Color16 Brighten(double amount) {
 		if (amount >= 0) {
 			R = R.AddClamped((Fixed16)(amount * R.Value));
 			G = G.AddClamped((Fixed16)(amount * G.Value));
@@ -220,11 +221,13 @@ internal readonly struct Color16 : IEquatable<Color16>, IEquatable<ulong>, ILong
 			G = G.SubtractClamped((Fixed16)(-amount * G.Value));
 			B = B.SubtractClamped((Fixed16)(-amount * B.Value));
 		}
+		return this;
 	}
 
-	public void AdjustTemperature(int amount) {
-		if (amount > 0) R = R.AddClamped((Fixed16) (amount * 100));
-		else B = B.AddClamped((Fixed16) (-amount * 100));
+	public Color16 AdjustTemperature(int amount) {
+		if (amount > 0) R = R.AddClamped((ushort)(R.Value * amount / 100));
+		else B = B.AddClamped((ushort)(-B.Value * amount / 100));
+		return this;
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]

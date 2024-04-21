@@ -29,6 +29,8 @@
   "resample.maxscale.name": "Maksimum Ölçek",
   "resample.maxscale.comment": "Spriteların maksimum ölçek faktörü",
   "resample.filters.title": "Renk Filtreleri",
+  "resample.filters.enabled.name": "Olanak vermek",
+  "resample.filters.enabled.comment": "Yeniden örnekleme gerçekleşmeden önce renk filtreleri uygulayın.",
   "resample.filters.saturation.name": "Doyma",
   "resample.filters.saturation.comment": "Renk doygunluğunu ayarlama miktarı. ",
   "resample.filters.brightness.name": "Parlaklık",

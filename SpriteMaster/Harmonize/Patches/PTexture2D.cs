@@ -125,6 +125,7 @@ internal static class PTexture2D {
 					);
 				}
 				catch (Exception ex) {
+					Debug.Warning($"Encountered mismatched size for texture \"{instance.NormalizedName()}\". You may notice glitched sprites. To fix this error, ensure that edits to the texture are the same size as the original.");
 					// If an exception occurred, we cannot use cached data. We should also report the parameters.
 					using var resultPooled = ObjectPoolExt.Take<StringBuilder>(builder => builder.Clear());
 					var result = resultPooled.Value;

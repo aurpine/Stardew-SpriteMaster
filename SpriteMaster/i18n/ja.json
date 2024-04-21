@@ -29,6 +29,8 @@
   "resample.maxscale.name": "最大スケール",
   "resample.maxscale.comment": "スプライトの最大倍率",
   "resample.filters.title": "カラーフィルター",
+  "resample.filters.enabled.name": "有効にする",
+  "resample.filters.enabled.comment": "リサンプリングが行われる前に、以下のカラー フィルターを適用します。",
   "resample.filters.saturation.name": "飽和",
   "resample.filters.saturation.comment": "色の彩度を調整する量。",
   "resample.filters.brightness.name": "輝度",

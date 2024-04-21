@@ -537,15 +537,32 @@ internal static class Config {
 
 		[Attributes.MenuName("Colour Adjustment Filters")]
 		internal static class Filters {
+			[Attributes.Comment("Enable colour filters applied to all resampled textures")]
+			[Attributes.OptionsAttribute(Attributes.OptionsAttribute.Flag.FlushAllRenderingCaches)]
+			[Obsolete($"Use {nameof(IsEnabled)}")]
+			internal static bool Enabled = true;
+			[Attributes.Ignore]
+#pragma warning disable CS0618 // Type or member is obsolete
+			internal static bool IsEnabled => Preview.Override.Instance?.FiltersEnabled ?? Enabled;
 			[Attributes.OptionsAttribute(Attributes.OptionsAttribute.Flag.FlushAllRenderingCaches)]
 			[Attributes.LimitsInt(-100, 100)]
+			[Obsolete($"Use {nameof(GetSaturation)}")]
 			internal static int Saturation = -20;
+			[Attributes.Ignore]
+			internal static int GetSaturation => Preview.Override.Instance?.Saturation ?? Saturation;
 			[Attributes.OptionsAttribute(Attributes.OptionsAttribute.Flag.FlushAllRenderingCaches)]
 			[Attributes.LimitsInt(-99, 100)]
+			[Obsolete($"Use {nameof(GetBrightness)}")]
 			internal static int Brightness = 0;
+			[Attributes.Ignore]
+			internal static int GetBrightness => Preview.Override.Instance?.Brightness ?? Brightness;
 			[Attributes.OptionsAttribute(Attributes.OptionsAttribute.Flag.FlushAllRenderingCaches)]
 			[Attributes.LimitsInt(-100, 100)]
+			[Obsolete($"Use {nameof(GetTemperature)}")]
 			internal static int Temperature = 0;
+			[Attributes.Ignore]
+			internal static int GetTemperature => Preview.Override.Instance?.Temperature ?? Temperature;
+#pragma warning restore CS0618 // Type or member is obsolete
 		}
 
 		[Attributes.Comment("Experimental resample-based recolor support")]

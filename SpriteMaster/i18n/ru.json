@@ -29,6 +29,8 @@
   "resample.maxscale.name": "Максимальный масштаб",
   "resample.maxscale.comment": "Максимальный масштабный коэффициент спрайтов",
   "resample.filters.title": "Цветные фильтры",
+  "resample.filters.enabled.name": "Давать возможность",
+  "resample.filters.enabled.comment": "Примените цветовые фильтры перед повторной выборкой.",
   "resample.filters.saturation.name": "Насыщенность",
   "resample.filters.saturation.comment": "Величина для регулировки насыщенности цвета. ",
   "resample.filters.brightness.name": "Яркость",

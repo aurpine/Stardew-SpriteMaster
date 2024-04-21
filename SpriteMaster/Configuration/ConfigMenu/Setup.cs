@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using SMMetadata = SpriteMaster.Metadata.Metadata;
 
 namespace SpriteMaster.Configuration.ConfigMenu;
@@ -496,6 +497,22 @@ internal static class Setup {
 				break;
 			case "SpriteMaster.Configuration.Config+Resample.EnabledSmallText":
 				PreviewOverride.ResampleSmallText = (bool)value;
+				SMMetadata.FlushValidations();
+				break;
+			case "SpriteMaster.Configuration.Config+Resample+Filters.Enabled":
+				PreviewOverride.FiltersEnabled = (bool)value;
+				SMMetadata.FlushValidations();
+				break;
+			case "SpriteMaster.Configuration.Config+Resample+Filters.Saturation":
+				PreviewOverride.Saturation = (int)value;
+				SMMetadata.FlushValidations();
+				break;
+			case "SpriteMaster.Configuration.Config+Resample+Filters.Brightness":
+				PreviewOverride.Brightness = (int)value;
+				SMMetadata.FlushValidations();
+				break;
+			case "SpriteMaster.Configuration.Config+Resample+Filters.Temperature":
+				PreviewOverride.Temperature = (int)value;
 				SMMetadata.FlushValidations();
 				break;
 			default:

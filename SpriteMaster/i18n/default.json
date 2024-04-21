@@ -29,6 +29,8 @@
   "resample.maxscale.name": "Maximum Scale",
   "resample.maxscale.comment": "Maximum scale factor of sprites",
   "resample.filters.title": "Colour Filters",
+  "resample.filters.enabled.name": "Enable",
+  "resample.filters.enabled.comment": "Apply colour filters before resampling takes place.",
   "resample.filters.saturation.name": "Saturation",
   "resample.filters.saturation.comment": "Amount to adjust colour saturation. A value of -100% would be grey, while +100% would be two times as vibrant.",
   "resample.filters.brightness.name": "Brightness",

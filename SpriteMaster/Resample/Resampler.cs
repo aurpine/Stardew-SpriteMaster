@@ -192,7 +192,7 @@ internal sealed class Resampler {
 		}
 
 		if (blockSize == Math.Max(inputBounds.Width, inputBounds.Height)) {
-			if (!Config.Resample.Recolor.Enabled) {
+			if (!Config.Resample.Recolor.Enabled && !Config.Resample.Filters.IsEnabled) {
 				return NewTextureResult.FromFailure(ResampleStatus.DisabledSolid);
 			}
 		}
@@ -295,6 +295,7 @@ internal sealed class Resampler {
 		}
 
 		if (
+			!Config.Resample.Filters.IsEnabled && 
 			!Config.Resample.Recolor.Enabled &&
 			!Config.Resample.IsEnabled ||
 			scalerType == Scaler.None
@@ -312,7 +313,7 @@ internal sealed class Resampler {
 					path: MakeDumpPath(analysis: analysis, subPath: "shadeless", modifiers: new[] { "reference" })
 				);
 			}
-			if (!Config.Resample.Recolor.Enabled) {
+			if (!Config.Resample.Recolor.Enabled && !Config.Resample.Filters.IsEnabled) {
 				return NewTextureResult.FromFailure(ResampleStatus.DisabledSolid);
 			}
 		}
@@ -346,6 +347,10 @@ internal sealed class Resampler {
 				color.G = Fixed16.FromReal(g);
 				color.B = Fixed16.FromReal(b);
 			}
+		}
+
+		if (Config.Resample.Filters.IsEnabled) {
+			ApplyFilters(spriteRawData);
 		}
 
 		Span<Color16> bitmapDataWide = spriteRawData;
@@ -442,8 +447,6 @@ internal sealed class Resampler {
 					targetSize: scaledSize,
 					targetData: bitmapDataWide
 				);
-
-				ApplyFilters(bitmapDataWide);
 
 				if (Config.Resample.Deposterization.PostEnabled) {
 					bitmapDataWide = Deposterize.Enhance(bitmapDataWide, scaledSize, doWrap);
@@ -1135,13 +1138,13 @@ internal sealed class Resampler {
 		//TextureCache.Add(hash, output);
 		return null;
 	}
+
 	internal static void ApplyFilters(Span<Color16> destination) {
-		double s = 1 + Config.Resample.Filters.Saturation / 100.0;
-		double b = Config.Resample.Filters.Brightness / 100.0;
+		double s = 1 + Config.Resample.Filters.GetSaturation / 100.0;
+		double b = Config.Resample.Filters.GetBrightness / 100.0;
+		int t = Config.Resample.Filters.GetTemperature;
 		for (int i = 0; i < destination.Length; i++) {
-			destination[i].Saturate(s);
-			destination[i].Brighten(b);
-			destination[i].AdjustTemperature(Config.Resample.Filters.Temperature);
+			destination[i] = destination[i].Saturate(s).Brighten(b).AdjustTemperature(t);
 		}
 	}
 }

@@ -29,6 +29,8 @@
   "resample.maxscale.name": "Maximaler Maßstab",
   "resample.maxscale.comment": "Maximaler Skalierungsfaktor von Sprites",
   "resample.filters.title": "Farbfilter",
+  "resample.filters.enabled.name": "Aktivieren",
+  "resample.filters.enabled.comment": "Wenden Sie Farbfilter an, bevor das Resampling durchgeführt wird.",
   "resample.filters.saturation.name": "Sättigung",
   "resample.filters.saturation.comment": "Betrag zum Anpassen der Farbsättigung. ",
   "resample.filters.brightness.name": "Helligkeit",

@@ -29,6 +29,8 @@
   "resample.maxscale.name": "最大规模",
   "resample.maxscale.comment": "精灵的最大比例因子",
   "resample.filters.title": "彩色滤光片",
+  "resample.filters.enabled.name": "使能够",
+  "resample.filters.enabled.comment": "在重新采样之前应用滤色器。",
   "resample.filters.saturation.name": "饱和",
   "resample.filters.saturation.comment": "调整颜色饱和度的量。 ",
   "resample.filters.brightness.name": "亮度",

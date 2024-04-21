@@ -13,6 +13,10 @@ internal class Override {
 	internal bool ResamplePortraits = false;
 	internal bool ResampleLargeText = false;
 	internal bool ResampleSmallText = false;
+	internal bool FiltersEnabled = false;
+	internal int Saturation = -20;
+	internal int Brightness = 0;
+	internal int Temperature = 0;
 
 	// draw state
 	internal bool SetLinearUnresampled = false;
@@ -30,6 +34,10 @@ internal class Override {
 		ResamplePortraits = Config.Resample.EnabledPortraits,
 		ResampleLargeText = Config.Resample.EnabledLargeText,
 		ResampleSmallText = Config.Resample.EnabledSmallText,
+		FiltersEnabled = Config.Resample.Filters.Enabled,
+		Saturation = Config.Resample.Filters.Saturation,
+		Brightness = Config.Resample.Filters.Brightness,
+		Temperature = Config.Resample.Filters.Temperature,
 
 		SetLinearUnresampled = Config.DrawState.SetLinearUnresampled,
 		SetLinear = Config.DrawState.SetLinear

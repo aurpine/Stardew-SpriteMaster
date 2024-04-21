@@ -97,11 +97,13 @@ internal static class Metadata {
 		}
 	}
 
+	internal static DateTime LastFlushed = DateTime.MinValue;
+
 	[MethodImpl(Runtime.MethodImpl.Inline)]
 	internal static void FlushValidations() {
-		foreach (var p in Texture2DMetaTable) {
-			p.Value.Validation = null;
-		}
+		// Add a buffer to also invalidate in flight tasks.
+		// Ideally, we'd store the time of the texture when the task was kicked off.
+		LastFlushed = DateTime.UtcNow.AddMilliseconds(10);
 	}
 }
 

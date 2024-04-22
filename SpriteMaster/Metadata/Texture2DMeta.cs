@@ -222,7 +222,6 @@ internal sealed class Texture2DMeta : IDisposable {
 
 	internal volatile bool TracePrinted = false;
 	internal bool? Validation = null;
-	internal DateTime? ValidationTime = null;
 	internal bool IsSystemRenderTarget = false;
 	internal readonly bool IsCompressed = false;
 

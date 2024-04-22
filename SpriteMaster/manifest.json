@@ -1,7 +1,7 @@
 {
   "Name": "Clear Glasses",
   "Author": "aurpine",
-  "Version": "0.2.1",
+  "Version": "0.2.2",
   "Description": "Steps up the visuals of your game by using pixel scaling techniques and filters.",
   "UniqueID": "aurpine.ClearGlasses",
   "EntryDll": "ClearGlasses.dll",

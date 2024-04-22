@@ -115,7 +115,7 @@
   "resample.enablewrappedaddressing.comment": "Should wrapped addressing be enabled for sprite resampling when analysis suggests it?",
   "resample.useframetimestalling.name": "Use frame time stalling",
   "resample.useframetimestalling.comment": "Should resampling be stalled if it is determined that it will cause hitches?",
-  "resample.usecolorenhancement.name": "Use Colour Enhancement",
+  "resample.usecolorenhancement.name": "Use colour enhancement",
   "resample.usecolorenhancement.comment": "Should color enhancement/rebalancing be performed?",
   "resample.premultiplyalpha.name": "Premultiply transparent",
   "resample.premultiplyalpha.comment": "Mask transparent pixels to prevent halo effect",

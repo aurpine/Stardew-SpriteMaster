@@ -7,7 +7,7 @@ internal static class DeprecationManager {
 	private static readonly object DeprecationManagerLock = new();
 
 	[Harmonize(
-		typeof(StardewModdingAPI.Framework.ModLoading.Rewriters.StardewValley_1_5.AccessToolsFacade),
+		typeof(StardewModdingAPI.Framework.ModLoading.Rewriters.StardewValley_1_6.AbigailGameFacade),
 		"StardewModdingAPI.Framework.Deprecations.DeprecationManager",
 		"Warn",
 		Harmonize.Fixation.Prefix,
@@ -27,7 +27,7 @@ internal static class DeprecationManager {
 	}
 
 	[Harmonize(
-		typeof(StardewModdingAPI.Framework.ModLoading.Rewriters.StardewValley_1_5.AccessToolsFacade),
+		typeof(StardewModdingAPI.Framework.ModLoading.Rewriters.StardewValley_1_6.AbigailGameFacade),
 		"StardewModdingAPI.Framework.Deprecations.DeprecationManager",
 		"Warn",
 		Harmonize.Fixation.Finalizer,
@@ -47,7 +47,7 @@ internal static class DeprecationManager {
 	}
 
 	[Harmonize(
-		typeof(StardewModdingAPI.Framework.ModLoading.Rewriters.StardewValley_1_5.AccessToolsFacade),
+		typeof(StardewModdingAPI.Framework.ModLoading.Rewriters.StardewValley_1_6.AbigailGameFacade),
 		"StardewModdingAPI.Framework.Deprecations.DeprecationManager",
 		"PrintQueued",
 		Harmonize.Fixation.Prefix,
@@ -59,7 +59,7 @@ internal static class DeprecationManager {
 	}
 
 	[Harmonize(
-		typeof(StardewModdingAPI.Framework.ModLoading.Rewriters.StardewValley_1_5.AccessToolsFacade),
+		typeof(StardewModdingAPI.Framework.ModLoading.Rewriters.StardewValley_1_6.AbigailGameFacade),
 		"StardewModdingAPI.Framework.Deprecations.DeprecationManager",
 		"PrintQueued",
 		Harmonize.Fixation.Finalizer,

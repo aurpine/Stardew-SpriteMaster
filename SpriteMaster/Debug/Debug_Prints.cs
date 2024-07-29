@@ -18,6 +18,13 @@ internal static partial class Debug {
 	[MethodImpl(MethodImplOptions.AggressiveInlining), DebuggerStepThrough, DebuggerHidden]
 	internal static bool CheckLogLevel(LogLevel logLevel) => Config.Debug.Logging.LogLevel <= logLevel;
 
+	// Trace but without the conditionals
+	internal static void ForceTrace(string message, bool format = true, [CallerMemberName] string caller = "") {
+		if (!CheckLogLevel(LogLevel.Trace))
+			return;
+		DebugWriteStr($"{caller.Format(format)}{message}", LogLevel.Trace);
+	}
+
 	[Conditional("DEBUG"), Conditional("TRACE"), DebuggerStepThrough, DebuggerHidden]
 	internal static void Trace(string message, bool format = true, [CallerMemberName] string caller = "") {
 		if (!CheckLogLevel(LogLevel.Trace))

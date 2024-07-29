@@ -13,7 +13,7 @@
 		<Configurations>Debug;Release;Development;Shipping;ReleaseUntraced;ShippingAsserts</Configurations>
 		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
 		<RunAnalyzersDuringBuild>False</RunAnalyzersDuringBuild>
-		<PackageProjectUrl>https://github.com/ameisen/SV-SpriteMaster</PackageProjectUrl>
+		<PackageProjectUrl>https://github.com/aurpine/Stardew-SpriteMaster</PackageProjectUrl>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RepositoryUrl>https://github.com/aurpine/Stardew-SpriteMaster</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
@@ -96,6 +96,11 @@
 		<InternalsAssemblyNames>MonoGame.Framework</InternalsAssemblyNames>
 		<InternalsAssemblyUseEmptyMethodBodies>false</InternalsAssemblyUseEmptyMethodBodies>
 		<TargetFramework>net6.0</TargetFramework>
+		<Version>0.2.4</Version>
+		<Product />
+		<Authors />
+		<Company />
+		<Copyright>aurpine</Copyright>
 	</PropertyGroup>
 
 	

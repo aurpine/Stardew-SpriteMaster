@@ -1,6 +1,7 @@
 ﻿using SpriteMaster.Types;
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 
@@ -91,9 +92,7 @@ internal static class Metadata {
 		}
 		using (InlineCacheLock.Write) {
 			Texture2DMetaTable.Clear();
-			foreach (var cacheElement in InlineCache.Values) {
-				cacheElement.Clear();
-			}
+			InlineCache.Values.AsParallel().ForAll(cacheElement => cacheElement.Clear());
 		}
 	}
 

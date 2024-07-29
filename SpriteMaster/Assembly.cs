@@ -32,9 +32,9 @@ using System.Security;
 [assembly: InternalsVisibleTo("Strings")]
 [assembly: InternalsVisibleTo("Math")]
 [assembly: SecurityRules(SecurityRuleSet.Level2, SkipVerificationInFullTrust = true)]
-[assembly: ChangeList("0.2.3")]
+[assembly: ChangeList("0.2.4")]
 [assembly: BuildComputerName("aurpine")]
-[assembly: FullVersion("0.2.3")]
+[assembly: FullVersion("0.2.4")]
 
 [module: CLSCompliant(false)]
 [module: SkipLocalsInit]

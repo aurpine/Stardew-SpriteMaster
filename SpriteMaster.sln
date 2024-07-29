@@ -37,7 +37,6 @@ Global
 		{9EE8FEE0-7402-4495-9671-D36FDE1D547F}.ReleaseUntraced|Any CPU.ActiveCfg = ReleaseUntraced|Any CPU
 		{9EE8FEE0-7402-4495-9671-D36FDE1D547F}.ReleaseUntraced|Any CPU.Build.0 = ReleaseUntraced|Any CPU
 		{9EE8FEE0-7402-4495-9671-D36FDE1D547F}.Shipping|Any CPU.ActiveCfg = Shipping|Any CPU
-		{9EE8FEE0-7402-4495-9671-D36FDE1D547F}.Shipping|Any CPU.Build.0 = Shipping|Any CPU
 		{9EE8FEE0-7402-4495-9671-D36FDE1D547F}.ShippingAsserts|Any CPU.ActiveCfg = ShippingAsserts|Any CPU
 		{9EE8FEE0-7402-4495-9671-D36FDE1D547F}.ShippingAsserts|Any CPU.Build.0 = ShippingAsserts|Any CPU
 	EndGlobalSection

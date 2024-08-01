@@ -121,7 +121,7 @@ internal static class SpriteMap {
 			using (meta.Lock.ReadWrite) {
 				if (spriteTable.TryGetValue(rectangleHash, out var spriteInstance)) {
 					if (!texture.NormalizedName().Equals(spriteInstance.NormalizedName())) {
-						Debug.Warning($"Applying fix for detected cache mismatch: Expected \"{texture.NormalizedName()}\" but got \"{spriteInstance.NormalizedName()}\"");
+						Debug.Message($"Applying fix for detected cache mismatch: Expected \"{texture.Name}\" but got \"{spriteInstance.Name}\"");
 						meta.RemoveFromSpriteInstanceTable(rectangleHash, true, out _);
 						result = null;
 						return false;

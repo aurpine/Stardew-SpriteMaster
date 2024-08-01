@@ -7,6 +7,8 @@ using SpriteMaster.Types;
 using StardewModdingAPI;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -72,6 +74,17 @@ internal static class Setup {
 			manifest: SpriteMaster.Self.ModManifest,
 			config: configApi
 		);
+
+		Helper.Events.Content.AssetsInvalidated += Content_AssetsInvalidated;
+	}
+
+	private static void Content_AssetsInvalidated(object? sender, StardewModdingAPI.Events.AssetsInvalidatedEventArgs e) {
+		var purged = Metadata.Metadata.Purge(new HashSet<string>(e.Names.AsEnumerable().Select(s => s.Name)));
+		if (purged.IsEmpty()) {
+			Debug.ForceTrace("No textures were purged");
+		} else {
+			Debug.ForceTrace($"Purged: [{string.Join(", ", purged)}]");
+		}
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -160,7 +173,7 @@ internal static class Setup {
 	}
 
 	private static readonly string[][] Prefixes = {
-		new[]{ "B" },
+		new[]{ "B", "B", "B" },
 		new[]{ "KiB", "KB", "K" },
 		new[]{ "MiB", "MB", "M" },
 		new[]{ "GiB", "GB", "G" },
@@ -188,14 +201,14 @@ internal static class Setup {
 
 	private static string FormatLong(long value) {
 		string? Magnitude(int order, bool force = false) {
-			if (!force && value >= SizeOrder(1024, order + 1)) {
+			if (!force && value >= SizeOrder(1, order + 1)) {
 				return null;
 			}
 
 			// This uses doubles because we want to get a fraction
-			var divisor = SizeOrder(1024, order);
+			var divisor = SizeOrder(1, order);
 			var dValue = (double)value / divisor;
-			var prefix = Prefixes[Math.Min(order, Prefixes.Length - 1)][0];
+			var prefix = Prefixes[Math.Min(order, Prefixes.Length - 1)][1];
 			return $"{dValue:0.##} {prefix}";
 		}
 		return
@@ -230,12 +243,12 @@ internal static class Setup {
 
 		// Try it as a pure integral-value
 		if (long.TryParse(value, out long intValue)) {
-			intValue *= SizeOrder(1024, prefixResult.Value.Order);
+			intValue *= SizeOrder(1, prefixResult.Value.Order);
 			resultValue = intValue;
 		}
 		// Otherwise, try it as a decimal value
 		else if (double.TryParse(value, out double realValue)) {
-			realValue *= SizeOrder(1024, prefixResult.Value.Order);
+			realValue *= SizeOrder(1, prefixResult.Value.Order);
 			resultValue = realValue.RoundToLong();
 		}
 		else {

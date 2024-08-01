@@ -96,7 +96,7 @@
 		<InternalsAssemblyNames>MonoGame.Framework</InternalsAssemblyNames>
 		<InternalsAssemblyUseEmptyMethodBodies>false</InternalsAssemblyUseEmptyMethodBodies>
 		<TargetFramework>net6.0</TargetFramework>
-		<Version>0.2.4</Version>
+		<Version>0.2.5</Version>
 		<Product />
 		<Authors />
 		<Company />

@@ -780,7 +780,7 @@ internal static class Config {
 		internal static long MaxSize = SizesExt.AsGiB(2);
 
 		[Attributes.Comment("Should all texture files in the Mods directory attempt to be pre-cached?")]
-		internal static bool Precache = false;
+		internal static bool Precache = true;
 	}
 
 	[Attributes.Advanced]

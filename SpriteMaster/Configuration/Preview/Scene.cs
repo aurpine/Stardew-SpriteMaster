@@ -56,14 +56,17 @@ internal abstract class Scene : IDisposable {
 	[StructLayout(LayoutKind.Auto)]
 	protected readonly ref struct TempValue<T> {
 		private readonly T? OriginalValue;
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2252:This API requires opting into preview features", Justification = "<Pending>")]
 		private readonly Ref<T?> ReferenceValue;
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2252:This API requires opting into preview features", Justification = "<Pending>")]
 		internal TempValue(ref T? value, in T? newValue) {
 			OriginalValue = value;
 			value = newValue;
 			ReferenceValue = new(ref value);
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2252:This API requires opting into preview features", Justification = "<Pending>")]
 		public void Dispose() {
 			ReferenceValue.Value = OriginalValue;
 		}

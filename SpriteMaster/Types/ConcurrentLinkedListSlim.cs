@@ -81,11 +81,14 @@ internal sealed class ConcurrentLinkedListSlim<T> {
 
 	[StructLayout(LayoutKind.Auto)]
 	private ref struct NodePair {
+		[SuppressMessage("Usage", "CA2252:This API requires opting into preview features", Justification = "<Pending>")]
 		private readonly Ref<Node> RefNode;
+		[SuppressMessage("Usage", "CA2252:This API requires opting into preview features", Justification = "<Pending>")]
 		internal ref Node Node => ref RefNode.Value;
 		internal readonly NodeRef Ref;
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		[SuppressMessage("Usage", "CA2252:This API requires opting into preview features", Justification = "<Pending>")]
 		internal NodePair(ref Node node, NodeRef nodeRef) {
 			RefNode = new(ref node);
 			Ref = nodeRef;

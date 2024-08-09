@@ -338,3 +338,5 @@ SpriteMaster/Hashing/Algorithms/XxHash3Exp/
 loc.rb
 .secret/
 *.mp3
+SpriteMaster/AssemblyInfo.cs
+SpriteMaster/manifest.json

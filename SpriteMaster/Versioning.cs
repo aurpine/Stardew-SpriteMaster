@@ -13,7 +13,7 @@ internal static class Versioning {
 
 	[Attributes.Ignore]
 	internal static readonly string CurrentVersion =
-		GetAssemblyAttribute<FullVersionAttribute>()?.Value.Split('-', 2).ElementAtOrDefaultF(0) ??
+		System.Diagnostics.FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion ??
 		throw new BadImageFormatException($"Could not extract version from assembly {typeof(SMConfig).Assembly.FullName ?? typeof(SMConfig).Assembly.ToString()}");
 
 	[Attributes.Ignore]

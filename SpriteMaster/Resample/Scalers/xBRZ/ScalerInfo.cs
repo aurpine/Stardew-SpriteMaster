@@ -6,7 +6,7 @@ internal sealed class ScalerInfo : IScalerInfo {
 	public Resample.Scaler Scaler => Resample.Scaler.xBRZ;
 	public int MinScale => 1;
 	public int MaxScale => Config.MaxScale;
-	public XGraphics.TextureFilter Filter => XGraphics.TextureFilter.Linear;
+	public XGraphics.TextureFilter? Filter => XGraphics.TextureFilter.Linear;
 	public bool PremultiplyAlpha => true;
 	public bool GammaCorrect => true;
 	public bool BlockCompress => true;

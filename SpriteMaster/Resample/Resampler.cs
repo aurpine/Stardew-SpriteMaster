@@ -367,12 +367,14 @@ internal sealed class Resampler {
 			if (Config.Resample.Scale) {
 				int preferredMaxDimension = Config.PreferredMaxTextureDimension;
 				var originalScale = scale;
-				scale = 2;
-				for (uint s = originalScale; s > 2U; --s) {
-					var newDimensions = spriteRawExtent * s;
-					if (newDimensions.MaxOf <= preferredMaxDimension) {
-						scale = s;
-						break;
+				if (scalerInfo.Scaler != Scaler.Vanilla) {
+					scale = 2;
+					for (uint s = originalScale; s > 2U; --s) {
+						var newDimensions = spriteRawExtent * s;
+						if (newDimensions.MaxOf <= preferredMaxDimension) {
+							scale = s;
+							break;
+						}
 					}
 				}
 			}

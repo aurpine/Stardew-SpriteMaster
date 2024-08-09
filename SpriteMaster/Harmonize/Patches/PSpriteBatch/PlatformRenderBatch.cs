@@ -72,19 +72,23 @@ internal static class PlatformRenderBatch {
 			scalerInfo = managedTexture.SpriteInstance.ScalerInfo;
 		}
 
-		var preferredFilter = scalerInfo?.Filter ?? TextureFilter.Linear;
+		var preferredFilter = scalerInfo?.Filter;
+
+		if (preferredFilter == null) {
+			return reference;
+		}
 
 		return reference.AddressU switch {
 			TextureAddressMode.Wrap when reference.AddressV == TextureAddressMode.Wrap => GetSamplerState(
-				addressMode: TextureAddressMode.Wrap, filter: preferredFilter
+				addressMode: TextureAddressMode.Wrap, filter: (TextureFilter)preferredFilter
 			),
 			TextureAddressMode.Border when reference.AddressV == TextureAddressMode.Border => GetSamplerState(
-				addressMode: TextureAddressMode.Border, filter: preferredFilter
+				addressMode: TextureAddressMode.Border, filter: (TextureFilter)preferredFilter
 			),
 			TextureAddressMode.Mirror when reference.AddressV == TextureAddressMode.Mirror => GetSamplerState(
-				addressMode: TextureAddressMode.Mirror, filter: preferredFilter
+				addressMode: TextureAddressMode.Mirror, filter: (TextureFilter)preferredFilter
 			),
-			_ => GetSamplerState(addressMode: TextureAddressMode.Clamp, filter: preferredFilter)
+			_ => GetSamplerState(addressMode: TextureAddressMode.Clamp, filter: (TextureFilter)preferredFilter)
 		};
 	}
 

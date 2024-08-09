@@ -14,7 +14,7 @@ internal class Override {
 	internal bool ResampleLargeText = false;
 	internal bool ResampleSmallText = false;
 	internal bool FiltersEnabled = false;
-	internal int Saturation = -20;
+	internal int Saturation = 0;
 	internal int Brightness = 0;
 	internal int Temperature = 0;
 

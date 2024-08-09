@@ -49,6 +49,7 @@ internal interface IScaler {
 		Scaler.EPX => EPX.ScalerInfo.Instance,
 		Scaler.EPXLegacy => EPX.ScalerInfo.InstanceLegacy,
 		Scaler.xBREPX => xBREPX.ScalerInfo.Instance,
+		Scaler.Vanilla => Identity.ScalerInfo.Instance,
 		Scaler.None => null,
 		_ => ThrowUnknownScalerTypeException<IScalerInfo>()
 	};
@@ -63,6 +64,7 @@ internal interface IScaler {
 		Scaler.EPX => EPX.Scaler.ScalerInterface.Instance,
 		Scaler.EPXLegacy => EPX.Scaler.ScalerInterface.InstanceLegacy,
 		Scaler.xBREPX => xBREPX.Scaler.ScalerInterface.Instance,
+		Scaler.Vanilla => Identity.Scaler.ScalerInterface.Instance,
 		Scaler.None => null,
 		_ => ThrowUnknownScalerTypeException<IScaler>()
 	};

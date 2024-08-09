@@ -6,6 +6,7 @@ internal enum Scaler : int {
 #if !SHIPPING
 	SuperXBR,
 #endif
+	Vanilla,
 	EPX,
 	ScaleX = EPX,
 	EPXLegacy,

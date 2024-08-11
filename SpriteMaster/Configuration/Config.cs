@@ -250,11 +250,10 @@ internal static class Config {
         }
     }
 
-    [Attributes.Advanced]
     internal static class DrawState {
         [Attributes.Comment("Enable linear sampling for sprites")]
         [Obsolete($"Use {nameof(IsSetLinear)}")]
-        internal static bool SetLinear = true;
+        internal static bool SetLinear = false;
 
         [Attributes.Ignore]
 #pragma warning disable CS0618 // Type or member is obsolete
@@ -263,6 +262,7 @@ internal static class Config {
 
         [Attributes.Comment("Enable linear sampling for sprites")]
         [Obsolete($"Use {nameof(IsSetLinearUnresampled)}")]
+        [Attributes.Advanced]
         internal static bool SetLinearUnresampled = false;
 
         [Attributes.Ignore]
@@ -273,6 +273,7 @@ internal static class Config {
         [Attributes.Comment("How many MSAA samples should be used?")]
         [Attributes.OptionsAttribute(Attributes.OptionsAttribute.Flag.ResetDisplay | Attributes.OptionsAttribute.Flag.FlushAllRenderingCaches)]
         [Attributes.LimitsInt(1, 16)]
+        [Attributes.Advanced]
         internal static int AntialiasingSamples = 1;
         [Attributes.Comment("Disable the depth buffer (unused in this game)")]
         [Attributes.OptionsAttribute(Attributes.OptionsAttribute.Flag.ResetDisplay)]
@@ -280,12 +281,15 @@ internal static class Config {
         internal static bool DisableDepthBuffer = false;
         [Attributes.Comment("The default backbuffer format to request")]
         [Attributes.OptionsAttribute(Attributes.OptionsAttribute.Flag.ResetDisplay)]
+        [Attributes.Advanced]
         internal static SurfaceFormat BackbufferFormat = SurfaceFormat.Color;
         [Attributes.Comment("The default HDR backbuffer format to request")]
         [Attributes.OptionsAttribute(Attributes.OptionsAttribute.Flag.ResetDisplay)]
+        [Attributes.Advanced]
         internal static SurfaceFormat BackbufferHDRFormat = SurfaceFormat.Rgba64;
         [Attributes.Comment("Should the system HDR settings be honored?")]
         [Attributes.OptionsAttribute(Attributes.OptionsAttribute.Flag.ResetDisplay)]
+        [Attributes.Advanced]
         internal static bool HonorHDRSettings = true;
     }
 

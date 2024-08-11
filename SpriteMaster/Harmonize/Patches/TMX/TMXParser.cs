@@ -8,128 +8,128 @@ using System.Xml;
 namespace SpriteMaster.Harmonize.Patches.TMX;
 
 internal static class TMXParser {
-	#region By Path
+    #region By Path
 
-	private static readonly ConcurrentDictionary<string, (DateTime Modified, object Result)> ParseFileCache = new();
+    private static readonly ConcurrentDictionary<string, (DateTime Modified, object Result)> ParseFileCache = new();
 
-	[Harmonize(
-		"TMXTile.TMXParser",
-		"Parse",
-		Harmonize.Fixation.Prefix,
-		Harmonize.PriorityLevel.Last
-	)]
-	public static bool ParsePre(object __instance, ref object __result, string path, ref DateTime __state) {
-		if (!ParseFileCache.TryGetValue(path, out var cachedResult)) {
-			return true;
-		}
+    [Harmonize(
+        "TMXTile.TMXParser",
+        "Parse",
+        Harmonize.Fixation.Prefix,
+        Harmonize.PriorityLevel.Last
+    )]
+    public static bool ParsePre(object __instance, ref object __result, string path, ref DateTime __state) {
+        if (!ParseFileCache.TryGetValue(path, out var cachedResult)) {
+            return true;
+        }
 
-		var currentTime = File.GetLastWriteTimeUtc(path);
-		__state = currentTime;
-		if (cachedResult.Modified != currentTime) {
-			return true;
-		}
+        var currentTime = File.GetLastWriteTimeUtc(path);
+        __state = currentTime;
+        if (cachedResult.Modified != currentTime) {
+            return true;
+        }
 
-		__result = cachedResult.Result;
-		return false;
+        __result = cachedResult.Result;
+        return false;
 
-	}
+    }
 
-	[Harmonize(
-		"TMXTile.TMXParser",
-		"Parse",
-		Harmonize.Fixation.Postfix,
-		Harmonize.PriorityLevel.Last
-	)]
-	public static void ParsePost(object __instance, object __result, string path, DateTime __state) {
-		var currentTime = __state;
+    [Harmonize(
+        "TMXTile.TMXParser",
+        "Parse",
+        Harmonize.Fixation.Postfix,
+        Harmonize.PriorityLevel.Last
+    )]
+    public static void ParsePost(object __instance, object __result, string path, DateTime __state) {
+        var currentTime = __state;
 
-		ParseFileCache.AddOrUpdate(path, _ => (currentTime, __result), (_, _) => (currentTime, __result));
-	}
+        ParseFileCache.AddOrUpdate(path, _ => (currentTime, __result), (_, _) => (currentTime, __result));
+    }
 
-	#endregion
+    #endregion
 
-	#region By XML Reader
+    #region By XML Reader
 
-	private static readonly ConcurrentDictionary<ulong, object> ParseXmlCache = new();
+    private static readonly ConcurrentDictionary<ulong, object> ParseXmlCache = new();
 
-	[Harmonize(
-		"TMXTile.TMXParser",
-		"Parse",
-		Harmonize.Fixation.Prefix,
-		Harmonize.PriorityLevel.Last
-	)]
-	public static bool ParsePre(object __instance, ref object __result, XmlReader reader, ref ulong __state) {
-		var document = new XmlDocument();
-		document.Load(reader);
+    [Harmonize(
+        "TMXTile.TMXParser",
+        "Parse",
+        Harmonize.Fixation.Prefix,
+        Harmonize.PriorityLevel.Last
+    )]
+    public static bool ParsePre(object __instance, ref object __result, XmlReader reader, ref ulong __state) {
+        var document = new XmlDocument();
+        document.Load(reader);
 
-		var xmlHash = document.OuterXml.GetSafeHash64();
+        var xmlHash = document.OuterXml.GetSafeHash64();
 
-		__state = xmlHash;
+        __state = xmlHash;
 
-		if (!ParseXmlCache.TryGetValue(xmlHash, out var cachedResult)) {
-			return true;
-		}
+        if (!ParseXmlCache.TryGetValue(xmlHash, out var cachedResult)) {
+            return true;
+        }
 
-		__result = cachedResult;
-		return false;
-	}
+        __result = cachedResult;
+        return false;
+    }
 
-	[Harmonize(
-		"TMXTile.TMXParser",
-		"Parse",
-		Harmonize.Fixation.Postfix,
-		Harmonize.PriorityLevel.Last
-	)]
-	public static void ParsePost(object __instance, object __result, XmlReader reader, ulong __state) {
-		ParseXmlCache.TryAdd(__state, __result);
-	}
+    [Harmonize(
+        "TMXTile.TMXParser",
+        "Parse",
+        Harmonize.Fixation.Postfix,
+        Harmonize.PriorityLevel.Last
+    )]
+    public static void ParsePost(object __instance, object __result, XmlReader reader, ulong __state) {
+        ParseXmlCache.TryAdd(__state, __result);
+    }
 
-	#endregion
+    #endregion
 
-	#region By Stream
+    #region By Stream
 
-	private static readonly ConcurrentDictionary<ulong, object> ParseStreamCache = new();
+    private static readonly ConcurrentDictionary<ulong, object> ParseStreamCache = new();
 
-	[Harmonize(
-		"TMXTile.TMXParser",
-		"Parse",
-		Harmonize.Fixation.Prefix,
-		Harmonize.PriorityLevel.Last
-	)]
-	public static bool ParsePre(object __instance, ref object __result, ref Stream stream, string path, ref ulong __state) {
-		long currentPosition = stream.Position;
-		
-		using var copyStream = new MemoryStream();
-		stream.CopyTo(copyStream);
+    [Harmonize(
+        "TMXTile.TMXParser",
+        "Parse",
+        Harmonize.Fixation.Prefix,
+        Harmonize.PriorityLevel.Last
+    )]
+    public static bool ParsePre(object __instance, ref object __result, ref Stream stream, string path, ref ulong __state) {
+        long currentPosition = stream.Position;
 
-		var dataHash = copyStream.Hash();
+        using var copyStream = new MemoryStream();
+        stream.CopyTo(copyStream);
 
-		__state = dataHash;
+        var dataHash = copyStream.Hash();
 
-		if (stream.CanSeek) {
-			stream.Seek(currentPosition, SeekOrigin.Begin);
-		}
-		else {
-			stream = copyStream;
-		}
+        __state = dataHash;
 
-		if (!ParseStreamCache.TryGetValue(dataHash, out var cachedResult)) {
-			return true;
-		}
+        if (stream.CanSeek) {
+            stream.Seek(currentPosition, SeekOrigin.Begin);
+        }
+        else {
+            stream = copyStream;
+        }
 
-		__result = cachedResult;
-		return false;
-	}
+        if (!ParseStreamCache.TryGetValue(dataHash, out var cachedResult)) {
+            return true;
+        }
 
-	[Harmonize(
-		"TMXTile.TMXParser",
-		"Parse",
-		Harmonize.Fixation.Postfix,
-		Harmonize.PriorityLevel.Last
-	)]
-	public static void ParsePost(object __instance, object __result, Stream stream, string path, ulong __state) {
-		ParseStreamCache.TryAdd(__state, __result);
-	}
+        __result = cachedResult;
+        return false;
+    }
 
-	#endregion
+    [Harmonize(
+        "TMXTile.TMXParser",
+        "Parse",
+        Harmonize.Fixation.Postfix,
+        Harmonize.PriorityLevel.Last
+    )]
+    public static void ParsePost(object __instance, object __result, Stream stream, string path, ulong __state) {
+        ParseStreamCache.TryAdd(__state, __result);
+    }
+
+    #endregion
 }

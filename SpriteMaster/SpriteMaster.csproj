@@ -1,7 +1,36 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-	<Import Project="$(SolutionDir)SpriteMasterCommon.props" />
+	<PropertyGroup>
+		<!-- From SpriteMasterCommon.props -->
+		<EnableModZip>false</EnableModZip>
+		<FileAlignment>512</FileAlignment>
+		<LangVersion>preview</LangVersion>
+		<PlatformTarget>AnyCPU</PlatformTarget>
+		<EnableHarmony>true</EnableHarmony>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<NullableReferenceTypes>true</NullableReferenceTypes>
+		<ErrorReport>prompt</ErrorReport>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
+		<DebugSymbols>true</DebugSymbols>
+		<DebugType>embedded</DebugType>
+		<OutputPath>bin\$(Configuration)\</OutputPath>
+		<Deterministic>false</Deterministic>
+		<RunAnalyzersDuringLiveAnalysis>false</RunAnalyzersDuringLiveAnalysis>
+		<RunAnalyzersDuringBuild>false</RunAnalyzersDuringBuild>
+		<ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
 
+		<BundleExtraAssemblies>System, ThirdParty</BundleExtraAssemblies>
+		<IgnoreModFilePatterns Condition="'$(IgnoreModFilePatterns)'!=''">$(IgnoreModFilePatterns), _§ENTINEL¶_</IgnoreModFilePatterns>
+		<IgnoreModFilePatterns Condition="'$(IgnoreModFilePatterns)'==''">_§ENTINEL¶_</IgnoreModFilePatterns>
+		<IgnoreModFilePatterns>$(IgnoreModFilePatterns), System\.(?!Data\.HashFunction\..+).*$</IgnoreModFilePatterns>
+		<IgnoreModFilePatterns>$(IgnoreModFilePatterns), Microsoft\.Build\..*$</IgnoreModFilePatterns>
+		<IgnoreModFilePatterns>$(IgnoreModFilePatterns), Microsoft\.NET\..*$</IgnoreModFilePatterns>
+		<IgnoreModFilePatterns>$(IgnoreModFilePatterns), Microsoft\.Win32\..*$</IgnoreModFilePatterns>
+		<IgnoreModFilePatterns>$(IgnoreModFilePatterns), .*32.*</IgnoreModFilePatterns>
+		<IgnoreModFilePatterns>$(IgnoreModFilePatterns), .*/x86/.*</IgnoreModFilePatterns>
+		<IgnoreModFilePatterns>$(IgnoreModFilePatterns), JetBrains.Annotations.dll</IgnoreModFilePatterns>
+	</PropertyGroup>
 	<PropertyGroup>
 		<AssemblyName>ClearGlasses</AssemblyName>
 		<PackageId>Clear Glasses</PackageId>
@@ -22,64 +51,64 @@
 		<DebugSymbols>true</DebugSymbols>
 		<DebugType>embedded</DebugType>
 		<EmbedAllSources>false</EmbedAllSources>
-		
+
 		<RestoreAdditionalProjectSources>$(RestoreSources);$(SolutionDir)Ext\SMAPI\src\SMAPI.ModBuildConfig\bin\Release;https://api.nuget.org/v3/index.json</RestoreAdditionalProjectSources>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-	  <DefineConstants>TRACE;CONTRACTS_FULL</DefineConstants>
-	  <Optimize>true</Optimize>
-	  <Deterministic>True</Deterministic>
-	  <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
+		<DefineConstants>TRACE;CONTRACTS_FULL</DefineConstants>
+		<Optimize>true</Optimize>
+		<Deterministic>True</Deterministic>
+		<CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseUntraced|AnyCPU'">
-	  <DefineConstants>RELEASE;CONTRACTS_FULL</DefineConstants>
-	  <Optimize>true</Optimize>
-	  <Deterministic>True</Deterministic>
-	  <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
+		<DefineConstants>RELEASE;CONTRACTS_FULL</DefineConstants>
+		<Optimize>true</Optimize>
+		<Deterministic>True</Deterministic>
+		<CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Shipping|AnyCPU'">
-	  <DefineConstants>SHIPPING</DefineConstants>
-	  <Optimize>true</Optimize>
-	  <Deterministic>True</Deterministic>
-	  <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
+		<DefineConstants>SHIPPING</DefineConstants>
+		<Optimize>true</Optimize>
+		<Deterministic>True</Deterministic>
+		<CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ShippingAsserts|AnyCPU'">
-	  <DefineConstants>SHIPPING;CONTRACTS_FULL</DefineConstants>
-	  <Optimize>true</Optimize>
-	  <Deterministic>True</Deterministic>
-	  <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
+		<DefineConstants>SHIPPING;CONTRACTS_FULL</DefineConstants>
+		<Optimize>true</Optimize>
+		<Deterministic>True</Deterministic>
+		<CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Development|AnyCPU'">
-	  <DefineConstants>DEVELOPMENT;CONTRACTS_FULL</DefineConstants>
-	  <Optimize>true</Optimize>
-	  <Deterministic>True</Deterministic>
-	  <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
+		<DefineConstants>DEVELOPMENT;CONTRACTS_FULL</DefineConstants>
+		<Optimize>true</Optimize>
+		<Deterministic>True</Deterministic>
+		<CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-	  <DefineConstants>DEBUG;TRACE</DefineConstants>
-	  <Deterministic>True</Deterministic>
-	  <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
+		<DefineConstants>DEBUG;TRACE</DefineConstants>
+		<Deterministic>True</Deterministic>
+		<CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <None Include="..\README.md">
-	    <Pack>True</Pack>
-	    <PackagePath>\</PackagePath>
-	  </None>
+		<None Include="..\README.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
 	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.HighPerformance" Version="8.0.0" />
 		<PackageReference Include="FastExpressionCompiler.LightExpression" Version="[3.3.3,)" />
 		<PackageReference Include="IgnoresAccessChecksToGenerator" Version="0.7.0">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<!--<PackageReference Include="ILRepack" Version="2.1.0-beta1" GeneratePathProperty="true" ExcludeAssets="all" />-->
 		<PackageReference Include="JetBrains.Annotations" Version="2023.3.0">
@@ -99,12 +128,12 @@
 		<PackageReference Include="ZstdNet" Version="1.4.5" GeneratePathProperty="true">
 			<!--<ExcludeAssets>all</ExcludeAssets>-->
 		</PackageReference>
-		
+
 		<Reference Include="$(PkgZstdNet)\lib\netstandard2.1\ZstdNet.dll">
 			<Private>true</Private>
 		</Reference>
 	</ItemGroup>
-	
+
 	<PropertyGroup>
 		<InternalsAssemblyNames>MonoGame.Framework</InternalsAssemblyNames>
 		<InternalsAssemblyUseEmptyMethodBodies>false</InternalsAssemblyUseEmptyMethodBodies>
@@ -112,7 +141,7 @@
 		<RunAnalyzersDuringLiveAnalysis>True</RunAnalyzersDuringLiveAnalysis>
 	</PropertyGroup>
 
-	
+
 	<!--
 	<PropertyGroup>
 		<Publicize>$(Publicize);MonoGame.Framework:Microsoft.Xna.Framework.Graphics.Texture.glTarget</Publicize>
@@ -147,7 +176,7 @@
 		<DoNotPublicize Include="$(DoNotPublicize)" />
 	</ItemGroup>
 	-->
-	
+
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
 		<!--<Exec Command="$(ProjectDir)scripts\build.post.rb 'OutDir=$(OutDir)' 'SolutionDir=$(SolutionDir)' 'ILRepack=$(PkgILRepack)' 'ILStrip=$(PkgBrokenevent_ILStrip_CLI)' 'IgnoreModFilePatterns=$(IgnoreModFilePatterns)'" />-->
 	</Target>
@@ -159,24 +188,24 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Resample\Scalers\xBREPX\" />
+		<Folder Include="Resample\Scalers\xBREPX\" />
 	</ItemGroup>
 
 	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-	  <!--<Exec Command="$(SolutionDir)SetVersion.rb -q" WorkingDirectory="$(SolutionDir)" />-->
+		<!--<Exec Command="$(SolutionDir)SetVersion.rb -q" WorkingDirectory="$(SolutionDir)" />-->
 	</Target>
 
 	<ItemGroup>
-	  <None Remove="C:\Users\mike\.nuget\packages\zstdnet\1.4.5\build\x64\libzstd.dll" />
+		<None Remove="C:\Users\mike\.nuget\packages\zstdnet\1.4.5\build\x64\libzstd.dll" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Remove="C:\Users\mike\.nuget\packages\zstdnet\1.4.5\build\x86\libzstd.dll" />
+		<None Remove="C:\Users\mike\.nuget\packages\zstdnet\1.4.5\build\x86\libzstd.dll" />
 	</ItemGroup>
 
 	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-	  <Exec Command="dotnet-gitversion /updateassemblyinfo AssemblyInfo.cs /ensureassemblyinfo" />
-	  <Exec Command="python update_manifest.py" />
+		<Exec Command="dotnet-gitversion /updateassemblyinfo AssemblyInfo.cs /ensureassemblyinfo" />
+		<Exec Command="python update_manifest.py" />
 	</Target>
-	
+
 </Project>

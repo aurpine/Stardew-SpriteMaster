@@ -7,66 +7,66 @@ namespace SpriteMaster.Types.Pooling;
 // Based upon 'LeakTrackingObjectPool.cs'
 // https://github.com/dotnet/aspnetcore/blob/4adb4258cb630114bc232af5339860dab9a5415e/src/ObjectPool/src/LeakTrackingObjectPool.cs
 internal sealed class TrackingObjectPool<T> : ISealedObjectPool<T, TrackingObjectPool<T>> where T : class, new() {
-	internal static readonly TrackingObjectPool<T> Default = new();
+    internal static readonly TrackingObjectPool<T> Default = new();
 
-	private static readonly ObjectPool<Tracker> TrackerPool = new();
+    private static readonly ObjectPool<Tracker> TrackerPool = new();
 
-	private readonly ConditionalWeakTable<T, Tracker> Trackers = new();
-	private readonly ObjectPool<T> Pool = new();
+    private readonly ConditionalWeakTable<T, Tracker> Trackers = new();
+    private readonly ObjectPool<T> Pool = new();
 
-	public int Count => Pool.Count;
+    public int Count => Pool.Count;
 
-	public long Allocated => Pool.Allocated;
+    public long Allocated => Pool.Allocated;
 
-	internal TrackingObjectPool() {
-	}
+    internal TrackingObjectPool() {
+    }
 
-	internal TrackingObjectPool(int initialCapacity) {
-		Pool = new(initialCapacity);
-	}
+    internal TrackingObjectPool(int initialCapacity) {
+        Pool = new(initialCapacity);
+    }
 
-	[MethodImpl(Runtime.MethodImpl.Inline)]
-	public T Get() {
-		var result = Pool.Get();
+    [MethodImpl(Runtime.MethodImpl.Inline)]
+    public T Get() {
+        var result = Pool.Get();
 
-		var tracker = TrackerPool.Get();
-		tracker.Reinitialize();
+        var tracker = TrackerPool.Get();
+        tracker.Reinitialize();
 
-		Trackers.Add(result, tracker);
+        Trackers.Add(result, tracker);
 
-		return result;
-	}
+        return result;
+    }
 
-	[MethodImpl(Runtime.MethodImpl.Inline)]
-	public void Return(T value) {
-		if (Trackers.TryGetValue(value, out var tracker)) {
-			Trackers.Remove(value);
-			tracker.Dispose();
-			TrackerPool.Return(tracker);
-		}
+    [MethodImpl(Runtime.MethodImpl.Inline)]
+    public void Return(T value) {
+        if (Trackers.TryGetValue(value, out var tracker)) {
+            Trackers.Remove(value);
+            tracker.Dispose();
+            TrackerPool.Return(tracker);
+        }
 
-		Pool.Return(value);
-	}
+        Pool.Return(value);
+    }
 
-	private sealed class Tracker : IDisposable {
-		private string? StackTrace;
+    private sealed class Tracker : IDisposable {
+        private string? StackTrace;
 
-		[MethodImpl(Runtime.MethodImpl.Inline)]
-		internal void Reinitialize() {
-			GC.ReRegisterForFinalize(this);
-			StackTrace = Environment.StackTrace;
-		}
+        [MethodImpl(Runtime.MethodImpl.Inline)]
+        internal void Reinitialize() {
+            GC.ReRegisterForFinalize(this);
+            StackTrace = Environment.StackTrace;
+        }
 
-		[MethodImpl(Runtime.MethodImpl.Inline)]
-		public void Dispose() {
-			GC.SuppressFinalize(this);
-			StackTrace = null;
-		}
+        [MethodImpl(Runtime.MethodImpl.Inline)]
+        public void Dispose() {
+            GC.SuppressFinalize(this);
+            StackTrace = null;
+        }
 
-		~Tracker() {
-			if (!Environment.HasShutdownStarted) {
-				Debug.Error($"{typeof(T).GetTypeName()} has leaked from {nameof(TrackingObjectPool<T>)}. Created at:\n{StackTrace}");
-			}
-		}
-	}
+        ~Tracker() {
+            if (!Environment.HasShutdownStarted) {
+                Debug.Error($"{typeof(T).GetTypeName()} has leaked from {nameof(TrackingObjectPool<T>)}. Created at:\n{StackTrace}");
+            }
+        }
+    }
 }

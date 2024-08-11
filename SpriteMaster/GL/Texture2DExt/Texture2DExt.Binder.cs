@@ -7,59 +7,59 @@ using System.Runtime.InteropServices;
 namespace SpriteMaster.GL;
 
 internal static partial class Texture2DExt {
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static GLExt.ObjectId GetCurrentBoundTexture2D() {
-		const int TextureBinding2D = 0x8069;
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static GLExt.ObjectId GetCurrentBoundTexture2D() {
+        const int TextureBinding2D = 0x8069;
 
-		int result = 0;
-		unsafe {
-			MonoGame.OpenGL.GL.GetIntegerv(TextureBinding2D, &result);
-			GLExt.CheckError();
-		}
+        int result = 0;
+        unsafe {
+            MonoGame.OpenGL.GL.GetIntegerv(TextureBinding2D, &result);
+            GLExt.CheckError();
+        }
 
-		return (GLExt.ObjectId)result;
-	}
+        return (GLExt.ObjectId)result;
+    }
 
-	[StructLayout(LayoutKind.Auto)]
-	private readonly ref struct TextureBinder {
-		private readonly GLExt.ObjectId PreviousTexture;
-		private readonly GLExt.ObjectId CurrentTexture;
+    [StructLayout(LayoutKind.Auto)]
+    private readonly ref struct TextureBinder {
+        private readonly GLExt.ObjectId PreviousTexture;
+        private readonly GLExt.ObjectId CurrentTexture;
 
-		[MethodImpl(Runtime.MethodImpl.Inline)]
-		internal TextureBinder(GLExt.ObjectId texture) {
-			var boundTexture = GetCurrentBoundTexture2D();
-			PreviousTexture = boundTexture;
-			CurrentTexture = texture;
-			if (texture == boundTexture) {
-				return;
-			}
+        [MethodImpl(Runtime.MethodImpl.Inline)]
+        internal TextureBinder(GLExt.ObjectId texture) {
+            var boundTexture = GetCurrentBoundTexture2D();
+            PreviousTexture = boundTexture;
+            CurrentTexture = texture;
+            if (texture == boundTexture) {
+                return;
+            }
 
-			GLExt.BindTextureChecked(TextureTarget.Texture2D, texture);
-		}
+            GLExt.BindTextureChecked(TextureTarget.Texture2D, texture);
+        }
 
-		[MethodImpl(Runtime.MethodImpl.Inline)]
-		internal TextureBinder(Func<GLExt.ObjectId> textureFactory) {
-			var boundTexture = GetCurrentBoundTexture2D();
-			PreviousTexture = boundTexture;
+        [MethodImpl(Runtime.MethodImpl.Inline)]
+        internal TextureBinder(Func<GLExt.ObjectId> textureFactory) {
+            var boundTexture = GetCurrentBoundTexture2D();
+            PreviousTexture = boundTexture;
 
-			var texture = textureFactory();
-			CurrentTexture = texture;
-			if (texture == boundTexture) {
-				return;
-			}
+            var texture = textureFactory();
+            CurrentTexture = texture;
+            if (texture == boundTexture) {
+                return;
+            }
 
-			GLExt.BindTextureChecked(TextureTarget.Texture2D, texture);
-		}
+            GLExt.BindTextureChecked(TextureTarget.Texture2D, texture);
+        }
 
-		[MethodImpl(Runtime.MethodImpl.Inline)]
-		internal void Dispose() {
-			var previousTexture = PreviousTexture;
+        [MethodImpl(Runtime.MethodImpl.Inline)]
+        internal void Dispose() {
+            var previousTexture = PreviousTexture;
 
-			if (previousTexture == CurrentTexture) {
-				return;
-			}
+            if (previousTexture == CurrentTexture) {
+                return;
+            }
 
-			GLExt.BindTextureChecked(TextureTarget.Texture2D, previousTexture);
-		}
-	}
+            GLExt.BindTextureChecked(TextureTarget.Texture2D, previousTexture);
+        }
+    }
 }

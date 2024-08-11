@@ -14,56 +14,56 @@ namespace SpriteMaster.Core;
 
 internal static partial class OnDrawImpl {
 
-	[StructLayout(LayoutKind.Auto)]
-	internal struct DrawInstance {
-		internal readonly Vector2F Position { get; init; }
-		internal readonly float Scale { get; init; }
-		internal readonly float Rotation { get; init; }
-		internal uint ExpectedScale = 0U;
+    [StructLayout(LayoutKind.Auto)]
+    internal struct DrawInstance {
+        internal readonly Vector2F Position { get; init; }
+        internal readonly float Scale { get; init; }
+        internal readonly float Rotation { get; init; }
+        internal uint ExpectedScale = 0U;
 
-		internal DrawInstance(Snow.SnowWeatherDebris debris) {
-			Position = debris.position;
-			Scale = debris.Scale;
-			Rotation = debris.Rotation;
-		}
-	}
+        internal DrawInstance(Snow.SnowWeatherDebris debris) {
+            Position = debris.position;
+            Scale = debris.Scale;
+            Rotation = debris.Rotation;
+        }
+    }
 
-	[MethodImpl(MethodImplOptions.NoInlining)]
-	[Harmonize(typeof(XSpriteBatch), "Draw", fixation: Fixation.Reverse)]
-	public static void RawDraw(XSpriteBatch __instance, XTexture2D texture, XVector2 position, XRectangle? sourceRectangle, XColor color, float rotation, XVector2 origin, float scale, SpriteEffects effects, float layerDepth) {
-		Harmonize.Patches.PSpriteBatch.Patch.Draw.IsReverse.Value = true;
-		try {
-			__instance.Draw(texture, position, sourceRectangle, color, rotation, origin, scale, effects, layerDepth);
-		}
-		finally {
-			Harmonize.Patches.PSpriteBatch.Patch.Draw.IsReverse.Value = false;
-		}
-	}
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    [Harmonize(typeof(XSpriteBatch), "Draw", fixation: Fixation.Reverse)]
+    public static void RawDraw(XSpriteBatch __instance, XTexture2D texture, XVector2 position, XRectangle? sourceRectangle, XColor color, float rotation, XVector2 origin, float scale, SpriteEffects effects, float layerDepth) {
+        Harmonize.Patches.PSpriteBatch.Patch.Draw.IsReverse.Value = true;
+        try {
+            __instance.Draw(texture, position, sourceRectangle, color, rotation, origin, scale, effects, layerDepth);
+        }
+        finally {
+            Harmonize.Patches.PSpriteBatch.Patch.Draw.IsReverse.Value = false;
+        }
+    }
 
-	[MethodImpl(MethodImplOptions.NoInlining)]
-	[Harmonize(typeof(XSpriteBatch), "Draw", fixation: Fixation.Reverse)]
-	public static void RawDraw(
-		XSpriteBatch __instance,
-		XTexture2D texture,
-		XVector2 position,
-		XRectangle? sourceRectangle,
-		XColor color,
-		float rotation,
-		XVector2 origin,
-		XVector2 scale,
-		SpriteEffects effects,
-		float layerDepth
-	) {
-		Harmonize.Patches.PSpriteBatch.Patch.Draw.IsReverse.Value = true;
-		try {
-			__instance.Draw(texture, position, sourceRectangle, color, rotation, origin, scale, effects, layerDepth);
-		}
-		finally {
-			Harmonize.Patches.PSpriteBatch.Patch.Draw.IsReverse.Value = false;
-		}
-	}
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    [Harmonize(typeof(XSpriteBatch), "Draw", fixation: Fixation.Reverse)]
+    public static void RawDraw(
+        XSpriteBatch __instance,
+        XTexture2D texture,
+        XVector2 position,
+        XRectangle? sourceRectangle,
+        XColor color,
+        float rotation,
+        XVector2 origin,
+        XVector2 scale,
+        SpriteEffects effects,
+        float layerDepth
+    ) {
+        Harmonize.Patches.PSpriteBatch.Patch.Draw.IsReverse.Value = true;
+        try {
+            __instance.Draw(texture, position, sourceRectangle, color, rotation, origin, scale, effects, layerDepth);
+        }
+        finally {
+            Harmonize.Patches.PSpriteBatch.Patch.Draw.IsReverse.Value = false;
+        }
+    }
 
-	/*
+    /*
 	private static void TestDraw(
 		XSpriteBatch @this,
 		XTexture2D texture,
@@ -151,35 +151,35 @@ internal static partial class OnDrawImpl {
 	}
 	*/
 
-	[StructLayout(LayoutKind.Auto)]
-	private struct SpriteInstanceData {
-		internal Bounds OriginalSourceRectangle;
-		internal PaddingQuad Padding;
+    [StructLayout(LayoutKind.Auto)]
+    private struct SpriteInstanceData {
+        internal Bounds OriginalSourceRectangle;
+        internal PaddingQuad Padding;
 
-		private Vector2F _unpaddedSize;
-		internal Vector2F UnpaddedSize {
-			get => _unpaddedSize;
-			set {
-				_unpaddedSize = value;
-				UnpaddedSizeReciprocal = Vector2F.One / value;
-			}
-		}
-		internal Vector2F UnpaddedSizeReciprocal { get; private set; }
+        private Vector2F _unpaddedSize;
+        internal Vector2F UnpaddedSize {
+            get => _unpaddedSize;
+            set {
+                _unpaddedSize = value;
+                UnpaddedSizeReciprocal = Vector2F.One / value;
+            }
+        }
+        internal Vector2F UnpaddedSizeReciprocal { get; private set; }
 
-		private Vector2F _scale;
-		internal Vector2F Scale {
-			get => _scale;
-			set {
-				_scale = value;
-				ScaleReciprocal = Vector2F.One / value;
-			}
-		}
-		internal Vector2F ScaleReciprocal { get; private set; }
+        private Vector2F _scale;
+        internal Vector2F Scale {
+            get => _scale;
+            set {
+                _scale = value;
+                ScaleReciprocal = Vector2F.One / value;
+            }
+        }
+        internal Vector2F ScaleReciprocal { get; private set; }
 
-		internal TextureType TextureType;
-	}
+        internal TextureType TextureType;
+    }
 
-	/*
+    /*
 	private readonly struct DrawData {
 		internal readonly ManagedTexture2D Texture;
 		internal readonly Vector2F Position;
@@ -192,154 +192,154 @@ internal static partial class OnDrawImpl {
 	}
 	*/
 
-	internal static void DrawMulti(
-		this XSpriteBatch @this,
-		XTexture2D texture,
-		Bounds source,
-		XColor color,
-		XVector2 origin,
-		SpriteEffects effects,
-		float layerDepth,
-		Span<DrawInstance> instances
-	) {
-		GetDrawParameters(
-			texture: texture,
-			source: source,
-			bounds: out var sourceRectangle,
-			scaleFactor: out var scaleFactor
-		);
+    internal static void DrawMulti(
+        this XSpriteBatch @this,
+        XTexture2D texture,
+        Bounds source,
+        XColor color,
+        XVector2 origin,
+        SpriteEffects effects,
+        float layerDepth,
+        Span<DrawInstance> instances
+    ) {
+        GetDrawParameters(
+            texture: texture,
+            source: source,
+            bounds: out var sourceRectangle,
+            scaleFactor: out var scaleFactor
+        );
 
-		var originalSourceRect = sourceRectangle;
-		Vector2F positionModifier = Vector2F.Zero;
-		if (originalSourceRect.X < 0) {
-			positionModifier.X = -originalSourceRect.X;
-		}
-		if (originalSourceRect.Y < 0) {
-			positionModifier.Y = -originalSourceRect.Y;
-		}
+        var originalSourceRect = sourceRectangle;
+        Vector2F positionModifier = Vector2F.Zero;
+        if (originalSourceRect.X < 0) {
+            positionModifier.X = -originalSourceRect.X;
+        }
+        if (originalSourceRect.Y < 0) {
+            positionModifier.Y = -originalSourceRect.Y;
+        }
 
-		ManagedSpriteInstance? spriteInstance = null;
-		ManagedTexture2D? resampledTexture = null;
-		if (texture is ManagedTexture2D texture2D) {
-			resampledTexture = texture2D;
-			spriteInstance = resampledTexture.SpriteInstance;
-			sourceRectangle = resampledTexture.Dimensions;
-		}
-		else {
-			// Rapidly sort the inputs based upon scale estimates
-			for (int i = 0; i < instances.Length; ++i) {
-				ref var instance = ref instances[i];
-				instance.ExpectedScale = EstimateScale((instance.Scale, instance.Scale), scaleFactor);
-			}
+        ManagedSpriteInstance? spriteInstance = null;
+        ManagedTexture2D? resampledTexture = null;
+        if (texture is ManagedTexture2D texture2D) {
+            resampledTexture = texture2D;
+            spriteInstance = resampledTexture.SpriteInstance;
+            sourceRectangle = resampledTexture.Dimensions;
+        }
+        else {
+            // Rapidly sort the inputs based upon scale estimates
+            for (int i = 0; i < instances.Length; ++i) {
+                ref var instance = ref instances[i];
+                instance.ExpectedScale = EstimateScale((instance.Scale, instance.Scale), scaleFactor);
+            }
 
-			instances.Sort((a, b) => a.ExpectedScale.CompareTo(b.ExpectedScale));
-		}
+            instances.Sort((a, b) => a.ExpectedScale.CompareTo(b.ExpectedScale));
+        }
 
-		bool debugModeEnabled = Debug.Mode.IsEnabled;
+        bool debugModeEnabled = Debug.Mode.IsEnabled;
 
-		SpriteInstanceData spriteInstanceData = default;
+        SpriteInstanceData spriteInstanceData = default;
 
-		uint fetchedScale = uint.MaxValue;
-		foreach (var instance in instances) {
-			Vector2F position = instance.Position;
-			float scale = instance.Scale;
-			float rotation = instance.Rotation;
+        uint fetchedScale = uint.MaxValue;
+        foreach (var instance in instances) {
+            Vector2F position = instance.Position;
+            float scale = instance.Scale;
+            float rotation = instance.Rotation;
 
-			if (fetchedScale != instance.ExpectedScale && (spriteInstance is null || resampledTexture is null)) {
-				if (texture.FetchScaledTexture(
-					expectedScale: instance.ExpectedScale,
-					source: ref sourceRectangle,
-					spriteInstance: out spriteInstance,
-					create: false
-				)) {
-					spriteInstance.UpdateReferenceFrame();
-					resampledTexture = spriteInstance.Texture!;
-				}
-				else {
-					resampledTexture = null;
-				}
-				fetchedScale = instance.ExpectedScale;
+            if (fetchedScale != instance.ExpectedScale && (spriteInstance is null || resampledTexture is null)) {
+                if (texture.FetchScaledTexture(
+                    expectedScale: instance.ExpectedScale,
+                    source: ref sourceRectangle,
+                    spriteInstance: out spriteInstance,
+                    create: false
+                )) {
+                    spriteInstance.UpdateReferenceFrame();
+                    resampledTexture = spriteInstance.Texture!;
+                }
+                else {
+                    resampledTexture = null;
+                }
+                fetchedScale = instance.ExpectedScale;
 
-				if (spriteInstance is not null) {
-					spriteInstanceData = new() {
-						OriginalSourceRectangle = spriteInstance.OriginalSourceRectangle,
-						Padding = spriteInstance.Padding,
-						UnpaddedSize = spriteInstance.UnpaddedSize,
-						Scale = spriteInstance.Scale,
-						TextureType = spriteInstance.TexType
-					};
-				}
-			}
+                if (spriteInstance is not null) {
+                    spriteInstanceData = new() {
+                        OriginalSourceRectangle = spriteInstance.OriginalSourceRectangle,
+                        Padding = spriteInstance.Padding,
+                        UnpaddedSize = spriteInstance.UnpaddedSize,
+                        Scale = spriteInstance.Scale,
+                        TextureType = spriteInstance.TexType
+                    };
+                }
+            }
 
-			if (spriteInstance is null || resampledTexture is null) {
-				@this.Draw(texture, position, source, color, rotation, origin, scale, effects, layerDepth);
-				continue;
-			}
+            if (spriteInstance is null || resampledTexture is null) {
+                @this.Draw(texture, position, source, color, rotation, origin, scale, effects, layerDepth);
+                continue;
+            }
 
-			position += positionModifier * scale;
+            position += positionModifier * scale;
 
-			var instanceScale = spriteInstanceData.Scale;
-			var instanceScaleReciprocal = spriteInstanceData.ScaleReciprocal;
+            var instanceScale = spriteInstanceData.Scale;
+            var instanceScaleReciprocal = spriteInstanceData.ScaleReciprocal;
 
-			var adjustedScale = instanceScaleReciprocal * scale;
-			var adjustedPosition = position;
-			var adjustedOrigin = (Vector2F)origin;
+            var adjustedScale = instanceScaleReciprocal * scale;
+            var adjustedPosition = position;
+            var adjustedOrigin = (Vector2F)origin;
 
-			if (spriteInstanceData.TextureType == TextureType.SlicedImage) {
-				sourceRectangle = new Bounds(
-					source.Location - spriteInstanceData.OriginalSourceRectangle.Offset,
-					source.Size
-				);
-				sourceRectangle.Offset = (sourceRectangle.OffsetF * instanceScale).NearestInt();
-				sourceRectangle.Extent = (sourceRectangle.ExtentF * instanceScale).NearestInt();
-			}
+            if (spriteInstanceData.TextureType == TextureType.SlicedImage) {
+                sourceRectangle = new Bounds(
+                    source.Location - spriteInstanceData.OriginalSourceRectangle.Offset,
+                    source.Size
+                );
+                sourceRectangle.Offset = (sourceRectangle.OffsetF * instanceScale).NearestInt();
+                sourceRectangle.Extent = (sourceRectangle.ExtentF * instanceScale).NearestInt();
+            }
 
-			if (!spriteInstanceData.Padding.IsZero) {
-				var textureSize = new Vector2F(sourceRectangle.Extent);
+            if (!spriteInstanceData.Padding.IsZero) {
+                var textureSize = new Vector2F(sourceRectangle.Extent);
 
-				// This is the scale factor to bring the inner size to the draw size.
-				var innerRatio = textureSize * spriteInstanceData.UnpaddedSizeReciprocal; // spriteInstance.InnerRatio;
+                // This is the scale factor to bring the inner size to the draw size.
+                var innerRatio = textureSize * spriteInstanceData.UnpaddedSizeReciprocal; // spriteInstance.InnerRatio;
 
-				// Scale the... scale by the scale factor.
-				adjustedScale *= innerRatio;
+                // Scale the... scale by the scale factor.
+                adjustedScale *= innerRatio;
 
-				adjustedOrigin *= instanceScale;
-				adjustedOrigin /= innerRatio;
-				adjustedOrigin += (Vector2F)spriteInstanceData.Padding.Offset;
-			}
-			else {
-				adjustedOrigin *= instanceScale;
-			}
+                adjustedOrigin *= instanceScale;
+                adjustedOrigin /= innerRatio;
+                adjustedOrigin += (Vector2F)spriteInstanceData.Padding.Offset;
+            }
+            else {
+                adjustedOrigin *= instanceScale;
+            }
 
-			sourceRectangle.Invert = (source.Width < 0, source.Height < 0);
+            sourceRectangle.Invert = (source.Width < 0, source.Height < 0);
 
-			if (debugModeEnabled && Debug.Mode.RegisterDrawForSelect(
-				instance: spriteInstance,
-				texture: texture,
-				position: adjustedPosition,
-				source: sourceRectangle,
-				color: color,
-				rotation: rotation,
-				origin: adjustedOrigin,
-				scale: adjustedScale,
-				effects: effects,
-				layerDepth: layerDepth
-			)) {
-				color = XColor.Red;
-			}
+            if (debugModeEnabled && Debug.Mode.RegisterDrawForSelect(
+                instance: spriteInstance,
+                texture: texture,
+                position: adjustedPosition,
+                source: sourceRectangle,
+                color: color,
+                rotation: rotation,
+                origin: adjustedOrigin,
+                scale: adjustedScale,
+                effects: effects,
+                layerDepth: layerDepth
+            )) {
+                color = XColor.Red;
+            }
 
-			RawDraw(
-				@this,
-				resampledTexture,
-				adjustedPosition,
-				sourceRectangle,
-				color,
-				rotation,
-				adjustedOrigin,
-				adjustedScale,
-				effects,
-				layerDepth
-			);
-		}
-	}
+            RawDraw(
+                @this,
+                resampledTexture,
+                adjustedPosition,
+                sourceRectangle,
+                color,
+                rotation,
+                adjustedOrigin,
+                adjustedScale,
+                effects,
+                layerDepth
+            );
+        }
+    }
 }

@@ -3,6 +3,6 @@
 namespace SpriteMaster.Types;
 
 internal interface IByteSize {
-	[Pure]
-	long SizeBytes { get; }
+    [Pure]
+    long SizeBytes { get; }
 }

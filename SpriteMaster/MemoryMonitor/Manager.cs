@@ -5,66 +5,66 @@ using System.Collections.Generic;
 
 namespace SpriteMaster.MemoryMonitor;
 internal sealed class Manager {
-	private static readonly InterlockedBool Purging = false;
-	private static IPurgeable[] PurgeablesArrayInternal = Array.Empty<IPurgeable>();
-	private static readonly HashSet<IPurgeable> Purgeables = new();
+    private static readonly InterlockedBool Purging = false;
+    private static IPurgeable[] PurgeablesArrayInternal = Array.Empty<IPurgeable>();
+    private static readonly HashSet<IPurgeable> Purgeables = new();
 
-	private static ReadOnlySpan<IPurgeable> LockedPurgeables {
-		get {
-			lock (Purgeables) {
-				Purgeables.CopyTo(PurgeablesArrayInternal);
-				return PurgeablesArrayInternal.AsSpan(0, Purgeables.Count);
-			}
-		}
-	}
+    private static ReadOnlySpan<IPurgeable> LockedPurgeables {
+        get {
+            lock (Purgeables) {
+                Purgeables.CopyTo(PurgeablesArrayInternal);
+                return PurgeablesArrayInternal.AsSpan(0, Purgeables.Count);
+            }
+        }
+    }
 
-	internal static bool Register(IPurgeable purgeable) {
-		lock (Purgeables) {
-			if (Purgeables.Add(purgeable)) {
-				Array.Resize(ref PurgeablesArrayInternal, Purgeables.Count);
-				return true;
-			}
+    internal static bool Register(IPurgeable purgeable) {
+        lock (Purgeables) {
+            if (Purgeables.Add(purgeable)) {
+                Array.Resize(ref PurgeablesArrayInternal, Purgeables.Count);
+                return true;
+            }
 
-			return false;
-		}
-	}
+            return false;
+        }
+    }
 
-	internal static bool Unregister(IPurgeable purgeable) {
-		lock (Purgeables) {
-			return Purgeables.Remove(purgeable);
-		}
-	}
+    internal static bool Unregister(IPurgeable purgeable) {
+        lock (Purgeables) {
+            return Purgeables.Remove(purgeable);
+        }
+    }
 
-	private delegate ulong? PurgeDelegate(IPurgeable @this, IPurgeable.Target target);
+    private delegate ulong? PurgeDelegate(IPurgeable @this, IPurgeable.Target target);
 
-	private static ulong Purge(ulong currentUsage, ulong targetUsage, PurgeDelegate purgeMethod) {
-		if (Purging.CompareExchange(true, false)) {
-			return 0UL;
-		}
+    private static ulong Purge(ulong currentUsage, ulong targetUsage, PurgeDelegate purgeMethod) {
+        if (Purging.CompareExchange(true, false)) {
+            return 0UL;
+        }
 
-		ulong purged = 0UL;
+        ulong purged = 0UL;
 
-		try {
-			foreach (var purgeable in LockedPurgeables) {
-				if (purgeMethod(purgeable, new() {CurrentMemoryUsage = currentUsage, TargetMemoryUsage = targetUsage}) is { } purgedBytes) {
-					purged += purgedBytes;
-				};
-			}
-		}
-		finally {
-			Purging.Value = false;
-		}
+        try {
+            foreach (var purgeable in LockedPurgeables) {
+                if (purgeMethod(purgeable, new() { CurrentMemoryUsage = currentUsage, TargetMemoryUsage = targetUsage }) is { } purgedBytes) {
+                    purged += purgedBytes;
+                };
+            }
+        }
+        finally {
+            Purging.Value = false;
+        }
 
-		return purged;
-	}
+        return purged;
+    }
 
-	internal static ulong HardPurge(ulong currentUsage, ulong targetUsage) {
-		var result = Purge(currentUsage, targetUsage, (obj, target) => obj.OnPurgeHard(target));
-		Metadata.Metadata.Purge();
-		return result;
-	}
+    internal static ulong HardPurge(ulong currentUsage, ulong targetUsage) {
+        var result = Purge(currentUsage, targetUsage, (obj, target) => obj.OnPurgeHard(target));
+        Metadata.Metadata.Purge();
+        return result;
+    }
 
-	internal static ulong SoftPurge(ulong currentUsage, ulong targetUsage) {
-		return Purge(currentUsage, targetUsage, (obj, target) => obj.OnPurgeSoft(target));
-	}
+    internal static ulong SoftPurge(ulong currentUsage, ulong targetUsage) {
+        return Purge(currentUsage, targetUsage, (obj, target) => obj.OnPurgeSoft(target));
+    }
 }

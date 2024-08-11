@@ -1,14 +1,14 @@
 ﻿namespace SpriteMaster.Resample;
 
 internal enum Scaler : int {
-	None = -1,
-	xBRZ = 0,
+    None = -1,
+    xBRZ = 0,
 #if !SHIPPING
-	SuperXBR,
+    SuperXBR,
 #endif
-	Vanilla,
-	EPX,
-	ScaleX = EPX,
-	EPXLegacy,
-	xBREPX
+    Vanilla,
+    EPX,
+    ScaleX = EPX,
+    EPXLegacy,
+    xBREPX
 }

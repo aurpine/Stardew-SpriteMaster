@@ -5,52 +5,52 @@ using System.Threading;
 namespace SpriteMaster.Types;
 
 internal sealed class ConcurrentConsumer<T> {
-	internal delegate void CallbackDelegate(in T item);
+    internal delegate void CallbackDelegate(in T item);
 
-	private readonly Thread ConsumerThread;
-	private readonly AutoResetEvent Event = new(false);
-	private readonly ConcurrentQueue<T> DataQueue = new();
-	private readonly CallbackDelegate Callback;
-	private readonly string Name;
+    private readonly Thread ConsumerThread;
+    private readonly AutoResetEvent Event = new(false);
+    private readonly ConcurrentQueue<T> DataQueue = new();
+    private readonly CallbackDelegate Callback;
+    private readonly string Name;
 
-	internal ConcurrentConsumer(string name, CallbackDelegate callback) {
-		Name = name;
-		Callback = callback;
+    internal ConcurrentConsumer(string name, CallbackDelegate callback) {
+        Name = name;
+        Callback = callback;
 
-		ConsumerThread = new(Loop) {
-			Name = $"ConcurrentConsumer '{name}' Thread",
-			Priority = ThreadPriority.BelowNormal,
-			IsBackground = true
-		};
-		ConsumerThread.Start();
-	}
+        ConsumerThread = new(Loop) {
+            Name = $"ConcurrentConsumer '{name}' Thread",
+            Priority = ThreadPriority.BelowNormal,
+            IsBackground = true
+        };
+        ConsumerThread.Start();
+    }
 
-	internal void Push(in T instance) {
-		DataQueue.Enqueue(instance);
-		Event.Set();
-	}
+    internal void Push(in T instance) {
+        DataQueue.Enqueue(instance);
+        Event.Set();
+    }
 
-	private void Loop() {
-		while (true) {
-			try {
-				Event.WaitOne();
-				while (DataQueue.TryDequeue(out var item)) {
-					try {
-						Callback(item);
-					}
-					catch (Exception ex) {
-						Debug.Error($"Exception during ConcurrentConsumer '{Name}' Loop", ex);
-					}
-				}
-			}
-			catch (ThreadAbortException) {
-				break;
-			}
-			catch (ObjectDisposedException) {
-				break;
-			}
-			catch (AbandonedMutexException) {
-			}
-		}
-	}
+    private void Loop() {
+        while (true) {
+            try {
+                Event.WaitOne();
+                while (DataQueue.TryDequeue(out var item)) {
+                    try {
+                        Callback(item);
+                    }
+                    catch (Exception ex) {
+                        Debug.Error($"Exception during ConcurrentConsumer '{Name}' Loop", ex);
+                    }
+                }
+            }
+            catch (ThreadAbortException) {
+                break;
+            }
+            catch (ObjectDisposedException) {
+                break;
+            }
+            catch (AbandonedMutexException) {
+            }
+        }
+    }
 }

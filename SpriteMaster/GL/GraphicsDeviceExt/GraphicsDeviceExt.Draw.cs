@@ -19,494 +19,494 @@ using System.Threading;
 namespace SpriteMaster.GL;
 
 internal static partial class GraphicsDeviceExt {
-	static GraphicsDeviceExt() {
-		SMConfig.ConfigChanged += OnConfigChanged;
-		OnConfigChanged();
-	}
+    static GraphicsDeviceExt() {
+        SMConfig.ConfigChanged += OnConfigChanged;
+        OnConfigChanged();
+    }
 
-	private static class Enabled {
-		internal static class DrawUserIndexedPrimitives {
-			internal const bool Internal = true;
-			internal static bool BasicInternal = SMConfig.Extras.OpenGL.DrawUserIndexedPrimitives.Optimize;
-			internal static bool AdvancedInternal = SMConfig.Extras.OpenGL.DrawUserIndexedPrimitives.Advanced;
+    private static class Enabled {
+        internal static class DrawUserIndexedPrimitives {
+            internal const bool Internal = true;
+            internal static bool BasicInternal = SMConfig.Extras.OpenGL.DrawUserIndexedPrimitives.Optimize;
+            internal static bool AdvancedInternal = SMConfig.Extras.OpenGL.DrawUserIndexedPrimitives.Advanced;
 
-			internal static bool Basic =
-				Internal && BasicInternal;
+            internal static bool Basic =
+                Internal && BasicInternal;
 
-			// ReSharper disable once MemberHidesStaticFromOuterClass
-			internal static bool Enabled = Basic;
+            // ReSharper disable once MemberHidesStaticFromOuterClass
+            internal static bool Enabled = Basic;
 
 #if ENABLE_VBO
 			internal static bool VertexBufferObjects = SMConfig.Extras.OpenGL.DrawUserIndexedPrimitives.UseVertexBufferObjects;
 #else
-			internal const bool VertexBufferObjects = false;
+            internal const bool VertexBufferObjects = false;
 #endif
-			internal static bool IndexBufferObjects = SMConfig.Extras.OpenGL.DrawUserIndexedPrimitives.UseIndexBufferObjects;
-		}
-	}
+            internal static bool IndexBufferObjects = SMConfig.Extras.OpenGL.DrawUserIndexedPrimitives.UseIndexBufferObjects;
+        }
+    }
 
-	internal static unsafe class SpriteBatcherValues {
-		internal static int MaxBatchSize = (int) typeof(SpriteBatcher).GetField("MaxBatchSize", BindingFlags.Static | BindingFlags.NonPublic)?.GetValue(null); //6000;//5461;
-		internal static int MaxIndicesCount = MaxBatchSize * 6;
-		internal static readonly short[] Indices16 = GC.AllocateUninitializedArray<short>(MaxIndicesCount);
+    internal static unsafe class SpriteBatcherValues {
+        internal static int MaxBatchSize = (int)typeof(SpriteBatcher).GetField("MaxBatchSize", BindingFlags.Static | BindingFlags.NonPublic)?.GetValue(null); //6000;//5461;
+        internal static int MaxIndicesCount = MaxBatchSize * 6;
+        internal static readonly short[] Indices16 = GC.AllocateUninitializedArray<short>(MaxIndicesCount);
 
-		internal static readonly Lazy<GLExt.ObjectId> IndexBuffer16 = new(() => GetIndexBuffer(Indices16), mode: LazyThreadSafetyMode.None);
+        internal static readonly Lazy<GLExt.ObjectId> IndexBuffer16 = new(() => GetIndexBuffer(Indices16), mode: LazyThreadSafetyMode.None);
 
-		// Creates an OpenGL index buffer object given the provided data.
-		private static GLExt.ObjectId GetIndexBuffer<T>(T[] data) where T : unmanaged {
-			try {
-				MonoGame.OpenGL.GL.GenBuffers(1, out int indexBuffer);
-				GraphicsExtensions.CheckGLError();
-				MonoGame.OpenGL.GL.BindBuffer(BufferTarget.ElementArrayBuffer, indexBuffer);
-				GraphicsExtensions.CheckGLError();
-				fixed (T* ptr = data) {
-					MonoGame.OpenGL.GL.BufferData(
-						BufferTarget.ElementArrayBuffer,
-						(nint)data.Length * sizeof(T),
-						(nint)ptr,
-						BufferUsageHint.StaticDraw
-					);
-				}
+        // Creates an OpenGL index buffer object given the provided data.
+        private static GLExt.ObjectId GetIndexBuffer<T>(T[] data) where T : unmanaged {
+            try {
+                MonoGame.OpenGL.GL.GenBuffers(1, out int indexBuffer);
+                GraphicsExtensions.CheckGLError();
+                MonoGame.OpenGL.GL.BindBuffer(BufferTarget.ElementArrayBuffer, indexBuffer);
+                GraphicsExtensions.CheckGLError();
+                fixed (T* ptr = data) {
+                    MonoGame.OpenGL.GL.BufferData(
+                        BufferTarget.ElementArrayBuffer,
+                        (nint)data.Length * sizeof(T),
+                        (nint)ptr,
+                        BufferUsageHint.StaticDraw
+                    );
+                }
 
-				GraphicsExtensions.CheckGLError();
+                GraphicsExtensions.CheckGLError();
 
-				return (GLExt.ObjectId)indexBuffer;
-			}
-			catch (Exception) {
-				return GLExt.ObjectId.None;
-			}
-		}
+                return (GLExt.ObjectId)indexBuffer;
+            }
+            catch (Exception) {
+                return GLExt.ObjectId.None;
+            }
+        }
 
-		// Returns the greatest array index possible given the number of elements.
-		// We know that the 4th offset of each element (which is two triangles, 6 indices total) is the greatest,
-		// so we can rapidly calculate a value based upon that assumption.
-		internal static uint GetMaxArrayIndex(uint numElements, uint offset) {
-			if (numElements == 0u) {
-				return 0u;
-			}
+        // Returns the greatest array index possible given the number of elements.
+        // We know that the 4th offset of each element (which is two triangles, 6 indices total) is the greatest,
+        // so we can rapidly calculate a value based upon that assumption.
+        internal static uint GetMaxArrayIndex(uint numElements, uint offset) {
+            if (numElements == 0u) {
+                return 0u;
+            }
 
-			if (offset != 0) {
-				numElements += offset / 6;
-				offset %= 6;
-				if (offset > 4) {
-					++numElements;
-				}
-			}
+            if (offset != 0) {
+                numElements += offset / 6;
+                offset %= 6;
+                if (offset > 4) {
+                    ++numElements;
+                }
+            }
 
-			// 1 == 2
-			// 2 == 3
-			// 3 == 6
-			// 4 == 7
-			// 5 == 10
-			// 6 == 11
+            // 1 == 2
+            // 2 == 3
+            // 3 == 6
+            // 4 == 7
+            // 5 == 10
+            // 6 == 11
 
-			uint adjustand = ((numElements & 1u) == 0u).ToUInt();
+            uint adjustand = ((numElements & 1u) == 0u).ToUInt();
 
-			return ((numElements - adjustand) * 2u) + adjustand;
-		}
+            return ((numElements - adjustand) * 2u) + adjustand;
+        }
 
-		internal static uint GetMinArrayIndex(uint offset) {
-			if (offset == 0u) {
-				return 0u;
-			}
+        internal static uint GetMinArrayIndex(uint offset) {
+            if (offset == 0u) {
+                return 0u;
+            }
 
-			// 0 1 2
-			// 1 3 2
-			// 4 5 6
-			// 5 7 6
-			// 8 9 10
-			// 9 11 10
+            // 0 1 2
+            // 1 3 2
+            // 4 5 6
+            // 5 7 6
+            // 8 9 10
+            // 9 11 10
 
-			uint subOffsetMod = offset % 6u;
-			uint subOffsetDiv = offset / 6u;
-			if (subOffsetMod < 3u) {
-				return (subOffsetDiv * 4u) + subOffsetMod;
-			}
-			else {
-				return (subOffsetDiv * 4u) + subOffsetMod switch {
-					3u => 1u,
-					4u => 3u,
-					5u => 2u
-				};
-			}
-		}
+            uint subOffsetMod = offset % 6u;
+            uint subOffsetDiv = offset / 6u;
+            if (subOffsetMod < 3u) {
+                return (subOffsetDiv * 4u) + subOffsetMod;
+            }
+            else {
+                return (subOffsetDiv * 4u) + subOffsetMod switch {
+                    3u => 1u,
+                    4u => 3u,
+                    5u => 2u
+                };
+            }
+        }
 
-		static SpriteBatcherValues() {
-			fixed (short* ptr16 = Indices16) {
-				for (uint i = 0, indexOffset = 0; i < MaxBatchSize; ++i, indexOffset += 6u) {
-					uint index0 = i * 4u;
-					uint index1 = index0 + 1u;
-					uint index2 = index0 + 2u;
-					uint index3 = index0 + 1u;
-					uint index4 = index0 + 3u;
-					uint index5 = index0 + 2u;
+        static SpriteBatcherValues() {
+            fixed (short* ptr16 = Indices16) {
+                for (uint i = 0, indexOffset = 0; i < MaxBatchSize; ++i, indexOffset += 6u) {
+                    uint index0 = i * 4u;
+                    uint index1 = index0 + 1u;
+                    uint index2 = index0 + 2u;
+                    uint index3 = index0 + 1u;
+                    uint index4 = index0 + 3u;
+                    uint index5 = index0 + 2u;
 
-					ptr16[indexOffset + 0u] = (short)(ushort)index0;
-					ptr16[indexOffset + 1u] = (short)(ushort)index1;
-					ptr16[indexOffset + 2u] = (short)(ushort)index2;
-					ptr16[indexOffset + 3u] = (short)(ushort)index3;
-					ptr16[indexOffset + 4u] = (short)(ushort)index4;
-					ptr16[indexOffset + 5u] = (short)(ushort)index5;
-				}
-			}
-		}
-	}
+                    ptr16[indexOffset + 0u] = (short)(ushort)index0;
+                    ptr16[indexOffset + 1u] = (short)(ushort)index1;
+                    ptr16[indexOffset + 2u] = (short)(ushort)index2;
+                    ptr16[indexOffset + 3u] = (short)(ushort)index3;
+                    ptr16[indexOffset + 4u] = (short)(ushort)index4;
+                    ptr16[indexOffset + 5u] = (short)(ushort)index5;
+                }
+            }
+        }
+    }
 
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static GLPrimitiveType GetGl(this PrimitiveType primitiveType) =>
-		primitiveType switch {
-			PrimitiveType.TriangleList => GLPrimitiveType.Triangles,
-			PrimitiveType.TriangleStrip => GLPrimitiveType.TriangleStrip,
-			PrimitiveType.LineList => GLPrimitiveType.Lines,
-			PrimitiveType.LineStrip => GLPrimitiveType.LineStrip,
-			_ => ThrowHelper.ThrowArgumentException<GLPrimitiveType>(primitiveType.ToString(), nameof(primitiveType))
-		};
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static GLPrimitiveType GetGl(this PrimitiveType primitiveType) =>
+        primitiveType switch {
+            PrimitiveType.TriangleList => GLPrimitiveType.Triangles,
+            PrimitiveType.TriangleStrip => GLPrimitiveType.TriangleStrip,
+            PrimitiveType.LineList => GLPrimitiveType.Lines,
+            PrimitiveType.LineStrip => GLPrimitiveType.LineStrip,
+            _ => ThrowHelper.ThrowArgumentException<GLPrimitiveType>(primitiveType.ToString(), nameof(primitiveType))
+        };
 
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static uint GetElementCountArray(this PrimitiveType primitiveType, uint primitiveCount) =>
-		primitiveType switch {
-			PrimitiveType.TriangleList => primitiveCount * 3u,
-			PrimitiveType.TriangleStrip => primitiveCount + 2u,
-			PrimitiveType.LineList => primitiveCount * 2u,
-			PrimitiveType.LineStrip => primitiveCount + 1,
-			_ => ThrowHelper.ThrowNotSupportedException<uint>(primitiveType.ToString())
-		};
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static uint GetElementCountArray(this PrimitiveType primitiveType, uint primitiveCount) =>
+        primitiveType switch {
+            PrimitiveType.TriangleList => primitiveCount * 3u,
+            PrimitiveType.TriangleStrip => primitiveCount + 2u,
+            PrimitiveType.LineList => primitiveCount * 2u,
+            PrimitiveType.LineStrip => primitiveCount + 1,
+            _ => ThrowHelper.ThrowNotSupportedException<uint>(primitiveType.ToString())
+        };
 
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static GLExt.ValueType GetExpensiveIndexType(GLExt.ValueType value) {
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static GLExt.ValueType GetExpensiveIndexType(GLExt.ValueType value) {
 #if SHIPPING
 		Debug.WarningOnce($"Expensive Index Type queried: {value}");
 #endif
-		return value;
-	}
+        return value;
+    }
 
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static unsafe GLExt.ValueType GetIndexType<TIndex>() where TIndex : unmanaged =>
-		sizeof(TIndex) switch {
-			1 => GetExpensiveIndexType(GLExt.ValueType.UnsignedByte),
-			2 => GLExt.ValueType.UnsignedShort,
-			4 => GLExt.ValueType.UnsignedInt,
-			_ => ThrowHelper.ThrowArgumentException<GLExt.ValueType>(nameof(TIndex))
-		};
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static unsafe GLExt.ValueType GetIndexType<TIndex>() where TIndex : unmanaged =>
+        sizeof(TIndex) switch {
+            1 => GetExpensiveIndexType(GLExt.ValueType.UnsignedByte),
+            2 => GLExt.ValueType.UnsignedShort,
+            4 => GLExt.ValueType.UnsignedInt,
+            _ => ThrowHelper.ThrowArgumentException<GLExt.ValueType>(nameof(TIndex))
+        };
 
-	private static uint EnabledAttributeBitmask = GetEnabledAttributeBitmask();
+    private static uint EnabledAttributeBitmask = GetEnabledAttributeBitmask();
 
-	// Gets a bitmask from the current MonoGame enabledVertexAttributes list.
-	private static uint GetEnabledAttributeBitmask() {
-		uint bitmask = 0u;
-		foreach (var attribute in GraphicsDevice._enabledVertexAttributes) {
-			bitmask |= 1u << attribute;
-		}
+    // Gets a bitmask from the current MonoGame enabledVertexAttributes list.
+    private static uint GetEnabledAttributeBitmask() {
+        uint bitmask = 0u;
+        foreach (var attribute in GraphicsDevice._enabledVertexAttributes) {
+            bitmask |= 1u << attribute;
+        }
 
-		return bitmask;
-	}
+        return bitmask;
+    }
 
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal static bool SetVertexAttributeArray(GraphicsDevice @this, bool[] attributes) {
-		
-		// Iterate over each attribute, setting the bitmask's bits appropriately for each offset in the array.
-		uint attributeBit = 1u;
-		uint bitmask = 0U;
-		foreach (var flagValue in attributes) {
-			int flag = flagValue.ReinterpretAs<byte>();
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static bool SetVertexAttributeArray(GraphicsDevice @this, bool[] attributes) {
 
-			bitmask |= (uint)-flag & attributeBit;
+        // Iterate over each attribute, setting the bitmask's bits appropriately for each offset in the array.
+        uint attributeBit = 1u;
+        uint bitmask = 0U;
+        foreach (var flagValue in attributes) {
+            int flag = flagValue.ReinterpretAs<byte>();
 
-			attributeBit <<= 1;
-		}
+            bitmask |= (uint)-flag & attributeBit;
 
-		// If the bitmask is different, then attribute enablement has changed - take the slow path.
-		// This is incredibly rare, surprisingly.
-		if (bitmask != EnabledAttributeBitmask) {
-			return SetVertexAttributeArraySlowPath(attributes);
-		}
+            attributeBit <<= 1;
+        }
 
-		return true;
-	}
+        // If the bitmask is different, then attribute enablement has changed - take the slow path.
+        // This is incredibly rare, surprisingly.
+        if (bitmask != EnabledAttributeBitmask) {
+            return SetVertexAttributeArraySlowPath(attributes);
+        }
 
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static bool SetVertexAttributeBitmask(GraphicsDevice @this, uint bitmask, bool[] attributes) {
-		// If the bitmask is different, then attribute enablement has changed - take the slow path.
-		// This is incredibly rare, surprisingly.
-		if (bitmask != EnabledAttributeBitmask) {
-			return SetVertexAttributeArraySlowPath(attributes);
-		}
+        return true;
+    }
 
-		return true;
-	}
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static bool SetVertexAttributeBitmask(GraphicsDevice @this, uint bitmask, bool[] attributes) {
+        // If the bitmask is different, then attribute enablement has changed - take the slow path.
+        // This is incredibly rare, surprisingly.
+        if (bitmask != EnabledAttributeBitmask) {
+            return SetVertexAttributeArraySlowPath(attributes);
+        }
 
-	[MethodImpl(MethodImplOptions.NoInlining)]
-	private static bool SetVertexAttributeArraySlowPath(bool[] attributes) {
-		uint attributeBit = 1u;
-		uint bitmask = EnabledAttributeBitmask;
+        return true;
+    }
 
-		// Iterate over each attribute, compare against the current bitmask, and enable/disable the Vertex Attribute Array as appropriate.
-		for (int attribute = 0; attribute < attributes.Length; ++attribute, attributeBit <<= 1) {
-			bool flagValue = attributes[attribute];
-			int flag = flagValue.ReinterpretAs<byte>();
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    private static bool SetVertexAttributeArraySlowPath(bool[] attributes) {
+        uint attributeBit = 1u;
+        uint bitmask = EnabledAttributeBitmask;
 
-			uint currentValue = bitmask & attributeBit;
-			if (flagValue) {
-				if (currentValue == 0u) {
-					bitmask |= attributeBit;
-					MonoGame.OpenGL.GL.EnableVertexAttribArray(attribute);
-				}
-			}
-			else {
-				if (currentValue != 0u) {
-					bitmask &= ~attributeBit;
-					MonoGame.OpenGL.GL.DisableVertexAttribArray(attribute);
-				}
-			}
+        // Iterate over each attribute, compare against the current bitmask, and enable/disable the Vertex Attribute Array as appropriate.
+        for (int attribute = 0; attribute < attributes.Length; ++attribute, attributeBit <<= 1) {
+            bool flagValue = attributes[attribute];
+            int flag = flagValue.ReinterpretAs<byte>();
 
-			bitmask = (bitmask & ~attributeBit) | ((uint)-flag & attributeBit);
-		}
+            uint currentValue = bitmask & attributeBit;
+            if (flagValue) {
+                if (currentValue == 0u) {
+                    bitmask |= attributeBit;
+                    MonoGame.OpenGL.GL.EnableVertexAttribArray(attribute);
+                }
+            }
+            else {
+                if (currentValue != 0u) {
+                    bitmask &= ~attributeBit;
+                    MonoGame.OpenGL.GL.DisableVertexAttribArray(attribute);
+                }
+            }
 
-		EnabledAttributeBitmask = bitmask;
+            bitmask = (bitmask & ~attributeBit) | ((uint)-flag & attributeBit);
+        }
 
-		// Update the MonoGame enabledVertexAttributes list just in-case something needs it.
-		var list = GraphicsDevice._enabledVertexAttributes;
-		list.Clear();
+        EnabledAttributeBitmask = bitmask;
 
-		// Iterates over the bitmask and adds each offset/index into the list.
-		int index = 0;
-		while (BitOperations.TrailingZeroCount(bitmask) is var shift && shift < 32) {
-			index += shift;
-			bitmask >>= shift + 1;
-			list.Add(index);
-			++index;
-		}
+        // Update the MonoGame enabledVertexAttributes list just in-case something needs it.
+        var list = GraphicsDevice._enabledVertexAttributes;
+        list.Clear();
 
-		return true;
-	}
+        // Iterates over the bitmask and adds each offset/index into the list.
+        int index = 0;
+        while (BitOperations.TrailingZeroCount(bitmask) is var shift && shift < 32) {
+            index += shift;
+            bitmask >>= shift + 1;
+            list.Add(index);
+            ++index;
+        }
 
-	private static int LastProgramHash = int.MinValue;
-	private static VertexDeclaration.VertexDeclarationAttributeInfo? LastAttributeInfo = null;
+        return true;
+    }
 
-	// Their implementation of this already caches using a `Dictionary`, but we can avoid even the overhead of the dictionary lookup
-	// in 99% of cases by just using a simple inline cache like this. This hits almost every time.
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static VertexDeclaration.VertexDeclarationAttributeInfo GetAttributeInfo(VertexDeclaration @this, Shader shader, int programHash) {
-		if (LastProgramHash != programHash || LastAttributeInfo is not {} attributeInfo) {
-			LastAttributeInfo = attributeInfo = @this.GetAttributeInfo(shader, programHash);
-			LastProgramHash = programHash;
-		}
+    private static int LastProgramHash = int.MinValue;
+    private static VertexDeclaration.VertexDeclarationAttributeInfo? LastAttributeInfo = null;
 
-		return attributeInfo;
-	}
+    // Their implementation of this already caches using a `Dictionary`, but we can avoid even the overhead of the dictionary lookup
+    // in 99% of cases by just using a simple inline cache like this. This hits almost every time.
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static VertexDeclaration.VertexDeclarationAttributeInfo GetAttributeInfo(VertexDeclaration @this, Shader shader, int programHash) {
+        if (LastProgramHash != programHash || LastAttributeInfo is not { } attributeInfo) {
+            LastAttributeInfo = attributeInfo = @this.GetAttributeInfo(shader, programHash);
+            LastProgramHash = programHash;
+        }
 
-	private static readonly bool SupportsInstancing = DrawState.Device.GraphicsCapabilities.SupportsInstancing;
+        return attributeInfo;
+    }
 
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static unsafe void VertexDeclarationApply(VertexDeclaration @this, Shader shader, nint offset, int programHash) {
-		VertexDeclaration.VertexDeclarationAttributeInfo attributeInfo = GetAttributeInfo(@this, shader, programHash);
+    private static readonly bool SupportsInstancing = DrawState.Device.GraphicsCapabilities.SupportsInstancing;
 
-		uint vertexStride = (uint)@this.VertexStride;
-		uint bitmask = 0u;
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static unsafe void VertexDeclarationApply(VertexDeclaration @this, Shader shader, nint offset, int programHash) {
+        VertexDeclaration.VertexDeclarationAttributeInfo attributeInfo = GetAttributeInfo(@this, shader, programHash);
 
-		// It's faster to iterate over a list-span than a list itself. Significantly so (about 5x).
-		foreach (var element in attributeInfo.Elements.AsSpan()) {
-			// Call our function pointer version - this is called a lot, so we want reduced overhead.
-			VertexAttribPointerInternal(
-				(uint)element.AttributeLocation,
-				element.NumberOfElements,
-				(GLExt.ValueType)element.VertexAttribPointerType,
-				element.Normalized,
-				vertexStride,
-				offset + element.Offset
-			);
+        uint vertexStride = (uint)@this.VertexStride;
+        uint bitmask = 0u;
 
-			bitmask |= 1u << element.AttributeLocation;
+        // It's faster to iterate over a list-span than a list itself. Significantly so (about 5x).
+        foreach (var element in attributeInfo.Elements.AsSpan()) {
+            // Call our function pointer version - this is called a lot, so we want reduced overhead.
+            VertexAttribPointerInternal(
+                (uint)element.AttributeLocation,
+                element.NumberOfElements,
+                (GLExt.ValueType)element.VertexAttribPointerType,
+                element.Normalized,
+                vertexStride,
+                offset + element.Offset
+            );
 
-			// This allows us to avoid a more complex boolean check every iteration of the loop
-			if (SupportsInstancing) {
-				MonoGame.OpenGL.GL.VertexAttribDivisor(element.AttributeLocation, 0);
-			}
-		}
-		SetVertexAttributeBitmask(@this.GraphicsDevice, bitmask, attributeInfo.EnabledAttributes);
-		GraphicsDevice._attribsDirty = true;
-	}
+            bitmask |= 1u << element.AttributeLocation;
 
-#region BindBufferOverride
+            // This allows us to avoid a more complex boolean check every iteration of the loop
+            if (SupportsInstancing) {
+                MonoGame.OpenGL.GL.VertexAttribDivisor(element.AttributeLocation, 0);
+            }
+        }
+        SetVertexAttributeBitmask(@this.GraphicsDevice, bitmask, attributeInfo.EnabledAttributes);
+        GraphicsDevice._attribsDirty = true;
+    }
 
-	private struct DirtyState {
-		internal uint VertexAttribPointer = uint.MaxValue;
-		internal bool VertexAttribDivisor = true;
+    #region BindBufferOverride
 
-		public DirtyState() {}
-	}
+    private struct DirtyState {
+        internal uint VertexAttribPointer = uint.MaxValue;
+        internal bool VertexAttribDivisor = true;
 
-	private static readonly Dictionary<BufferTarget, GLExt.ObjectId> OtherBufferBindings = new();
-	private static readonly GLExt.ObjectId[] PrimaryBufferBindingsArray = GC.AllocateArray<GLExt.ObjectId>(2, pinned: true);
-	private static readonly unsafe GLExt.ObjectId* PrimaryBufferBindings = PrimaryBufferBindingsArray.GetPointerFromPinned();
-	private static readonly DirtyState[] BufferBindingsDirtyArray = GC.AllocateArray<DirtyState>(2, pinned: true);
-	private static readonly unsafe DirtyState* BufferBindingsDirty = BufferBindingsDirtyArray.GetPointerFromPinned();
+        public DirtyState() { }
+    }
 
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static void BindBufferOverride(BufferTarget target, int obj) =>
-		BindBufferInternal(target, (GLExt.ObjectId)obj);
+    private static readonly Dictionary<BufferTarget, GLExt.ObjectId> OtherBufferBindings = new();
+    private static readonly GLExt.ObjectId[] PrimaryBufferBindingsArray = GC.AllocateArray<GLExt.ObjectId>(2, pinned: true);
+    private static readonly unsafe GLExt.ObjectId* PrimaryBufferBindings = PrimaryBufferBindingsArray.GetPointerFromPinned();
+    private static readonly DirtyState[] BufferBindingsDirtyArray = GC.AllocateArray<DirtyState>(2, pinned: true);
+    private static readonly unsafe DirtyState* BufferBindingsDirty = BufferBindingsDirtyArray.GetPointerFromPinned();
 
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static unsafe void BindBufferInternal(BufferTarget target, GLExt.ObjectId obj) {
-		int offset = (int)target - (int)BufferTarget.ArrayBuffer;
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static void BindBufferOverride(BufferTarget target, int obj) =>
+        BindBufferInternal(target, (GLExt.ObjectId)obj);
 
-		if (offset <= 1) {
-			if (PrimaryBufferBindings[offset] != obj) {
-				PrimaryBufferBindings[offset] = obj;
-				BufferBindingsDirty[offset] = new();
-				GLExt.BindBuffer(target, obj);
-			}
-		}
-		else {
-			BindBufferInternalSlowPath(target, obj);
-		}
-	}
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static unsafe void BindBufferInternal(BufferTarget target, GLExt.ObjectId obj) {
+        int offset = (int)target - (int)BufferTarget.ArrayBuffer;
 
-	[MethodImpl(MethodImplOptions.NoInlining)]
-	private static unsafe void BindBufferInternalSlowPath(BufferTarget target, GLExt.ObjectId obj) {
-		if (OtherBufferBindings.TryGetValue(target, out var boundObj) && boundObj == obj) {
-			return;
-		}
+        if (offset <= 1) {
+            if (PrimaryBufferBindings[offset] != obj) {
+                PrimaryBufferBindings[offset] = obj;
+                BufferBindingsDirty[offset] = new();
+                GLExt.BindBuffer(target, obj);
+            }
+        }
+        else {
+            BindBufferInternalSlowPath(target, obj);
+        }
+    }
 
-		OtherBufferBindings[target] = obj;
-		GLExt.BindBuffer(target, obj);
-	}
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    private static unsafe void BindBufferInternalSlowPath(BufferTarget target, GLExt.ObjectId obj) {
+        if (OtherBufferBindings.TryGetValue(target, out var boundObj) && boundObj == obj) {
+            return;
+        }
 
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static unsafe bool BindBufferInternalResult(GraphicsDevice device, BufferTarget target, GLExt.ObjectId obj) {
-		int offset = (int)target - (int)BufferTarget.ArrayBuffer;
+        OtherBufferBindings[target] = obj;
+        GLExt.BindBuffer(target, obj);
+    }
 
-		if (PrimaryBufferBindings[offset] == obj && device.Indices is null) {
-			return false;
-		}
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static unsafe bool BindBufferInternalResult(GraphicsDevice device, BufferTarget target, GLExt.ObjectId obj) {
+        int offset = (int)target - (int)BufferTarget.ArrayBuffer;
 
-		PrimaryBufferBindings[offset] = obj;
-		BufferBindingsDirty[offset] = new();
-		GLExt.BindBuffer(target, obj);
-		return true;
+        if (PrimaryBufferBindings[offset] == obj && device.Indices is null) {
+            return false;
+        }
 
-	}
+        PrimaryBufferBindings[offset] = obj;
+        BufferBindingsDirty[offset] = new();
+        GLExt.BindBuffer(target, obj);
+        return true;
 
-#endregion
+    }
 
-#region VertexAttributeDivisor
+    #endregion
 
-	private static readonly Lazy<int> MaxVertexAttributes = new(
-		() => {
-			MonoGame.OpenGL.GL.GetInteger((int)MonoGame.OpenGL.GetPName.MaxVertexAttribs, out int value);
-			return value;
-		}
-	);
+    #region VertexAttributeDivisor
 
-	private static readonly uint[] VertexAttribDivisorsArray = GC.AllocateArray<uint>(MaxVertexAttributes.Value, pinned: true);
-	private static readonly unsafe uint* VertexAttribDivisors = VertexAttribDivisorsArray.GetPointerFromPinned();
+    private static readonly Lazy<int> MaxVertexAttributes = new(
+        () => {
+            MonoGame.OpenGL.GL.GetInteger((int)MonoGame.OpenGL.GetPName.MaxVertexAttribs, out int value);
+            return value;
+        }
+    );
 
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static unsafe void VertexAttribDivisorOverride(int index, int divisor) {
-		uint uDivisor = (uint)divisor;
-		
-		if (BufferBindingsDirty[0].VertexAttribDivisor || VertexAttribDivisors[index] != uDivisor) {
-			BufferBindingsDirty[0].VertexAttribDivisor = false;
-			VertexAttribDivisors[index] = uDivisor;
+    private static readonly uint[] VertexAttribDivisorsArray = GC.AllocateArray<uint>(MaxVertexAttributes.Value, pinned: true);
+    private static readonly unsafe uint* VertexAttribDivisors = VertexAttribDivisorsArray.GetPointerFromPinned();
 
-			GLExt.VertexAttribDivisor((uint)index, uDivisor);
-		}
-	}
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static unsafe void VertexAttribDivisorOverride(int index, int divisor) {
+        uint uDivisor = (uint)divisor;
 
-#endregion
+        if (BufferBindingsDirty[0].VertexAttribDivisor || VertexAttribDivisors[index] != uDivisor) {
+            BufferBindingsDirty[0].VertexAttribDivisor = false;
+            VertexAttribDivisors[index] = uDivisor;
 
-#region VertexAttributePointer
+            GLExt.VertexAttribDivisor((uint)index, uDivisor);
+        }
+    }
 
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static void VertexAttribPointerOverride(
-		int location,
-		int elementCount,
-		VertexAttribPointerType type,
-		bool normalize,
-		int stride,
-		IntPtr data
-	) {
-		VertexAttribPointerInternal(
-			(uint)location,
-			elementCount,
-			(GLExt.ValueType)type,
-			normalize,
-			(uint)stride,
-			data
-		);
-	}
+    #endregion
 
-	[StructLayout(LayoutKind.Sequential, Pack = 4)]
-	private readonly record struct AttributePointer(
-		nint Data,							// 8
-		int ElementCount,				// 12
-		GLExt.ValueType Type,		// 16
-		uint Stride,						// 20
-		bool Normalize					// 21 (24)
-	) {
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		internal unsafe bool FastEquals(in AttributePointer other) {
-			ulong* thisPtr = (ulong*)Unsafe.AsPointer(ref Unsafe.AsRef(this));
-			ulong* otherPtr = (ulong*)Unsafe.AsPointer(ref Unsafe.AsRef(other));
+    #region VertexAttributePointer
 
-			return
-				thisPtr[0] == otherPtr[0] &&
-				thisPtr[1] == otherPtr[1] &&
-				thisPtr[2] == otherPtr[2];
-		}
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static void VertexAttribPointerOverride(
+        int location,
+        int elementCount,
+        VertexAttribPointerType type,
+        bool normalize,
+        int stride,
+        IntPtr data
+    ) {
+        VertexAttribPointerInternal(
+            (uint)location,
+            elementCount,
+            (GLExt.ValueType)type,
+            normalize,
+            (uint)stride,
+            data
+        );
+    }
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		internal unsafe bool FastEqualsBr(in AttributePointer other) {
-			ulong* thisPtr = (ulong*)Unsafe.AsPointer(ref Unsafe.AsRef(this));
-			ulong* otherPtr = (ulong*)Unsafe.AsPointer(ref Unsafe.AsRef(other));
+    [StructLayout(LayoutKind.Sequential, Pack = 4)]
+    private readonly record struct AttributePointer(
+        nint Data,                          // 8
+        int ElementCount,               // 12
+        GLExt.ValueType Type,       // 16
+        uint Stride,                        // 20
+        bool Normalize                  // 21 (24)
+    ) {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal unsafe bool FastEquals(in AttributePointer other) {
+            ulong* thisPtr = (ulong*)Unsafe.AsPointer(ref Unsafe.AsRef(this));
+            ulong* otherPtr = (ulong*)Unsafe.AsPointer(ref Unsafe.AsRef(other));
 
-			return
-				(thisPtr[0] == otherPtr[0]) &
-				(thisPtr[1] == otherPtr[1]) &
-				(thisPtr[2] == otherPtr[2]);
-		}
-	};
+            return
+                thisPtr[0] == otherPtr[0] &&
+                thisPtr[1] == otherPtr[1] &&
+                thisPtr[2] == otherPtr[2];
+        }
 
-	private static readonly AttributePointer[] VertexAttributePointersArray = GC.AllocateArray<AttributePointer>(MaxVertexAttributes.Value, pinned: true);
-	private static readonly unsafe AttributePointer* VertexAttributePointers = VertexAttributePointersArray.GetPointerFromPinned();
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal unsafe bool FastEqualsBr(in AttributePointer other) {
+            ulong* thisPtr = (ulong*)Unsafe.AsPointer(ref Unsafe.AsRef(this));
+            ulong* otherPtr = (ulong*)Unsafe.AsPointer(ref Unsafe.AsRef(other));
 
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static unsafe void VertexAttribPointerInternal(
-		uint location,
-		int elementCount,
-		GLExt.ValueType type,
-		bool normalize,
-		uint stride,
-		nint data
-	) {
-		var currentAttributePointer = new AttributePointer(data, elementCount, type, stride, normalize);
-		var attributePointer = VertexAttributePointers + location;
-		if (!BufferBindingsDirty[0].VertexAttribPointer.GetBit((int)location) && currentAttributePointer.FastEquals(*attributePointer)) {
-			return;
-		}
+            return
+                (thisPtr[0] == otherPtr[0]) &
+                (thisPtr[1] == otherPtr[1]) &
+                (thisPtr[2] == otherPtr[2]);
+        }
+    };
 
-		BufferBindingsDirty[0].VertexAttribPointer.ClearBit((int)location);
+    private static readonly AttributePointer[] VertexAttributePointersArray = GC.AllocateArray<AttributePointer>(MaxVertexAttributes.Value, pinned: true);
+    private static readonly unsafe AttributePointer* VertexAttributePointers = VertexAttributePointersArray.GetPointerFromPinned();
 
-		*attributePointer = currentAttributePointer;
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static unsafe void VertexAttribPointerInternal(
+        uint location,
+        int elementCount,
+        GLExt.ValueType type,
+        bool normalize,
+        uint stride,
+        nint data
+    ) {
+        var currentAttributePointer = new AttributePointer(data, elementCount, type, stride, normalize);
+        var attributePointer = VertexAttributePointers + location;
+        if (!BufferBindingsDirty[0].VertexAttribPointer.GetBit((int)location) && currentAttributePointer.FastEquals(*attributePointer)) {
+            return;
+        }
 
-		GLExt.VertexAttribPointer(
-			location,
-			elementCount,
-			type,
-			normalize,
-			stride,
-			data
-		);
-	}
+        BufferBindingsDirty[0].VertexAttribPointer.ClearBit((int)location);
 
-#endregion
+        *attributePointer = currentAttributePointer;
 
-	private const uint MaxSpriteBatchCount = 5461 * 4u;
-	private const uint MaxSequentialBufferCount = MaxSpriteBatchCount * 64u;
+        GLExt.VertexAttribPointer(
+            location,
+            elementCount,
+            type,
+            normalize,
+            stride,
+            data
+        );
+    }
 
-	private static GLExt.ObjectId MakeTransientVertexBuffer() {
+    #endregion
+
+    private const uint MaxSpriteBatchCount = 5461 * 4u;
+    private const uint MaxSequentialBufferCount = MaxSpriteBatchCount * 64u;
+
+    private static GLExt.ObjectId MakeTransientVertexBuffer() {
 #if !ENABLE_VBO
-		return GLExt.ObjectId.None;
+        return GLExt.ObjectId.None;
 #else
 		try {
 			MonoGame.OpenGL.GL.GenBuffers(1, out int vertexBuffer);
@@ -551,7 +551,7 @@ internal static partial class GraphicsDeviceExt {
 			return GLExt.ObjectId.None;
 		}
 #endif
-	}
+    }
 
 #if ENABLE_VBO
 	private static readonly Lazy<GLExt.ObjectId> TransientVertexBuffer = new(MakeTransientVertexBuffer);
@@ -571,25 +571,25 @@ internal static partial class GraphicsDeviceExt {
 	private static GLExt.ObjectId CurrentTransientVertexBufferMulti => TransientVertexBufferMulti.Value[CurrentVertexBufferMultiIndex++ % MultiBuffers];
 #endif
 
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static void ApplyVertexDeclaration(
-		GraphicsDevice @this,
-		VertexDeclaration declaration,
-		nint vertexPointer
-	) {
-		// Setup the vertex declaration to point at the VB data.
-		declaration.GraphicsDevice = @this;
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static void ApplyVertexDeclaration(
+        GraphicsDevice @this,
+        VertexDeclaration declaration,
+        nint vertexPointer
+    ) {
+        // Setup the vertex declaration to point at the VB data.
+        declaration.GraphicsDevice = @this;
 
-		var hash = typeof(GraphicsDevice).GetProperty("ShaderProgramHash", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(@this);
+        var hash = typeof(GraphicsDevice).GetProperty("ShaderProgramHash", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(@this);
 
-		// Use our optimized version.
-		VertexDeclarationApply(
-			declaration,
-			shader: @this.VertexShader,
-			offset: vertexPointer,
-			programHash: hash == null? 0: (int) hash
-		);
-	}
+        // Use our optimized version.
+        VertexDeclarationApply(
+            declaration,
+            shader: @this.VertexShader,
+            offset: vertexPointer,
+            programHash: hash == null ? 0 : (int)hash
+        );
+    }
 
 #if ENABLE_VBO
 	private enum VBType {
@@ -713,10 +713,10 @@ internal static partial class GraphicsDeviceExt {
 	}
 #endif
 
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static GLExt.ObjectId GetTransientVertexBuffer() {
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static GLExt.ObjectId GetTransientVertexBuffer() {
 #if !ENABLE_VBO
-		return GLExt.ObjectId.None;
+        return GLExt.ObjectId.None;
 #else
 #if ENABLE_VBO_MULTI
 		if (VBOType is (VBType.BufferDataMulti or VBType.BufferSubDataFullMulti)) {
@@ -728,257 +728,257 @@ internal static partial class GraphicsDeviceExt {
 			return TransientVertexBuffer.Value;
 		}
 #endif
-	}
+    }
 
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal static unsafe bool DrawUserIndexedPrimitives<TVertex, TIndex>(
-		GraphicsDevice @this,
-		PrimitiveType primitiveType,
-		TVertex[] vertexData,
-		int vertexOffset,
-		int numVertices,
-		TIndex[] indexData,
-		int indexOffset,
-		int primitiveCount,
-		VertexDeclaration vertexDeclaration
-	) where TVertex : unmanaged where TIndex : unmanaged {
-		if (Enabled.DrawUserIndexedPrimitives.Basic) {
-			return DrawUserIndexedPrimitivesBasic(
-				@this,
-				primitiveType,
-				vertexData,
-				vertexOffset,
-				numVertices,
-				indexData,
-				(uint)indexOffset,
-				(uint)primitiveCount,
-				vertexDeclaration
-			);
-		}
-		else {
-			return DrawUserIndexedPrimitivesAdvanced(
-				@this,
-				primitiveType,
-				vertexData,
-				vertexOffset,
-				numVertices,
-				indexData,
-				(uint)indexOffset,
-				(uint)primitiveCount,
-				vertexDeclaration
-			);
-		}
-	}
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static unsafe bool DrawUserIndexedPrimitives<TVertex, TIndex>(
+        GraphicsDevice @this,
+        PrimitiveType primitiveType,
+        TVertex[] vertexData,
+        int vertexOffset,
+        int numVertices,
+        TIndex[] indexData,
+        int indexOffset,
+        int primitiveCount,
+        VertexDeclaration vertexDeclaration
+    ) where TVertex : unmanaged where TIndex : unmanaged {
+        if (Enabled.DrawUserIndexedPrimitives.Basic) {
+            return DrawUserIndexedPrimitivesBasic(
+                @this,
+                primitiveType,
+                vertexData,
+                vertexOffset,
+                numVertices,
+                indexData,
+                (uint)indexOffset,
+                (uint)primitiveCount,
+                vertexDeclaration
+            );
+        }
+        else {
+            return DrawUserIndexedPrimitivesAdvanced(
+                @this,
+                primitiveType,
+                vertexData,
+                vertexOffset,
+                numVertices,
+                indexData,
+                (uint)indexOffset,
+                (uint)primitiveCount,
+                vertexDeclaration
+            );
+        }
+    }
 
-	private static unsafe bool DrawUserIndexedPrimitivesBasic<TVertex, TIndex>(
-		GraphicsDevice @this,
-		PrimitiveType primitiveType,
-		TVertex[] vertexData,
-		int vertexOffset,
-		int numVertices,
-		TIndex[] indexData,
-		uint indexOffset,
-		uint primitiveCount,
-		VertexDeclaration vertexDeclaration
-	) where TVertex : unmanaged where TIndex : unmanaged {
-		++DrawState.Statistics.DrawCalls;
+    private static unsafe bool DrawUserIndexedPrimitivesBasic<TVertex, TIndex>(
+        GraphicsDevice @this,
+        PrimitiveType primitiveType,
+        TVertex[] vertexData,
+        int vertexOffset,
+        int numVertices,
+        TIndex[] indexData,
+        uint indexOffset,
+        uint primitiveCount,
+        VertexDeclaration vertexDeclaration
+    ) where TVertex : unmanaged where TIndex : unmanaged {
+        ++DrawState.Statistics.DrawCalls;
 
-		if (!Enabled.DrawUserIndexedPrimitives.Enabled) {
-			return false;
-		}
+        if (!Enabled.DrawUserIndexedPrimitives.Enabled) {
+            return false;
+        }
 
-		try {
-			// TODO : This can be optimized as well - lots of interdependant booleans.
-			@this.ApplyState(true);
+        try {
+            // TODO : This can be optimized as well - lots of interdependant booleans.
+            @this.ApplyState(true);
 
-			GLExt.BindBuffer(BufferTarget.ArrayBuffer, 0);
-			GLExt.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
-			@this.Indices = @this.Indices;
+            GLExt.BindBuffer(BufferTarget.ArrayBuffer, 0);
+            GLExt.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
+            @this.Indices = @this.Indices;
 
-			var hash = typeof(GraphicsDevice).GetProperty("ShaderProgramHash", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(@this);
+            var hash = typeof(GraphicsDevice).GetProperty("ShaderProgramHash", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(@this);
 
-			fixed (TVertex* vertexPtr = vertexData) {
-				fixed (TIndex* indexPtr = indexData) {
-					nint offset = (nint)vertexPtr + (vertexDeclaration.VertexStride * vertexOffset);
-					vertexDeclaration.GraphicsDevice = @this;
-					vertexDeclaration.Apply(@this.VertexShader, offset, hash == null? 0: (int) hash);
-					GLExt.DrawElements(
-						primitiveType.GetGl(),
-						primitiveType.GetElementCountArray(primitiveCount),
-						sizeof(TIndex) == 2 ? GLExt.ValueType.UnsignedShort : GLExt.ValueType.UnsignedInt,
-						(nint)indexPtr + ((nint)indexOffset * sizeof(TIndex))
-					);
-				}
-			}
-		}
-		catch (Exception ex) when (ex is MemberAccessException or MonoGameGLException) {
-			Debug.Error($"Disabling OpenGL DrawUserIndexedPrimitives Basic Optimizations due to exception", ex);
-			Enabled.DrawUserIndexedPrimitives.BasicInternal = false;
-			OnConfigChanged();
-			return false;
-		}
+            fixed (TVertex* vertexPtr = vertexData) {
+                fixed (TIndex* indexPtr = indexData) {
+                    nint offset = (nint)vertexPtr + (vertexDeclaration.VertexStride * vertexOffset);
+                    vertexDeclaration.GraphicsDevice = @this;
+                    vertexDeclaration.Apply(@this.VertexShader, offset, hash == null ? 0 : (int)hash);
+                    GLExt.DrawElements(
+                        primitiveType.GetGl(),
+                        primitiveType.GetElementCountArray(primitiveCount),
+                        sizeof(TIndex) == 2 ? GLExt.ValueType.UnsignedShort : GLExt.ValueType.UnsignedInt,
+                        (nint)indexPtr + ((nint)indexOffset * sizeof(TIndex))
+                    );
+                }
+            }
+        }
+        catch (Exception ex) when (ex is MemberAccessException or MonoGameGLException) {
+            Debug.Error($"Disabling OpenGL DrawUserIndexedPrimitives Basic Optimizations due to exception", ex);
+            Enabled.DrawUserIndexedPrimitives.BasicInternal = false;
+            OnConfigChanged();
+            return false;
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static unsafe (GLExt.ObjectId Vbo, GLExt.ObjectId Ibo, bool IsSpriteBatcher) GetBufferObjects<TIndex>(TIndex[] indexData)
-		where TIndex : unmanaged {
-		bool isSpriteBatcher = sizeof(TIndex) == 2 && ReferenceEquals(indexData, SpriteBatcherValues.Indices16);
-		if (isSpriteBatcher) {
-			return (
-				Enabled.DrawUserIndexedPrimitives.VertexBufferObjects ? GetTransientVertexBuffer() : GLExt.ObjectId.None,
-				Enabled.DrawUserIndexedPrimitives.IndexBufferObjects ? SpriteBatcherValues.IndexBuffer16.Value : GLExt.ObjectId.None,
-				isSpriteBatcher
-			);
-		}
-		else {
-			return (
-				default,
-				default,
-				isSpriteBatcher
-			);
-		}
-	}
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static unsafe (GLExt.ObjectId Vbo, GLExt.ObjectId Ibo, bool IsSpriteBatcher) GetBufferObjects<TIndex>(TIndex[] indexData)
+        where TIndex : unmanaged {
+        bool isSpriteBatcher = sizeof(TIndex) == 2 && ReferenceEquals(indexData, SpriteBatcherValues.Indices16);
+        if (isSpriteBatcher) {
+            return (
+                Enabled.DrawUserIndexedPrimitives.VertexBufferObjects ? GetTransientVertexBuffer() : GLExt.ObjectId.None,
+                Enabled.DrawUserIndexedPrimitives.IndexBufferObjects ? SpriteBatcherValues.IndexBuffer16.Value : GLExt.ObjectId.None,
+                isSpriteBatcher
+            );
+        }
+        else {
+            return (
+                default,
+                default,
+                isSpriteBatcher
+            );
+        }
+    }
 
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static unsafe (uint Min, uint Max) GetIndexRange<TIndex>(
-		TIndex[] indexData,
-		uint offset,
-		uint count
-	) where TIndex : unmanaged {
-		uint minIndex = (sizeof(TIndex) == 2) ? ushort.MaxValue : uint.MaxValue;
-		uint maxIndex = 0;
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static unsafe (uint Min, uint Max) GetIndexRange<TIndex>(
+        TIndex[] indexData,
+        uint offset,
+        uint count
+    ) where TIndex : unmanaged {
+        uint minIndex = (sizeof(TIndex) == 2) ? ushort.MaxValue : uint.MaxValue;
+        uint maxIndex = 0;
 
-		uint maxOffset = offset + count;
+        uint maxOffset = offset + count;
 
-		for (uint i = offset; i < maxOffset; ++i) {
-			var index = (ushort)(short)(object)indexData[i];
+        for (uint i = offset; i < maxOffset; ++i) {
+            var index = (ushort)(short)(object)indexData[i];
 
-			minIndex = Math.Min(minIndex, index);
-			maxIndex = Math.Max(maxIndex, index);
-		}
+            minIndex = Math.Min(minIndex, index);
+            maxIndex = Math.Max(maxIndex, index);
+        }
 
-		return (minIndex, maxIndex);
-	}
+        return (minIndex, maxIndex);
+    }
 
-	[Conditional("CHECK_DRAW_RANGE_ELEMENTS")]
-	private static void CheckRangeElements<TIndex>(
-		uint primitiveCount,
-		uint elementCount,
-		uint indexOffset,
-		bool ranged,
-		TIndex[] indexData
-	) where TIndex : unmanaged {
-		if (!ranged) {
-			return;
-		}
+    [Conditional("CHECK_DRAW_RANGE_ELEMENTS")]
+    private static void CheckRangeElements<TIndex>(
+        uint primitiveCount,
+        uint elementCount,
+        uint indexOffset,
+        bool ranged,
+        TIndex[] indexData
+    ) where TIndex : unmanaged {
+        if (!ranged) {
+            return;
+        }
 
-		var maxCalcIndex = SpriteBatcherValues.GetMaxArrayIndex(primitiveCount, indexOffset);
-		var minCalcIndex = SpriteBatcherValues.GetMinArrayIndex(indexOffset);
+        var maxCalcIndex = SpriteBatcherValues.GetMaxArrayIndex(primitiveCount, indexOffset);
+        var minCalcIndex = SpriteBatcherValues.GetMinArrayIndex(indexOffset);
 
-		var (minIndex, maxIndex) = GetIndexRange(indexData, indexOffset, elementCount);
+        var (minIndex, maxIndex) = GetIndexRange(indexData, indexOffset, elementCount);
 
-		if (minIndex != minCalcIndex) {
-			throw new IndexOutOfRangeException($"{minIndex} != {minCalcIndex}");
-		}
+        if (minIndex != minCalcIndex) {
+            throw new IndexOutOfRangeException($"{minIndex} != {minCalcIndex}");
+        }
 
-		if (maxIndex != maxCalcIndex) {
-			throw new IndexOutOfRangeException($"{maxIndex} != {maxCalcIndex}");
-		}
-	}
+        if (maxIndex != maxCalcIndex) {
+            throw new IndexOutOfRangeException($"{maxIndex} != {maxCalcIndex}");
+        }
+    }
 
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static unsafe void DrawRangeElementsImpl(
-		GLPrimitiveType primitiveType,
-		uint primitiveCount,
-		uint elementCount,
-		GLExt.ValueType indexType,
-		uint indexOffset, 
-		nint indexPointer,
-		bool ranged
-	) {
-		if (ranged && GLExt.DrawRangeElements is not null) {
-			GLExt.DrawRangeElements(
-				primitiveType,
-				SpriteBatcherValues.GetMinArrayIndex(indexOffset),
-				SpriteBatcherValues.GetMaxArrayIndex(primitiveCount, indexOffset),
-				elementCount,
-				indexType,
-				indexPointer
-			);
-		}
-		else {
-			GLExt.DrawElements(
-				primitiveType,
-				elementCount,
-				indexType,
-				indexPointer
-			);
-		}
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static unsafe void DrawRangeElementsImpl(
+        GLPrimitiveType primitiveType,
+        uint primitiveCount,
+        uint elementCount,
+        GLExt.ValueType indexType,
+        uint indexOffset,
+        nint indexPointer,
+        bool ranged
+    ) {
+        if (ranged && GLExt.DrawRangeElements is not null) {
+            GLExt.DrawRangeElements(
+                primitiveType,
+                SpriteBatcherValues.GetMinArrayIndex(indexOffset),
+                SpriteBatcherValues.GetMaxArrayIndex(primitiveCount, indexOffset),
+                elementCount,
+                indexType,
+                indexPointer
+            );
+        }
+        else {
+            GLExt.DrawElements(
+                primitiveType,
+                elementCount,
+                indexType,
+                indexPointer
+            );
+        }
 
-		GraphicsExtensions.CheckGLError();
-	}
+        GraphicsExtensions.CheckGLError();
+    }
 
-	private static unsafe bool DrawUserIndexedPrimitivesAdvanced<TVertex, TIndex>(
-		GraphicsDevice @this,
-		PrimitiveType primitiveType,
-		TVertex[] vertexData,
-		int vertexOffset,
-		int numVertices,
-		TIndex[] indexData,
-		uint indexOffset,
-		uint primitiveCount,
-		VertexDeclaration vertexDeclaration
-	) where TVertex : unmanaged where TIndex : unmanaged {
-		++DrawState.Statistics.DrawCalls;
+    private static unsafe bool DrawUserIndexedPrimitivesAdvanced<TVertex, TIndex>(
+        GraphicsDevice @this,
+        PrimitiveType primitiveType,
+        TVertex[] vertexData,
+        int vertexOffset,
+        int numVertices,
+        TIndex[] indexData,
+        uint indexOffset,
+        uint primitiveCount,
+        VertexDeclaration vertexDeclaration
+    ) where TVertex : unmanaged where TIndex : unmanaged {
+        ++DrawState.Statistics.DrawCalls;
 
-		if (!Enabled.DrawUserIndexedPrimitives.Enabled) {
-			return false;
-		}
+        if (!Enabled.DrawUserIndexedPrimitives.Enabled) {
+            return false;
+        }
 
-		try {
-			// TODO : This can be optimized as well - lots of interdependant booleans.
-			@this.ApplyState(true);
+        try {
+            // TODO : This can be optimized as well - lots of interdependant booleans.
+            @this.ApplyState(true);
 
-			var (vbo, ibo, isSpriteBatcher) = GetBufferObjects(indexData);
+            var (vbo, ibo, isSpriteBatcher) = GetBufferObjects(indexData);
 
-			// Unbind current VBOs.
-			BindBufferInternal(BufferTarget.ArrayBuffer, vbo);
-			GraphicsExtensions.CheckGLError();
-			if (BindBufferInternalResult(@this, BufferTarget.ElementArrayBuffer, ibo)) {
-				@this.Indices = @this.Indices;
-			}
-			GraphicsExtensions.CheckGLError();
+            // Unbind current VBOs.
+            BindBufferInternal(BufferTarget.ArrayBuffer, vbo);
+            GraphicsExtensions.CheckGLError();
+            if (BindBufferInternalResult(@this, BufferTarget.ElementArrayBuffer, ibo)) {
+                @this.Indices = @this.Indices;
+            }
+            GraphicsExtensions.CheckGLError();
 
-			var count = primitiveType.GetElementCountArray(primitiveCount);
+            var count = primitiveType.GetElementCountArray(primitiveCount);
 
-			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			void DrawRangeElementsLocal(
-				GLPrimitiveType _primitiveType,
-				uint _primitiveCount,
-				uint _elementCount,
-				GLExt.ValueType _elementType,
-				uint _indexOffset,
-				nint _indexPointer
-			) {
-				CheckRangeElements(
-					_primitiveCount,
-					_elementCount,
-					indexOffset,
-					isSpriteBatcher,
-					indexData
-				);
-				DrawRangeElementsImpl(
-					_primitiveType,
-					_primitiveCount,
-					_elementCount,
-					_elementType,
-					_indexOffset,
-					_indexPointer,
-					ranged: isSpriteBatcher
-				);
-			}
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            void DrawRangeElementsLocal(
+                GLPrimitiveType _primitiveType,
+                uint _primitiveCount,
+                uint _elementCount,
+                GLExt.ValueType _elementType,
+                uint _indexOffset,
+                nint _indexPointer
+            ) {
+                CheckRangeElements(
+                    _primitiveCount,
+                    _elementCount,
+                    indexOffset,
+                    isSpriteBatcher,
+                    indexData
+                );
+                DrawRangeElementsImpl(
+                    _primitiveType,
+                    _primitiveCount,
+                    _elementCount,
+                    _elementType,
+                    _indexOffset,
+                    _indexPointer,
+                    ranged: isSpriteBatcher
+                );
+            }
 
 #if ENABLE_VBO
 			if (vbo is not GLExt.ObjectId.None) {
@@ -1014,97 +1014,97 @@ internal static partial class GraphicsDeviceExt {
 			}
 			else
 #endif
-			{
-				// Perform as much work outside of 'fixed' as possible so as to limit the time the GC might have to stall if it is triggered.
-				nint vertexPointerOffset = vertexDeclaration.VertexStride * vertexOffset;
+            {
+                // Perform as much work outside of 'fixed' as possible so as to limit the time the GC might have to stall if it is triggered.
+                nint vertexPointerOffset = vertexDeclaration.VertexStride * vertexOffset;
 
-				// Pin the buffers.
-				fixed (TVertex* vbPtr = vertexData) {
-					nint vertexPointer = (nint)vbPtr + vertexPointerOffset;
+                // Pin the buffers.
+                fixed (TVertex* vbPtr = vertexData) {
+                    nint vertexPointer = (nint)vbPtr + vertexPointerOffset;
 
-					// Setup the vertex declaration to point at the VB data.
-					ApplyVertexDeclaration(@this, vertexDeclaration, vertexPointer);
+                    // Setup the vertex declaration to point at the VB data.
+                    ApplyVertexDeclaration(@this, vertexDeclaration, vertexPointer);
 
-					if (ibo is not GLExt.ObjectId.None) {
-						DrawRangeElementsLocal(
-							primitiveType.GetGl(),
-							primitiveCount,
-							count,
-							GetIndexType<TIndex>(),
-							indexOffset,
-							(nint)indexOffset
-						);
-					}
-					else {
-						fixed (TIndex* ibPtr = indexData) {
-							var offsetIndexPtr = (nint)(ibPtr + indexOffset);
+                    if (ibo is not GLExt.ObjectId.None) {
+                        DrawRangeElementsLocal(
+                            primitiveType.GetGl(),
+                            primitiveCount,
+                            count,
+                            GetIndexType<TIndex>(),
+                            indexOffset,
+                            (nint)indexOffset
+                        );
+                    }
+                    else {
+                        fixed (TIndex* ibPtr = indexData) {
+                            var offsetIndexPtr = (nint)(ibPtr + indexOffset);
 
-							DrawRangeElementsLocal(
-								primitiveType.GetGl(),
-								primitiveCount,
-								count,
-								GetIndexType<TIndex>(),
-								indexOffset,
-								offsetIndexPtr
-							);
-						}
-					}
-				}
-			}
-		}
-		catch (Exception ex) when (ex is MemberAccessException or MonoGameGLException) {
-			Debug.Error($"Disabling OpenGL DrawUserIndexedPrimitives Advanced Optimizations due to exception", ex);
-			Enabled.DrawUserIndexedPrimitives.AdvancedInternal = false;
-			OnConfigChanged();
-			return false;
-		}
+                            DrawRangeElementsLocal(
+                                primitiveType.GetGl(),
+                                primitiveCount,
+                                count,
+                                GetIndexType<TIndex>(),
+                                indexOffset,
+                                offsetIndexPtr
+                            );
+                        }
+                    }
+                }
+            }
+        }
+        catch (Exception ex) when (ex is MemberAccessException or MonoGameGLException) {
+            Debug.Error($"Disabling OpenGL DrawUserIndexedPrimitives Advanced Optimizations due to exception", ex);
+            Enabled.DrawUserIndexedPrimitives.AdvancedInternal = false;
+            OnConfigChanged();
+            return false;
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	private static readonly MonoGame.OpenGL.GL.BindBufferDelegate OriginalBindBuffer =
-		MonoGame.OpenGL.GL.BindBuffer;
+    private static readonly MonoGame.OpenGL.GL.BindBufferDelegate OriginalBindBuffer =
+        MonoGame.OpenGL.GL.BindBuffer;
 
-	private static readonly MonoGame.OpenGL.GL.VertexAttribDivisorDelegate OriginalVertexAttribDivisor =
-		MonoGame.OpenGL.GL.VertexAttribDivisor;
+    private static readonly MonoGame.OpenGL.GL.VertexAttribDivisorDelegate OriginalVertexAttribDivisor =
+        MonoGame.OpenGL.GL.VertexAttribDivisor;
 
-	private static readonly MonoGame.OpenGL.GL.VertexAttribPointerDelegate OriginalVertexAttribPointer =
-		MonoGame.OpenGL.GL.VertexAttribPointer;
+    private static readonly MonoGame.OpenGL.GL.VertexAttribPointerDelegate OriginalVertexAttribPointer =
+        MonoGame.OpenGL.GL.VertexAttribPointer;
 
-	// When the config changes, update the enablement booleans.
-	private static void OnConfigChanged() {
-		bool drawUserIndexedPrimitivesEnabled =
-			Enabled.DrawUserIndexedPrimitives.Internal &&
-			SMConfig.Extras.OpenGL.Enabled &&
-			SMConfig.Extras.OpenGL.DrawUserIndexedPrimitives.Optimize;
+    // When the config changes, update the enablement booleans.
+    private static void OnConfigChanged() {
+        bool drawUserIndexedPrimitivesEnabled =
+            Enabled.DrawUserIndexedPrimitives.Internal &&
+            SMConfig.Extras.OpenGL.Enabled &&
+            SMConfig.Extras.OpenGL.DrawUserIndexedPrimitives.Optimize;
 
-		bool drawUserIndexPrimitivesBasic =
-			drawUserIndexedPrimitivesEnabled &&
-			Enabled.DrawUserIndexedPrimitives.BasicInternal;
+        bool drawUserIndexPrimitivesBasic =
+            drawUserIndexedPrimitivesEnabled &&
+            Enabled.DrawUserIndexedPrimitives.BasicInternal;
 
-		bool drawUserIndexPrimitivesAdvanced =
-			drawUserIndexedPrimitivesEnabled &&
-			Enabled.DrawUserIndexedPrimitives.AdvancedInternal &&
-			SMConfig.Extras.OpenGL.DrawUserIndexedPrimitives.Advanced;
+        bool drawUserIndexPrimitivesAdvanced =
+            drawUserIndexedPrimitivesEnabled &&
+            Enabled.DrawUserIndexedPrimitives.AdvancedInternal &&
+            SMConfig.Extras.OpenGL.DrawUserIndexedPrimitives.Advanced;
 
-		Enabled.DrawUserIndexedPrimitives.Enabled =
-			drawUserIndexPrimitivesBasic ||
-			drawUserIndexPrimitivesAdvanced;
+        Enabled.DrawUserIndexedPrimitives.Enabled =
+            drawUserIndexPrimitivesBasic ||
+            drawUserIndexPrimitivesAdvanced;
 
-		Enabled.DrawUserIndexedPrimitives.Basic =
-			drawUserIndexPrimitivesBasic &&
-			!drawUserIndexPrimitivesAdvanced;
+        Enabled.DrawUserIndexedPrimitives.Basic =
+            drawUserIndexPrimitivesBasic &&
+            !drawUserIndexPrimitivesAdvanced;
 
 #if ENABLE_VBO
 		Enabled.DrawUserIndexedPrimitives.VertexBufferObjects =
 			SMConfig.Extras.OpenGL.DrawUserIndexedPrimitives.UseVertexBufferObjects;
 #endif
 
-		Enabled.DrawUserIndexedPrimitives.IndexBufferObjects =
-			SMConfig.Extras.OpenGL.DrawUserIndexedPrimitives.UseIndexBufferObjects;
+        Enabled.DrawUserIndexedPrimitives.IndexBufferObjects =
+            SMConfig.Extras.OpenGL.DrawUserIndexedPrimitives.UseIndexBufferObjects;
 
-		MonoGame.OpenGL.GL.BindBuffer = BindBufferOverride;
-		MonoGame.OpenGL.GL.VertexAttribDivisor = VertexAttribDivisorOverride;
-		MonoGame.OpenGL.GL.VertexAttribPointer = VertexAttribPointerOverride;
-	}
+        MonoGame.OpenGL.GL.BindBuffer = BindBufferOverride;
+        MonoGame.OpenGL.GL.VertexAttribDivisor = VertexAttribDivisorOverride;
+        MonoGame.OpenGL.GL.VertexAttribPointer = VertexAttribPointerOverride;
+    }
 }

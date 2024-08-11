@@ -9,72 +9,72 @@ namespace SpriteMaster.Types;
 
 [StructLayout(LayoutKind.Auto)]
 internal readonly unsafe struct FixedArray<T> : IReadOnlyList<T> where T : unmanaged {
-	internal readonly T[] Array;
-	internal readonly T* Pointer;
+    internal readonly T[] Array;
+    internal readonly T* Pointer;
 
-	internal readonly int Count => Array.Length;
-	internal readonly int Length => Array.Length;
-	internal readonly long LongLength => Array.LongLength;
+    internal readonly int Count => Array.Length;
+    internal readonly int Length => Array.Length;
+    internal readonly long LongLength => Array.LongLength;
 
-	internal readonly ref T this[int index] {
-		[MethodImpl(Runtime.MethodImpl.Inline)]
-		get => ref Pointer[index];
-	}
+    internal readonly ref T this[int index] {
+        [MethodImpl(Runtime.MethodImpl.Inline)]
+        get => ref Pointer[index];
+    }
 
-	internal FixedArray(int length) {
-		Array = GC.AllocateUninitializedArray<T>(length, pinned: true);
-		Pointer = (T*)Unsafe.AsPointer(ref MemoryMarshal.GetArrayDataReference(Array));
-	}
+    internal FixedArray(int length) {
+        Array = GC.AllocateUninitializedArray<T>(length, pinned: true);
+        Pointer = (T*)Unsafe.AsPointer(ref MemoryMarshal.GetArrayDataReference(Array));
+    }
 
-	public readonly struct Enumerator : IEnumerator<T>, IEnumerator {
-		private readonly T* Pointer;
-		private readonly int Length;
-		private readonly int Index = 0;
+    public readonly struct Enumerator : IEnumerator<T>, IEnumerator {
+        private readonly T* Pointer;
+        private readonly int Length;
+        private readonly int Index = 0;
 
-		public readonly T Current => Pointer[Index - 1];
+        public readonly T Current => Pointer[Index - 1];
 
-		[MethodImpl(Runtime.MethodImpl.Inline)]
-		internal Enumerator(in FixedArray<T> array) {
-			Pointer = array.Pointer;
-			Length = array.Length;
-		}
+        [MethodImpl(Runtime.MethodImpl.Inline)]
+        internal Enumerator(in FixedArray<T> array) {
+            Pointer = array.Pointer;
+            Length = array.Length;
+        }
 
-		[MethodImpl(Runtime.MethodImpl.Inline)]
-		public readonly void Dispose() {}
+        [MethodImpl(Runtime.MethodImpl.Inline)]
+        public readonly void Dispose() { }
 
-		[MustUseReturnValue, MethodImpl(Runtime.MethodImpl.Inline)]
-		public readonly bool MoveNext() {
-			if ((uint)Index < (uint)Length) {
-				++Unsafe.AsRef(Index);
-				return true;
-			}
+        [MustUseReturnValue, MethodImpl(Runtime.MethodImpl.Inline)]
+        public readonly bool MoveNext() {
+            if ((uint)Index < (uint)Length) {
+                ++Unsafe.AsRef(Index);
+                return true;
+            }
 
-			return MoveNextRare();
-		}
+            return MoveNextRare();
+        }
 
-		[MustUseReturnValue, MethodImpl(MethodImplOptions.NoInlining)]
-		private readonly bool MoveNextRare() {
-			Unsafe.AsRef(Index) = Length + 1;
-			return false;
-		}
+        [MustUseReturnValue, MethodImpl(MethodImplOptions.NoInlining)]
+        private readonly bool MoveNextRare() {
+            Unsafe.AsRef(Index) = Length + 1;
+            return false;
+        }
 
-		readonly object? IEnumerator.Current => Current;
+        readonly object? IEnumerator.Current => Current;
 
-		[MethodImpl(Runtime.MethodImpl.Inline)]
-		readonly void IEnumerator.Reset() {
-			Unsafe.AsRef(Index) = 0;
-		}
-	}
+        [MethodImpl(Runtime.MethodImpl.Inline)]
+        readonly void IEnumerator.Reset() {
+            Unsafe.AsRef(Index) = 0;
+        }
+    }
 
-	[MustUseReturnValue, MethodImpl(Runtime.MethodImpl.Inline)]
-	public readonly T[] GetEnumerable() => Array;
+    [MustUseReturnValue, MethodImpl(Runtime.MethodImpl.Inline)]
+    public readonly T[] GetEnumerable() => Array;
 
-	[MustUseReturnValue, MethodImpl(Runtime.MethodImpl.Inline)]
-	public readonly Enumerator GetEnumerator() => new Enumerator(this);
-	[MustUseReturnValue, MethodImpl(Runtime.MethodImpl.Inline)]
-	readonly IEnumerator<T> IEnumerable<T>.GetEnumerator() => new Enumerator(this);
-	[MustUseReturnValue, MethodImpl(Runtime.MethodImpl.Inline)]
-	readonly IEnumerator IEnumerable.GetEnumerator() => new Enumerator(this);
-	readonly int IReadOnlyCollection<T>.Count => Count;
-	readonly T IReadOnlyList<T>.this[int index] => Pointer[index];
+    [MustUseReturnValue, MethodImpl(Runtime.MethodImpl.Inline)]
+    public readonly Enumerator GetEnumerator() => new Enumerator(this);
+    [MustUseReturnValue, MethodImpl(Runtime.MethodImpl.Inline)]
+    readonly IEnumerator<T> IEnumerable<T>.GetEnumerator() => new Enumerator(this);
+    [MustUseReturnValue, MethodImpl(Runtime.MethodImpl.Inline)]
+    readonly IEnumerator IEnumerable.GetEnumerator() => new Enumerator(this);
+    readonly int IReadOnlyCollection<T>.Count => Count;
+    readonly T IReadOnlyList<T>.this[int index] => Pointer[index];
 }

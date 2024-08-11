@@ -8,161 +8,161 @@ using System.Runtime.CompilerServices;
 namespace SpriteMaster.Extensions;
 
 internal static class Compression {
-	internal enum Algorithm {
-		None = 0,
-		Compress,
-		Deflate,
-		Zstd,
-		Best = Zstd,
-	}
+    internal enum Algorithm {
+        None = 0,
+        Compress,
+        Deflate,
+        Zstd,
+        Best = Zstd,
+    }
 
-	internal static readonly Algorithm BestAlgorithm = GetPreferredAlgorithm();
+    internal static readonly Algorithm BestAlgorithm = GetPreferredAlgorithm();
 
-	[Pure, MustUseReturnValue, MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal static unsafe long AlignCount<T>(long size) where T : unmanaged =>
-		(long)(((ulong)size + (ulong)(sizeof(T) - 1)) / (ulong)sizeof(T));
+    [Pure, MustUseReturnValue, MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static unsafe long AlignCount<T>(long size) where T : unmanaged =>
+        (long)(((ulong)size + (ulong)(sizeof(T) - 1)) / (ulong)sizeof(T));
 
-	[Pure, MustUseReturnValue, MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal static unsafe int AlignCount<T>(int size) where T : unmanaged =>
-		(int)(((long)size + (sizeof(T) - 1)) / sizeof(T));
+    [Pure, MustUseReturnValue, MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static unsafe int AlignCount<T>(int size) where T : unmanaged =>
+        (int)(((long)size + (sizeof(T) - 1)) / sizeof(T));
 
-	[Pure, MustUseReturnValue, MethodImpl(Runtime.MethodImpl.Inline)]
-	private static T[] ConvertArray<T>(byte[] data) where T : unmanaged {
-		if (typeof(T) == typeof(byte)) {
-			return (T[])(object)data;
-		}
+    [Pure, MustUseReturnValue, MethodImpl(Runtime.MethodImpl.Inline)]
+    private static T[] ConvertArray<T>(byte[] data) where T : unmanaged {
+        if (typeof(T) == typeof(byte)) {
+            return (T[])(object)data;
+        }
 
-		int elementCount = AlignCount<T>(data.Length);
-		T[] result = GC.AllocateUninitializedArray<T>(elementCount);
-		data.AsReadOnlySpan().CopyTo(result.AsSpan().AsBytes());
-		return result;
-	}
+        int elementCount = AlignCount<T>(data.Length);
+        T[] result = GC.AllocateUninitializedArray<T>(elementCount);
+        data.AsReadOnlySpan().CopyTo(result.AsSpan().AsBytes());
+        return result;
+    }
 
-	[Pure, MustUseReturnValue, MethodImpl(Runtime.MethodImpl.Inline)]
-	private static T[] ConvertArray<T>(ReadOnlySpan<byte> data) where T : unmanaged {
-		if (typeof(T) == typeof(byte)) {
-			return (T[])(object)data.ToArray();
-		}
+    [Pure, MustUseReturnValue, MethodImpl(Runtime.MethodImpl.Inline)]
+    private static T[] ConvertArray<T>(ReadOnlySpan<byte> data) where T : unmanaged {
+        if (typeof(T) == typeof(byte)) {
+            return (T[])(object)data.ToArray();
+        }
 
-		return data.Cast<byte, T>().ToArray();
-	}
+        return data.Cast<byte, T>().ToArray();
+    }
 
-	[MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
-	internal static Algorithm GetPreferredAlgorithm(Algorithm fromAlgorithm = Algorithm.Best) {
-		for (int i = (int)fromAlgorithm; i > 0; --i) {
-			var algorithm = (Algorithm)i;
+    [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
+    internal static Algorithm GetPreferredAlgorithm(Algorithm fromAlgorithm = Algorithm.Best) {
+        for (int i = (int)fromAlgorithm; i > 0; --i) {
+            var algorithm = (Algorithm)i;
 
-			bool supported = algorithm switch {
-				Algorithm.Compress => Compressors.SystemIo.IsSupported,
-				Algorithm.Deflate => Compressors.Deflate.IsSupported,
-				Algorithm.Zstd => Compressors.Zstd.IsSupported,
-				_ => false
-			};
+            bool supported = algorithm switch {
+                Algorithm.Compress => Compressors.SystemIo.IsSupported,
+                Algorithm.Deflate => Compressors.Deflate.IsSupported,
+                Algorithm.Zstd => Compressors.Zstd.IsSupported,
+                _ => false
+            };
 
-			if (supported) {
-				return algorithm;
-			}
-		}
+            if (supported) {
+                return algorithm;
+            }
+        }
 
-		return Algorithm.None;
-	}
+        return Algorithm.None;
+    }
 
-	[DoesNotReturn]
-	[MethodImpl(MethodImplOptions.NoInlining)]
-	private static T ThrowUnknownCompressionAlgorithmException<T>(Algorithm algorithm) =>
-		throw new NotImplementedException($"Unknown Compression Algorithm: '{algorithm}'");
+    [DoesNotReturn]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    private static T ThrowUnknownCompressionAlgorithmException<T>(Algorithm algorithm) =>
+        throw new NotImplementedException($"Unknown Compression Algorithm: '{algorithm}'");
 
-	[MethodImpl(Runtime.MethodImpl.Inline)]
-	internal static byte[] Compress(this byte[] data, Algorithm algorithm) => algorithm switch {
-		Algorithm.None => data,
-		Algorithm.Compress => Compressors.SystemIo.Compress(data),
-		Algorithm.Deflate => Compressors.Deflate.Compress(data),
-		Algorithm.Zstd => Compressors.Zstd.Compress(data),
-		_ => ThrowUnknownCompressionAlgorithmException<byte[]>(algorithm)
-	};
+    [MethodImpl(Runtime.MethodImpl.Inline)]
+    internal static byte[] Compress(this byte[] data, Algorithm algorithm) => algorithm switch {
+        Algorithm.None => data,
+        Algorithm.Compress => Compressors.SystemIo.Compress(data),
+        Algorithm.Deflate => Compressors.Deflate.Compress(data),
+        Algorithm.Zstd => Compressors.Zstd.Compress(data),
+        _ => ThrowUnknownCompressionAlgorithmException<byte[]>(algorithm)
+    };
 
-	[MethodImpl(Runtime.MethodImpl.Inline)]
-	internal static T[] Compress<T>(this ReadOnlySpan<byte> data, Algorithm algorithm) where T : unmanaged => algorithm switch {
-		Algorithm.None => ConvertArray<T>(data),
-		Algorithm.Compress => Compressors.SystemIo.Compress<T>(data),
-		Algorithm.Deflate => Compressors.Deflate.Compress<T>(data),
-		Algorithm.Zstd => Compressors.Zstd.Compress<T>(data),
-		_ => ThrowUnknownCompressionAlgorithmException<T[]>(algorithm)
-	};
+    [MethodImpl(Runtime.MethodImpl.Inline)]
+    internal static T[] Compress<T>(this ReadOnlySpan<byte> data, Algorithm algorithm) where T : unmanaged => algorithm switch {
+        Algorithm.None => ConvertArray<T>(data),
+        Algorithm.Compress => Compressors.SystemIo.Compress<T>(data),
+        Algorithm.Deflate => Compressors.Deflate.Compress<T>(data),
+        Algorithm.Zstd => Compressors.Zstd.Compress<T>(data),
+        _ => ThrowUnknownCompressionAlgorithmException<T[]>(algorithm)
+    };
 
-	[MethodImpl(Runtime.MethodImpl.Inline)]
-	internal static T[] Compress<T>(this Span<byte> data, Algorithm algorithm) where T : unmanaged => Compress<T>((ReadOnlySpan<byte>)data, algorithm);
+    [MethodImpl(Runtime.MethodImpl.Inline)]
+    internal static T[] Compress<T>(this Span<byte> data, Algorithm algorithm) where T : unmanaged => Compress<T>((ReadOnlySpan<byte>)data, algorithm);
 
-	[MethodImpl(Runtime.MethodImpl.Inline)]
-	internal static T[] Compress<T>(this PinnedSpan<byte> data, Algorithm algorithm) where T : unmanaged => Compress<T>((Span<byte>)data, algorithm);
+    [MethodImpl(Runtime.MethodImpl.Inline)]
+    internal static T[] Compress<T>(this PinnedSpan<byte> data, Algorithm algorithm) where T : unmanaged => Compress<T>((Span<byte>)data, algorithm);
 
-	[MethodImpl(Runtime.MethodImpl.Inline)]
-	internal static T[] Compress<T>(this ReadOnlyPinnedSpan<byte> data, Algorithm algorithm) where T : unmanaged => Compress<T>((ReadOnlySpan<byte>)data, algorithm);
+    [MethodImpl(Runtime.MethodImpl.Inline)]
+    internal static T[] Compress<T>(this ReadOnlyPinnedSpan<byte> data, Algorithm algorithm) where T : unmanaged => Compress<T>((ReadOnlySpan<byte>)data, algorithm);
 
-	[MethodImpl(Runtime.MethodImpl.Inline)]
-	internal static byte[] Compress(this byte[] data) => Compress(data, BestAlgorithm);
+    [MethodImpl(Runtime.MethodImpl.Inline)]
+    internal static byte[] Compress(this byte[] data) => Compress(data, BestAlgorithm);
 
-	[MethodImpl(Runtime.MethodImpl.Inline)]
-	internal static T[] Compress<T>(this ReadOnlySpan<byte> data) where T : unmanaged => Compress<T>(data, BestAlgorithm);
+    [MethodImpl(Runtime.MethodImpl.Inline)]
+    internal static T[] Compress<T>(this ReadOnlySpan<byte> data) where T : unmanaged => Compress<T>(data, BestAlgorithm);
 
-	[MethodImpl(Runtime.MethodImpl.Inline)]
-	internal static T[] Compress<T>(this Span<byte> data) where T : unmanaged => Compress<T>((ReadOnlySpan<byte>)data);
+    [MethodImpl(Runtime.MethodImpl.Inline)]
+    internal static T[] Compress<T>(this Span<byte> data) where T : unmanaged => Compress<T>((ReadOnlySpan<byte>)data);
 
-	[MethodImpl(Runtime.MethodImpl.Inline)]
-	internal static T[] Compress<T>(this ReadOnlyPinnedSpan<byte> data) where T : unmanaged => Compress<T>(data, BestAlgorithm);
+    [MethodImpl(Runtime.MethodImpl.Inline)]
+    internal static T[] Compress<T>(this ReadOnlyPinnedSpan<byte> data) where T : unmanaged => Compress<T>(data, BestAlgorithm);
 
-	[MethodImpl(Runtime.MethodImpl.Inline)]
-	internal static T[] Compress<T>(this PinnedSpan<byte> data) where T : unmanaged => Compress<T>((ReadOnlySpan<byte>)data);
+    [MethodImpl(Runtime.MethodImpl.Inline)]
+    internal static T[] Compress<T>(this PinnedSpan<byte> data) where T : unmanaged => Compress<T>((ReadOnlySpan<byte>)data);
 
-	[MethodImpl(Runtime.MethodImpl.Inline)]
-	internal static byte[] Decompress(this byte[] data, int size, Algorithm algorithm) {
-		if (size == -1) {
-			return Decompress(data, algorithm);
-		}
+    [MethodImpl(Runtime.MethodImpl.Inline)]
+    internal static byte[] Decompress(this byte[] data, int size, Algorithm algorithm) {
+        if (size == -1) {
+            return Decompress(data, algorithm);
+        }
 
-		return algorithm switch {
-			Algorithm.None => data,
-			Algorithm.Compress => Compressors.SystemIo.Decompress(data, size),
-			Algorithm.Deflate => Compressors.Deflate.Decompress(data, size),
-			Algorithm.Zstd => Compressors.Zstd.Decompress(data, size),
-			_ => ThrowUnknownCompressionAlgorithmException<byte[]>(algorithm)
-		};
-	}
+        return algorithm switch {
+            Algorithm.None => data,
+            Algorithm.Compress => Compressors.SystemIo.Decompress(data, size),
+            Algorithm.Deflate => Compressors.Deflate.Decompress(data, size),
+            Algorithm.Zstd => Compressors.Zstd.Decompress(data, size),
+            _ => ThrowUnknownCompressionAlgorithmException<byte[]>(algorithm)
+        };
+    }
 
-	[MethodImpl(Runtime.MethodImpl.Inline)]
-	internal static T[] Decompress<T>(this byte[] data, int size, Algorithm algorithm) where T : unmanaged {
-		if (size == -1) {
-			ThrowHelper.ThrowArgumentException("size must not be negative", nameof(size));
-		}
+    [MethodImpl(Runtime.MethodImpl.Inline)]
+    internal static T[] Decompress<T>(this byte[] data, int size, Algorithm algorithm) where T : unmanaged {
+        if (size == -1) {
+            ThrowHelper.ThrowArgumentException("size must not be negative", nameof(size));
+        }
 
-		return algorithm switch {
-			Algorithm.None => ConvertArray<T>(data),
-			Algorithm.Compress => Compressors.SystemIo.Decompress<T>(data, size),
-			Algorithm.Deflate => Compressors.Deflate.Decompress<T>(data, size),
-			Algorithm.Zstd => Compressors.Zstd.Decompress<T>(data, size),
-			_ => ThrowUnknownCompressionAlgorithmException<T[]>(algorithm)
-		};
-	}
+        return algorithm switch {
+            Algorithm.None => ConvertArray<T>(data),
+            Algorithm.Compress => Compressors.SystemIo.Decompress<T>(data, size),
+            Algorithm.Deflate => Compressors.Deflate.Decompress<T>(data, size),
+            Algorithm.Zstd => Compressors.Zstd.Decompress<T>(data, size),
+            _ => ThrowUnknownCompressionAlgorithmException<T[]>(algorithm)
+        };
+    }
 
-	[MethodImpl(Runtime.MethodImpl.Inline)]
-	internal static byte[] Decompress(this byte[] data, int size) {
-		return Decompress(data, size, BestAlgorithm);
-	}
+    [MethodImpl(Runtime.MethodImpl.Inline)]
+    internal static byte[] Decompress(this byte[] data, int size) {
+        return Decompress(data, size, BestAlgorithm);
+    }
 
-	[MethodImpl(Runtime.MethodImpl.Inline)]
-	internal static T[] Decompress<T>(this byte[] data, int size) where T : unmanaged {
-		return Decompress<T>(data, size, BestAlgorithm);
-	}
+    [MethodImpl(Runtime.MethodImpl.Inline)]
+    internal static T[] Decompress<T>(this byte[] data, int size) where T : unmanaged {
+        return Decompress<T>(data, size, BestAlgorithm);
+    }
 
-	[MethodImpl(Runtime.MethodImpl.Inline)]
-	internal static byte[] Decompress(this byte[] data, Algorithm algorithm) => algorithm switch {
-		Algorithm.None => data,
-		Algorithm.Compress => Compressors.SystemIo.Decompress(data),
-		Algorithm.Deflate => Compressors.Deflate.Decompress(data),
-		Algorithm.Zstd => Compressors.Zstd.Decompress(data),
-		_ => ThrowUnknownCompressionAlgorithmException<byte[]>(algorithm)
-	};
+    [MethodImpl(Runtime.MethodImpl.Inline)]
+    internal static byte[] Decompress(this byte[] data, Algorithm algorithm) => algorithm switch {
+        Algorithm.None => data,
+        Algorithm.Compress => Compressors.SystemIo.Decompress(data),
+        Algorithm.Deflate => Compressors.Deflate.Decompress(data),
+        Algorithm.Zstd => Compressors.Zstd.Decompress(data),
+        _ => ThrowUnknownCompressionAlgorithmException<byte[]>(algorithm)
+    };
 
-	[MethodImpl(Runtime.MethodImpl.Inline)]
-	internal static byte[] Decompress(this byte[] data) => Decompress(data, BestAlgorithm);
+    [MethodImpl(Runtime.MethodImpl.Inline)]
+    internal static byte[] Decompress(this byte[] data) => Decompress(data, BestAlgorithm);
 }

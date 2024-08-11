@@ -6,36 +6,36 @@ using System.Runtime.CompilerServices;
 namespace SpriteMaster.Configuration.Preview;
 
 internal class SpriteSheet : MetaTexture {
-	internal readonly Vector2I Size;
-	internal Vector2I RenderedSize => Size * 4;
-	internal readonly Vector2I Dimensions;
+    internal readonly Vector2I Size;
+    internal Vector2I RenderedSize => Size * 4;
+    internal readonly Vector2I Dimensions;
 
-	[DoesNotReturn]
-	[MethodImpl(MethodImplOptions.NoInlining)]
-	private static T ThrowIndexOutOfRangeException<T>(string name, int value, int constraint) =>
-		throw new IndexOutOfRangeException($"Argument '{name}' ({value}) is out of range (< 0 or >= {constraint})");
+    [DoesNotReturn]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    private static T ThrowIndexOutOfRangeException<T>(string name, int value, int constraint) =>
+        throw new IndexOutOfRangeException($"Argument '{name}' ({value}) is out of range (< 0 or >= {constraint})");
 
-	internal Drawable this[int x, int y] {
-		get {
-			if (x < 0 || x >= Dimensions.X) {
-				return ThrowIndexOutOfRangeException<Drawable>(nameof(x), x, Dimensions.X);
-			}
-			if (y < 0 || y >= Dimensions.Y) {
-				return ThrowIndexOutOfRangeException<Drawable>(nameof(y), y, Dimensions.Y);
-			}
+    internal Drawable this[int x, int y] {
+        get {
+            if (x < 0 || x >= Dimensions.X) {
+                return ThrowIndexOutOfRangeException<Drawable>(nameof(x), x, Dimensions.X);
+            }
+            if (y < 0 || y >= Dimensions.Y) {
+                return ThrowIndexOutOfRangeException<Drawable>(nameof(y), y, Dimensions.Y);
+            }
 
-			Bounds bounds = new(Size * (x, y), Size);
+            Bounds bounds = new(Size * (x, y), Size);
 
-			return new(Texture, bounds);
-		}
-	}
+            return new(Texture, bounds);
+        }
+    }
 
-	internal SpriteSheet(
-		string textureName,
-		Vector2I spriteSize,
-		Vector2I? dimensions = null
-	) : base(textureName) {
-		Size = spriteSize;
-		Dimensions = dimensions ?? (new Vector2I(Texture.Width, Texture.Height) / spriteSize);
-	}
+    internal SpriteSheet(
+        string textureName,
+        Vector2I spriteSize,
+        Vector2I? dimensions = null
+    ) : base(textureName) {
+        Size = spriteSize;
+        Dimensions = dimensions ?? (new Vector2I(Texture.Width, Texture.Height) / spriteSize);
+    }
 }

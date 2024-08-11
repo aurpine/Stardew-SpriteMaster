@@ -4,10 +4,10 @@ using System;
 namespace SpriteMaster.Resample;
 
 internal static class Recolor {
-	internal static Span<T> Enhance<T>(Span<T> data, Vector2I size) where T : unmanaged {
-		return data;
+    internal static Span<T> Enhance<T>(Span<T> data, Vector2I size) where T : unmanaged {
+        return data;
 
-		/*
+        /*
 		lock (typeof(Upscaler)) {
 			using var bitmapStream = data.Stream();
 			using (var image = new MagickImage(bitmapStream, new PixelReadSettings(size.Width, size.Height, StorageType.Char, PixelMapping.RGBA))) {
@@ -46,5 +46,5 @@ internal static class Recolor {
 			}
 		}
 		*/
-	}
+    }
 }

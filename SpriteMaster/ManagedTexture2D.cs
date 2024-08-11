@@ -12,102 +12,102 @@ using System.Threading;
 namespace SpriteMaster;
 
 internal sealed class ManagedTexture2D : InternalTexture2D {
-	private static ulong TotalAllocatedSize = 0L;
-	private static volatile uint TotalManagedTextures = 0;
-	private const bool UseMips = false;
-	private const bool UseShared = false;
+    private static ulong TotalAllocatedSize = 0L;
+    private static volatile uint TotalManagedTextures = 0;
+    private const bool UseMips = false;
+    private const bool UseShared = false;
 
-	internal readonly WeakReference<XTexture2D> Reference;
-	internal readonly ManagedSpriteInstance SpriteInstance;
-	internal readonly Vector2I Dimensions;
-	private readonly bool Marked = false;
-	private volatile bool Disposed = false;
+    internal readonly WeakReference<XTexture2D> Reference;
+    internal readonly ManagedSpriteInstance SpriteInstance;
+    internal readonly Vector2I Dimensions;
+    private readonly bool Marked = false;
+    private volatile bool Disposed = false;
 
-	internal static void DumpStats(List<string> output) {
-		output.AddRange(new[]{
-			"\tManagedTexture2D:",
-			$"\t\tTotal Managed Textures : {TotalManagedTextures}",
-			$"\t\tTotal Texture Size     : {Interlocked.Read(ref TotalAllocatedSize).AsDataSize()}"
-			});
-	}
+    internal static void DumpStats(List<string> output) {
+        output.AddRange(new[]{
+            "\tManagedTexture2D:",
+            $"\t\tTotal Managed Textures : {TotalManagedTextures}",
+            $"\t\tTotal Texture Size     : {Interlocked.Read(ref TotalAllocatedSize).AsDataSize()}"
+            });
+    }
 
-	internal ManagedTexture2D(
-		ReadOnlyPinnedSpan<byte>.FixedSpan data,
-		ManagedSpriteInstance instance,
-		XTexture2D reference,
-		Vector2I dimensions,
-		SurfaceFormat format,
-		string? name = null
-	) : base(
-		graphicsDevice: reference.GraphicsDevice.IsDisposed ? DrawState.Device : reference.GraphicsDevice,
-		width: dimensions.Width,
-		height: dimensions.Height,
-		mipmap: UseMips,
-		format: format,
-		type: PTexture2D.PlatformConstruct is null ? SurfaceType.Texture : SurfaceType.SwapChainRenderTarget, // this prevents the texture from being constructed immediately
-		shared: UseShared,
-		arraySize: 1
-	) {
-		if (PTexture2D.PlatformConstruct is not null && !GL.Texture2DExt.Construct(this, data, dimensions, UseMips, format, SurfaceType.Texture, UseShared)) {
-			PTexture2D.PlatformConstruct(this, dimensions.X, dimensions.Y, UseMips, format, SurfaceType.Texture, UseShared);
-			SetData(data.Array);
-		}
+    internal ManagedTexture2D(
+        ReadOnlyPinnedSpan<byte>.FixedSpan data,
+        ManagedSpriteInstance instance,
+        XTexture2D reference,
+        Vector2I dimensions,
+        SurfaceFormat format,
+        string? name = null
+    ) : base(
+        graphicsDevice: reference.GraphicsDevice.IsDisposed ? DrawState.Device : reference.GraphicsDevice,
+        width: dimensions.Width,
+        height: dimensions.Height,
+        mipmap: UseMips,
+        format: format,
+        type: PTexture2D.PlatformConstruct is null ? SurfaceType.Texture : SurfaceType.SwapChainRenderTarget, // this prevents the texture from being constructed immediately
+        shared: UseShared,
+        arraySize: 1
+    ) {
+        if (PTexture2D.PlatformConstruct is not null && !GL.Texture2DExt.Construct(this, data, dimensions, UseMips, format, SurfaceType.Texture, UseShared)) {
+            PTexture2D.PlatformConstruct(this, dimensions.X, dimensions.Y, UseMips, format, SurfaceType.Texture, UseShared);
+            SetData(data.Array);
+        }
 
-		Name = name ?? $"{reference.NormalizedName()} [internal managed <{format}>]";
+        Name = name ?? $"{reference.NormalizedName()} [internal managed <{format}>]";
 
-		Reference = reference.MakeWeak();
-		SpriteInstance = instance;
-		Dimensions = dimensions - instance.BlockPadding;
+        Reference = reference.MakeWeak();
+        SpriteInstance = instance;
+        Dimensions = dimensions - instance.BlockPadding;
 
-		reference.Disposing += OnParentDispose;
+        reference.Disposing += OnParentDispose;
 
-		Interlocked.Add(ref TotalAllocatedSize, (ulong)this.SizeBytes());
-		Interlocked.Increment(ref TotalManagedTextures);
+        Interlocked.Add(ref TotalAllocatedSize, (ulong)this.SizeBytes());
+        Interlocked.Increment(ref TotalManagedTextures);
 
-		if (Configuration.Config.Garbage.ShouldCollectAccountOwnedTextures) {
-			Garbage.MarkOwned(format, dimensions.Area);
-			Marked = true;
-		}
-	}
+        if (Configuration.Config.Garbage.ShouldCollectAccountOwnedTextures) {
+            Garbage.MarkOwned(format, dimensions.Area);
+            Marked = true;
+        }
+    }
 
-	[MethodImpl(Runtime.MethodImpl.Inline)]
-	~ManagedTexture2D() {
-		if (!IsDisposed) {
-			//Debug.Error($"Memory leak: ManagedTexture2D '{Name}' was finalized without the Dispose method called");
-			Dispose(false);
-		}
-	}
+    [MethodImpl(Runtime.MethodImpl.Inline)]
+    ~ManagedTexture2D() {
+        if (!IsDisposed) {
+            //Debug.Error($"Memory leak: ManagedTexture2D '{Name}' was finalized without the Dispose method called");
+            Dispose(false);
+        }
+    }
 
-	[MethodImpl(Runtime.MethodImpl.Inline)]
-	private void OnParentDispose(object? resource, EventArgs args) => OnParentDispose(resource as XTexture2D);
+    [MethodImpl(Runtime.MethodImpl.Inline)]
+    private void OnParentDispose(object? resource, EventArgs args) => OnParentDispose(resource as XTexture2D);
 
-	[MethodImpl(Runtime.MethodImpl.Inline)]
-	private void OnParentDispose(XTexture2D? referenceTexture) {
-		if (!IsDisposed) {
-			Debug.Trace($"Disposing ManagedTexture2D '{Name}'");
-			Dispose();
-		}
+    [MethodImpl(Runtime.MethodImpl.Inline)]
+    private void OnParentDispose(XTexture2D? referenceTexture) {
+        if (!IsDisposed) {
+            Debug.Trace($"Disposing ManagedTexture2D '{Name}'");
+            Dispose();
+        }
 
-		referenceTexture?.Meta().Dispose();
-	}
+        referenceTexture?.Meta().Dispose();
+    }
 
-	protected override void Dispose(bool disposing) {
-		base.Dispose(disposing);
+    protected override void Dispose(bool disposing) {
+        base.Dispose(disposing);
 
-		if (Disposed) {
-			return;
-		}
-		Disposed = true;
+        if (Disposed) {
+            return;
+        }
+        Disposed = true;
 
-		if (Reference.TryGet(out var reference)) {
-			reference.Disposing -= OnParentDispose;
-		}
+        if (Reference.TryGet(out var reference)) {
+            reference.Disposing -= OnParentDispose;
+        }
 
-		if (Marked) {
-			Garbage.UnmarkOwned(Format, Width * Height);
-		}
+        if (Marked) {
+            Garbage.UnmarkOwned(Format, Width * Height);
+        }
 
-		Interlocked.Add(ref TotalAllocatedSize, (ulong)-this.SizeBytes());
-		Interlocked.Decrement(ref TotalManagedTextures);
-	}
+        Interlocked.Add(ref TotalAllocatedSize, (ulong)-this.SizeBytes());
+        Interlocked.Decrement(ref TotalManagedTextures);
+    }
 }

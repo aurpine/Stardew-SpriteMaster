@@ -3,28 +3,28 @@
 namespace SpriteMaster.Configuration.Preview;
 
 internal abstract class MetaTexture : IDisposable {
-	internal readonly XTexture2D Texture;
+    internal readonly XTexture2D Texture;
 
-	protected MetaTexture(XTexture2D? texture) {
-		Texture = texture ?? ThrowHelper.ThrowArgumentNullException<XTexture2D?>(nameof(texture));
-	}
+    protected MetaTexture(XTexture2D? texture) {
+        Texture = texture ?? ThrowHelper.ThrowArgumentNullException<XTexture2D?>(nameof(texture));
+    }
 
-	protected MetaTexture(string textureName) : this(StardewValley.Game1.content.Load<XTexture2D>(textureName)) { }
+    protected MetaTexture(string textureName) : this(StardewValley.Game1.content.Load<XTexture2D>(textureName)) { }
 
-	~MetaTexture() {
-		Dispose(false);
-	}
+    ~MetaTexture() {
+        Dispose(false);
+    }
 
-	internal void Dispose(bool disposing) {
-		if (!disposing) {
-			return;
-		}
+    internal void Dispose(bool disposing) {
+        if (!disposing) {
+            return;
+        }
 
-		Texture.Dispose();
-		GC.SuppressFinalize(this);
-	}
+        Texture.Dispose();
+        GC.SuppressFinalize(this);
+    }
 
-	public void Dispose() {
-		Dispose(true);
-	}
+    public void Dispose() {
+        Dispose(true);
+    }
 }

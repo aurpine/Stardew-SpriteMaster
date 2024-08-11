@@ -12,231 +12,232 @@ namespace SpriteMaster.Types;
 [DebuggerDisplay("[{R.Value}, {G.Value}, {B.Value}, {A.Value}]")]
 [StructLayout(LayoutKind.Sequential, Pack = sizeof(ulong), Size = sizeof(ulong))]
 internal readonly struct Color16 : IEquatable<Color16>, IEquatable<ulong>, ILongHash {
-	internal static readonly Color16 Zero = new(0UL);
+    internal static readonly Color16 Zero = new(0UL);
 
-	internal readonly ulong Packed = 0;
+    internal readonly ulong Packed = 0;
 
-	internal readonly ulong AsPacked => Packed;
+    internal readonly ulong AsPacked => Packed;
 
-	internal readonly Fixed16 R {
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		get => new((ushort)(Packed >> 0));
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		set => Unsafe.AsRef(in Packed) = (Packed & 0xFFFF_FFFF_FFFF_0000UL) | (((ulong)value.Value) << 0);
-	}
+    internal readonly Fixed16 R {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => new((ushort)(Packed >> 0));
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        set => Unsafe.AsRef(in Packed) = (Packed & 0xFFFF_FFFF_FFFF_0000UL) | (((ulong)value.Value) << 0);
+    }
 
-	internal readonly Fixed16 G {
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		get => new((ushort)(Packed >> 16));
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		set => Unsafe.AsRef(in Packed) = (Packed & 0xFFFF_FFFF_0000_FFFFUL) | (((ulong)value.Value) << 16);
-	}
+    internal readonly Fixed16 G {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => new((ushort)(Packed >> 16));
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        set => Unsafe.AsRef(in Packed) = (Packed & 0xFFFF_FFFF_0000_FFFFUL) | (((ulong)value.Value) << 16);
+    }
 
-	internal readonly Fixed16 B {
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		get => new((ushort)(Packed >> 32));
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		set => Unsafe.AsRef(in Packed) = (Packed & 0xFFFF_0000_FFFF_FFFFUL) | (((ulong)value.Value) << 32);
-	}
+    internal readonly Fixed16 B {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => new((ushort)(Packed >> 32));
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        set => Unsafe.AsRef(in Packed) = (Packed & 0xFFFF_0000_FFFF_FFFFUL) | (((ulong)value.Value) << 32);
+    }
 
-	internal readonly Fixed16 A {
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		get => new((ushort)(Packed >> 48));
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		set => Unsafe.AsRef(in Packed) = (Packed & 0x0000_FFFF_FFFF_FFFFUL) | (((ulong)value.Value) << 48);
-	}
+    internal readonly Fixed16 A {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => new((ushort)(Packed >> 48));
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        set => Unsafe.AsRef(in Packed) = (Packed & 0x0000_FFFF_FFFF_FFFFUL) | (((ulong)value.Value) << 48);
+    }
 
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal readonly void SetRgb(ushort r, ushort g, ushort b) {
-		ulong tempPacked = Packed;
-		ref ulong packed = ref Unsafe.AsRef(in Packed);
-		packed = (tempPacked & 0xFFFF_0000_0000_0000UL) | (((ulong)r) | (((ulong)g) << 16) | (((ulong)b) << 32));
-	}
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal readonly void SetRgb(ushort r, ushort g, ushort b) {
+        ulong tempPacked = Packed;
+        ref ulong packed = ref Unsafe.AsRef(in Packed);
+        packed = (tempPacked & 0xFFFF_0000_0000_0000UL) | (((ulong)r) | (((ulong)g) << 16) | (((ulong)b) << 32));
+    }
 
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal readonly void SetRgb(Fixed16 r, Fixed16 g, Fixed16 b) =>
-		SetRgb(r.Value, g.Value, b.Value);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal readonly void SetRgb(Fixed16 r, Fixed16 g, Fixed16 b) =>
+        SetRgb(r.Value, g.Value, b.Value);
 
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal readonly void SetRgbTest(ulong r, ulong g, ulong b) {
-		ulong tempPacked = Packed;
-		ref ulong packed = ref Unsafe.AsRef(in Packed);
-		packed = (tempPacked & 0xFFFF_0000_0000_0000UL) | r | (g << 16) | (b << 32);
-	}
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal readonly void SetRgbTest(ulong r, ulong g, ulong b) {
+        ulong tempPacked = Packed;
+        ref ulong packed = ref Unsafe.AsRef(in Packed);
+        packed = (tempPacked & 0xFFFF_0000_0000_0000UL) | r | (g << 16) | (b << 32);
+    }
 
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal readonly void SetRgbTest(Fixed16 r, Fixed16 g, Fixed16 b) =>
-		SetRgb(r.Value, g.Value, b.Value);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal readonly void SetRgbTest(Fixed16 r, Fixed16 g, Fixed16 b) =>
+        SetRgb(r.Value, g.Value, b.Value);
 
-	internal readonly Color16 NoAlpha => this with { A = 0 };
+    internal readonly Color16 NoAlpha => this with { A = 0 };
 
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static ulong MakeMask(bool r, bool g, bool b, bool a) {
-		// ToShort returns 0 or 1 for the mask. Negating it will turn that into 0 or -1, and -1 is 0xFF...
-		var rr = (ulong)(ushort)(-r.ToUShort());
-		var gg = ((ulong)(ushort)(-g.ToUShort())) << 16;
-		var bb = ((ulong)(ushort)(-b.ToUShort())) << 32;
-		var aa = ((ulong)(ushort)(-a.ToUShort())) << 48;
-		return rr | gg | bb | aa;
-	}
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static ulong MakeMask(bool r, bool g, bool b, bool a) {
+        // ToShort returns 0 or 1 for the mask. Negating it will turn that into 0 or -1, and -1 is 0xFF...
+        var rr = (ulong)(ushort)(-r.ToUShort());
+        var gg = ((ulong)(ushort)(-g.ToUShort())) << 16;
+        var bb = ((ulong)(ushort)(-b.ToUShort())) << 32;
+        var aa = ((ulong)(ushort)(-a.ToUShort())) << 48;
+        return rr | gg | bb | aa;
+    }
 
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal readonly Color16 Mask(bool r = true, bool g = true, bool b = true, bool a = true) => new(Packed & MakeMask(r, g, b, a));
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal readonly Color16 Mask(bool r = true, bool g = true, bool b = true, bool a = true) => new(Packed & MakeMask(r, g, b, a));
 
-	private static Color16 From(Color8 color) => new(
-		(Fixed16)color.R,
-		(Fixed16)color.G,
-		(Fixed16)color.B,
-		(Fixed16)color.A
-	);
+    private static Color16 From(Color8 color) => new(
+        (Fixed16)color.R,
+        (Fixed16)color.G,
+        (Fixed16)color.B,
+        (Fixed16)color.A
+    );
 
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal Color16(ulong rgba) : this() {
-		Packed = rgba;
-	}
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal Color16(ulong rgba) : this() {
+        Packed = rgba;
+    }
 
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal Color16((ushort R, ushort G, ushort B) color) : this(color.R, color.G, color.B) { }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal Color16((ushort R, ushort G, ushort B) color) : this(color.R, color.G, color.B) { }
 
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal Color16(ushort r, ushort g, ushort b) : this() {
-		R = r;
-		G = g;
-		B = b;
-	}
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal Color16(ushort r, ushort g, ushort b) : this() {
+        R = r;
+        G = g;
+        B = b;
+    }
 
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal Color16((Fixed16 R, Fixed16 G, Fixed16 B) color) : this(color.R, color.G, color.B) { }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal Color16((Fixed16 R, Fixed16 G, Fixed16 B) color) : this(color.R, color.G, color.B) { }
 
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal Color16(Fixed16 r, Fixed16 g, Fixed16 b) : this() {
-		R = r;
-		G = g;
-		B = b;
-	}
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal Color16(Fixed16 r, Fixed16 g, Fixed16 b) : this() {
+        R = r;
+        G = g;
+        B = b;
+    }
 
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal Color16((ushort R, ushort G, ushort B, ushort A) color) : this(color.R, color.G, color.B, color.A) { }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal Color16((ushort R, ushort G, ushort B, ushort A) color) : this(color.R, color.G, color.B, color.A) { }
 
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal Color16(ushort r, ushort g, ushort b, ushort a) : this() {
-		R = r;
-		G = g;
-		B = b;
-		A = a;
-	}
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal Color16(ushort r, ushort g, ushort b, ushort a) : this() {
+        R = r;
+        G = g;
+        B = b;
+        A = a;
+    }
 
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal Color16((Fixed16 R, Fixed16 G, Fixed16 B, Fixed16 A) color) : this(color.R, color.G, color.B, color.A) { }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal Color16((Fixed16 R, Fixed16 G, Fixed16 B, Fixed16 A) color) : this(color.R, color.G, color.B, color.A) { }
 
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal Color16(Fixed16 r, Fixed16 g, Fixed16 b, Fixed16 a) : this() {
-		R = r;
-		G = g;
-		B = b;
-		A = a;
-	}
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal Color16(Fixed16 r, Fixed16 g, Fixed16 b, Fixed16 a) : this() {
+        R = r;
+        G = g;
+        B = b;
+        A = a;
+    }
 
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static explicit operator ulong(Color16 value) => value.Packed;
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static explicit operator Color16(ulong value) => new(value);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static explicit operator ulong(Color16 value) => value.Packed;
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static explicit operator Color16(ulong value) => new(value);
 
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public override readonly bool Equals(object? obj) {
-		if (obj is Color16 color) {
-			return this == color;
-		}
-		if (obj is ulong value) {
-			return this == (Color16)value;
-		}
-		return false;
-	}
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public override readonly bool Equals(object? obj) {
+        if (obj is Color16 color) {
+            return this == color;
+        }
+        if (obj is ulong value) {
+            return this == (Color16)value;
+        }
+        return false;
+    }
 
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal readonly bool Equals(Color16 other) => this == other;
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal readonly bool Equals(ulong other) => this == (Color16)other;
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal readonly bool Equals(Color16 other) => this == other;
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal readonly bool Equals(ulong other) => this == (Color16)other;
 
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	readonly bool IEquatable<Color16>.Equals(Color16 other) => Equals(other);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    readonly bool IEquatable<Color16>.Equals(Color16 other) => Equals(other);
 
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	readonly bool IEquatable<ulong>.Equals(ulong other) => Equals(other);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    readonly bool IEquatable<ulong>.Equals(ulong other) => Equals(other);
 
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static bool operator ==(Color16 lhs, Color16 rhs) => lhs.Packed == rhs.Packed;
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static bool operator !=(Color16 lhs, Color16 rhs) => lhs.Packed != rhs.Packed;
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool operator ==(Color16 lhs, Color16 rhs) => lhs.Packed == rhs.Packed;
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool operator !=(Color16 lhs, Color16 rhs) => lhs.Packed != rhs.Packed;
 
-	internal static unsafe void Convert(Color8* source, Color16* destination, int count) {
-		for (int i = 0; i < count; ++i) {
-			destination[i] = From(source[i]);
-		}
-	}
+    internal static unsafe void Convert(Color8* source, Color16* destination, int count) {
+        for (int i = 0; i < count; ++i) {
+            destination[i] = From(source[i]);
+        }
+    }
 
-	internal static void Convert(ReadOnlySpan<Color8> source, Span<Color16> destination, int count) {
-		for (int i = 0; i < count; ++i) {
-			destination[i] = From(source[i]);
-		}
-	}
+    internal static void Convert(ReadOnlySpan<Color8> source, Span<Color16> destination, int count) {
+        for (int i = 0; i < count; ++i) {
+            destination[i] = From(source[i]);
+        }
+    }
 
-	internal static Span<Color16> Convert(ReadOnlySpan<Color8> source) {
-		var destination = SpanExt.Make<Color16>(source.Length);
-		for (int i = 0; i < source.Length; ++i) {
-			destination[i] = From(source[i]);
-		}
-		return destination;
-	}
+    internal static Span<Color16> Convert(ReadOnlySpan<Color8> source) {
+        var destination = SpanExt.Make<Color16>(source.Length);
+        for (int i = 0; i < source.Length; ++i) {
+            destination[i] = From(source[i]);
+        }
+        return destination;
+    }
 
-	internal static PinnedSpan<Color16> ConvertPinned(ReadOnlySpan<Color8> source) {
-		var destination = SpanExt.MakePinned<Color16>(source.Length);
-		for (int i = 0; i < source.Length; ++i) {
-			destination[i] = From(source[i]);
-		}
-		return destination;
-	}
+    internal static PinnedSpan<Color16> ConvertPinned(ReadOnlySpan<Color8> source) {
+        var destination = SpanExt.MakePinned<Color16>(source.Length);
+        for (int i = 0; i < source.Length; ++i) {
+            destination[i] = From(source[i]);
+        }
+        return destination;
+    }
 
-	// From https://www.w3.org/TR/filter-effects-1/#element-attrdef-fecolormatrix-values
-	// Copyright © 2018 World Wide Web Consortium. All Rights Reserved. This work is distributed under the W3C® Software and Document License [1] in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-	// [1] https://www.w3.org/Consortium/Legal/copyright-software
-	public Color16 Saturate(double amount) {
-		var r = R.Real;
-		var g = G.Real;
-		var b = B.Real;
+    // From https://www.w3.org/TR/filter-effects-1/#element-attrdef-fecolormatrix-values
+    // Copyright © 2018 World Wide Web Consortium. All Rights Reserved. This work is distributed under the W3C® Software and Document License [1] in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+    // [1] https://www.w3.org/Consortium/Legal/copyright-software
+    public Color16 Saturate(double amount) {
+        var r = R.Real;
+        var g = G.Real;
+        var b = B.Real;
 
-		R = Fixed16.FromReal(Math.Clamp(((0.2126 + 0.7874 * amount) * r + (0.7152 - 0.7152 * amount) * g + (0.0722 - 0.0722 * amount) * b), 0.0, 1.0));
-		G = Fixed16.FromReal(Math.Clamp(((0.2126 - 0.2126 * amount) * r + (0.7152 + 0.2848 * amount) * g + (0.0722 - 0.0722 * amount) * b), 0.0, 1.0));
-		B = Fixed16.FromReal(Math.Clamp(((0.2126 - 0.2126 * amount) * r + (0.7152 - 0.7152 * amount) * g + (0.0722 + 0.9278 * amount) * b), 0.0, 1.0));
-		return this;
-	}
+        R = Fixed16.FromReal(Math.Clamp(((0.2126 + 0.7874 * amount) * r + (0.7152 - 0.7152 * amount) * g + (0.0722 - 0.0722 * amount) * b), 0.0, 1.0));
+        G = Fixed16.FromReal(Math.Clamp(((0.2126 - 0.2126 * amount) * r + (0.7152 + 0.2848 * amount) * g + (0.0722 - 0.0722 * amount) * b), 0.0, 1.0));
+        B = Fixed16.FromReal(Math.Clamp(((0.2126 - 0.2126 * amount) * r + (0.7152 - 0.7152 * amount) * g + (0.0722 + 0.9278 * amount) * b), 0.0, 1.0));
+        return this;
+    }
 
-	public Color16 Brighten(double amount) {
-		if (amount >= 0) {
-			R = R.AddClamped((Fixed16)(amount * R.Value));
-			G = G.AddClamped((Fixed16)(amount * G.Value));
-			B = B.AddClamped((Fixed16)(amount * B.Value));
-		} else {
-			R = R.SubtractClamped((Fixed16)(-amount * R.Value));
-			G = G.SubtractClamped((Fixed16)(-amount * G.Value));
-			B = B.SubtractClamped((Fixed16)(-amount * B.Value));
-		}
-		return this;
-	}
+    public Color16 Brighten(double amount) {
+        if (amount >= 0) {
+            R = R.AddClamped((Fixed16)(amount * R.Value));
+            G = G.AddClamped((Fixed16)(amount * G.Value));
+            B = B.AddClamped((Fixed16)(amount * B.Value));
+        }
+        else {
+            R = R.SubtractClamped((Fixed16)(-amount * R.Value));
+            G = G.SubtractClamped((Fixed16)(-amount * G.Value));
+            B = B.SubtractClamped((Fixed16)(-amount * B.Value));
+        }
+        return this;
+    }
 
-	public Color16 AdjustTemperature(int amount) {
-		if (amount > 0) R = R.AddClamped((ushort)(R.Value * amount / 100));
-		else B = B.AddClamped((ushort)(-B.Value * amount / 100));
-		return this;
-	}
+    public Color16 AdjustTemperature(int amount) {
+        if (amount > 0) R = R.AddClamped((ushort)(R.Value * amount / 100));
+        else B = B.AddClamped((ushort)(-B.Value * amount / 100));
+        return this;
+    }
 
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public override readonly int GetHashCode() => Packed.GetHashCode();
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public override readonly int GetHashCode() => Packed.GetHashCode();
 
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public readonly ulong GetLongHashCode() => HashUtility.Combine(Packed);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public readonly ulong GetLongHashCode() => HashUtility.Combine(Packed);
 
-	static Color16() {
+    static Color16() {
 #if SM_INTERNAL_TESTING
 		// Testing
 		var rMask = MakeMask(true, false, false, false);
@@ -252,5 +253,5 @@ internal readonly struct Color16 : IEquatable<Color16>, IEquatable<ulong>, ILong
 		var noneMask = MakeMask(false, false, false, false);
 		Contracts.AssertEqual(noneMask, 0x0000_0000_0000_0000UL);
 #endif //SM_INTERNAL_TESTING
-	}
+    }
 }

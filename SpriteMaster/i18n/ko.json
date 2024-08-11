@@ -298,6 +298,7 @@
   "filecache.prefersystemcompression.name": "시스템 압축 선호",
   "filecache.prefersystemcompression.comment": "시스템 압축(예: NTFS 압축)을 선호해야 합니까?",
   "enum.Scaler.None": "없음",
+  "enum.Scaler.Vanilla": "없음(컬러 필터만 해당)",
   "enum.CompressionQuality.Low": "낮은",
   "enum.CompressionQuality.Medium": "중간",
   "enum.CompressionQuality.High": "높은",

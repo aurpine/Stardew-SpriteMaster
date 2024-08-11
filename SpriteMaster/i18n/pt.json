@@ -298,6 +298,7 @@
   "filecache.prefersystemcompression.name": "Prefira compactação do sistema",
   "filecache.prefersystemcompression.comment": "A compactação do sistema (como a compactação NTFS) deve ser preferida?",
   "enum.Scaler.None": "Nenhum",
+  "enum.Scaler.Vanilla": "Nenhum (apenas filtros de cor)",
   "enum.CompressionQuality.Low": "Baixo",
   "enum.CompressionQuality.Medium": "Médio",
   "enum.CompressionQuality.High": "Alto",

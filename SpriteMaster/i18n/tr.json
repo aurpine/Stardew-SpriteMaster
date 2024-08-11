@@ -298,6 +298,7 @@
   "filecache.prefersystemcompression.name": "Sistem sıkıştırmasını tercih edin",
   "filecache.prefersystemcompression.comment": "Sistem sıkıştırması (NTFS sıkıştırması gibi) tercih edilmeli mi?",
   "enum.Scaler.None": "Hiçbiri",
+  "enum.Scaler.Vanilla": "Hiçbiri (yalnızca renk filtreleri)",
   "enum.CompressionQuality.Low": "Düşük",
   "enum.CompressionQuality.Medium": "Orta",
   "enum.CompressionQuality.High": "Yüksek",

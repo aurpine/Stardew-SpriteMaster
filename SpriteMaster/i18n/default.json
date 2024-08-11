@@ -326,6 +326,7 @@
   "filecache.prefersystemcompression.comment": "Should system compression (such as NTFS compression) be preferred?",
 
   "enum.Scaler.None": "None",
+  "enum.Scaler.Vanilla": "None (colour filters only)",
   "enum.CompressionQuality.Low": "Low",
   "enum.CompressionQuality.Medium": "Medium",
   "enum.CompressionQuality.High": "High",

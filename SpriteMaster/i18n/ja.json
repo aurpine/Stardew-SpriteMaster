@@ -298,6 +298,7 @@
   "filecache.prefersystemcompression.name": "システム圧縮を優先する",
   "filecache.prefersystemcompression.comment": "システム圧縮 (NTFS 圧縮など) を優先する必要がありますか?",
   "enum.Scaler.None": "なし",
+  "enum.Scaler.Vanilla": "なし（カラーフィルターのみ）",
   "enum.CompressionQuality.Low": "低い",
   "enum.CompressionQuality.Medium": "中くらい",
   "enum.CompressionQuality.High": "高い",

@@ -32,7 +32,6 @@ using System.Security;
 [assembly: InternalsVisibleTo("Strings")]
 [assembly: InternalsVisibleTo("Math")]
 [assembly: SecurityRules(SecurityRuleSet.Level2, SkipVerificationInFullTrust = true)]
-[assembly: BuildComputerName("aurpine")]
 
 [module: CLSCompliant(false)]
 [module: SkipLocalsInit]

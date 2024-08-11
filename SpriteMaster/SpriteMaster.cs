@@ -87,7 +87,7 @@ public sealed class SpriteMaster : Mod {
 
             Serialize.Load(Config.DefaultConfig, retain: true);
             Config.DefaultConfig.Position = 0;
-            Config.ConfigVersion = Versioning.CurrentVersion;
+            Config.ConfigVersion = Versioning.CurrentVersion.FileVersion ?? "N/A";
         }
 
         static Regex ProcessTexturePattern(string pattern) {

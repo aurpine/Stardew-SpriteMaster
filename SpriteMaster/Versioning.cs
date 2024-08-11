@@ -12,8 +12,8 @@ internal static class Versioning {
     private static T? GetAssemblyAttribute<T>() where T : Attribute => typeof(SpriteMaster).Assembly.GetCustomAttribute<T>();
 
     [Attributes.Ignore]
-    internal static readonly string CurrentVersion =
-        System.Diagnostics.FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion ??
+    internal static readonly System.Diagnostics.FileVersionInfo CurrentVersion =
+        System.Diagnostics.FileVersionInfo.GetVersionInfo(SpriteMaster.Assembly.Location) ??
         throw new BadImageFormatException($"Could not extract version from assembly {typeof(SMConfig).Assembly.FullName ?? typeof(SMConfig).Assembly.ToString()}");
 
     [Attributes.Ignore]
@@ -23,7 +23,7 @@ internal static class Versioning {
 
     internal static readonly string ChangeList = GetAssemblyAttribute<ChangeListAttribute>()?.Value ?? "local";
     internal static readonly string BuildComputerName = GetAssemblyAttribute<BuildComputerNameAttribute>()?.Value ?? "unknown";
-    internal static readonly string FullVersion = GetAssemblyAttribute<FullVersionAttribute>()?.Value ?? CurrentVersion;
+    internal static readonly string FullVersion = GetAssemblyAttribute<FullVersionAttribute>()?.Value ?? CurrentVersion.FileVersion ?? "N/A";
 
     internal static bool IsOutdated(string configVersion) {
         string referenceVersion = Config.ClearConfigBefore;
@@ -60,5 +60,5 @@ internal static class Versioning {
     }
 
     internal static string StringHeader =>
-        $"Clear Glasses {FullVersion} build {AssemblyVersion.Revision} ({Config.BuildConfiguration}, {ChangeList}, {BuildComputerName})";
+        $"Clear Glasses {FullVersion} ({Config.BuildConfiguration})";
 }

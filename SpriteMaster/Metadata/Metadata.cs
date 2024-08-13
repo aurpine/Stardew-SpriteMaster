@@ -1,4 +1,5 @@
 ﻿using SpriteMaster.Types;
+using StardewModdingAPI;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -98,25 +99,25 @@ internal static class Metadata {
     }
 
     [MethodImpl(Runtime.MethodImpl.Inline)]
-    internal static IReadOnlySet<String> Purge(IReadOnlySet<string> names, bool recache = false) {
+    internal static IReadOnlySet<String> Purge(IReadOnlySet<IAssetName> names, bool recache = false) {
         if (recache && SMConfig.ResidentCache.Enabled) {
-            foreach (var p in Texture2DMetaTable) {
-                if (names.Contains(p.Key.Name)) {
-                    p.Value.PushToCache();
-                }
-            }
+            Texture2DMetaTable.AsParallel()
+              .Where(p => names.Any(n => n.IsEquivalentTo(p.Key.Name)))
+              .ForAll(p => p.Value.PushToCache());
         }
-        ISet<string> purgedNames = new HashSet<string>();
+        // For logging
+        ISet<string> purgedNames = new ConcurrentSet<string>();
         using (InlineCacheLock.Write) {
             InlineCache.Values.AsParallel()
-                .Where(cacheElement => cacheElement.Reference.Target != null && names.Contains(cacheElement.Reference.Target.Name))
-                .ForAll(cacheElement => cacheElement.Clear());
-            foreach (var item in Texture2DMetaTable) {
-                if (names.Contains(item.Key.Name)) {
-                    Texture2DMetaTable.Remove(item.Key);
-                    purgedNames.Add(item.Key.Name);
-                }
-            }
+              .Where(cacheElement => cacheElement.Reference.Target != null &&
+                  names.Any(n => n.IsEquivalentTo(cacheElement.Reference.Target.Name)))
+              .ForAll(cacheElement => cacheElement.Clear());
+            Texture2DMetaTable.AsParallel()
+              .Where(p => names.Any(n => n.IsEquivalentTo(p.Key.Name)))
+              .ForAll(item => {
+                  Texture2DMetaTable.Remove(item.Key);
+                  purgedNames.Add(item.Key.Name);
+              });
         }
         return (IReadOnlySet<string>)purgedNames;
     }

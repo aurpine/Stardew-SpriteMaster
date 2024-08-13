@@ -5,6 +5,7 @@ using SpriteMaster.Extensions;
 using SpriteMaster.Extensions.Reflection;
 using SpriteMaster.Types;
 using StardewModdingAPI;
+using StardewModdingAPI.Events;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -78,8 +79,9 @@ internal static class Setup {
         Helper.Events.Content.AssetsInvalidated += Content_AssetsInvalidated;
     }
 
-    private static void Content_AssetsInvalidated(object? sender, StardewModdingAPI.Events.AssetsInvalidatedEventArgs e) {
-        var purged = Metadata.Metadata.Purge(new HashSet<string>(e.Names.AsEnumerable().Select(s => s.Name)));
+    [EventPriority(EventPriority.High)]
+    private static void Content_AssetsInvalidated(object? sender, AssetsInvalidatedEventArgs e) {
+        var purged = SMMetadata.Purge(e.Names);
         if (purged.IsEmpty()) {
             Debug.ForceTrace("No textures were purged");
         }

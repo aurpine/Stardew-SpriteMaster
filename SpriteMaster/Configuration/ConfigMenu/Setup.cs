@@ -75,19 +75,6 @@ internal static class Setup {
             manifest: SpriteMaster.Self.ModManifest,
             config: configApi
         );
-
-        Helper.Events.Content.AssetsInvalidated += Content_AssetsInvalidated;
-    }
-
-    [EventPriority(EventPriority.High)]
-    private static void Content_AssetsInvalidated(object? sender, AssetsInvalidatedEventArgs e) {
-        var purged = SMMetadata.Purge(e.Names);
-        if (purged.IsEmpty()) {
-            Debug.ForceTrace("No textures were purged");
-        }
-        else {
-            Debug.ForceTrace($"Purged: [{string.Join(", ", purged)}]");
-        }
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

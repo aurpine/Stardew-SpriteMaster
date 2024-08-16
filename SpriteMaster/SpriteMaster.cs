@@ -194,6 +194,7 @@ public sealed class SpriteMaster : Mod {
             }
         };
         Helper.Events.Display.MenuChanged += OnMenuChanged;
+        Helper.Events.Content.AssetsInvalidated += Content_AssetsInvalidated;
     }
 
     private bool Initialized = false;
@@ -470,6 +471,17 @@ public sealed class SpriteMaster : Mod {
             else {
                 Config.Resample.ToggledEnable = !Config.Resample.ToggledEnable;
             }
+        }
+    }
+
+    [EventPriority(EventPriority.High)]
+    private static void Content_AssetsInvalidated(object? sender, AssetsInvalidatedEventArgs e) {
+        var purged = Metadata.Metadata.Purge(e.Names);
+        if (purged.IsEmpty()) {
+            Debug.ForceTrace("No textures were purged");
+        }
+        else {
+            Debug.ForceTrace($"Purged: [{string.Join(", ", purged)}]");
         }
     }
 }

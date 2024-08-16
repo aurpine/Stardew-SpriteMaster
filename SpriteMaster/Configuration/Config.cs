@@ -846,10 +846,10 @@ internal static class Config {
         // ReSharper disable once InconsistentNaming
         internal static class OpenGL {
             [Attributes.Comment("Should low-level OpenGL optimizations be performed?")]
-            internal static bool Enabled = true;
+            internal static bool Enabled = false;
 
             [Attributes.Comment("Should Texture2D.SetData be optimized?")]
-            internal static bool OptimizeTexture2DSetData = true;
+            internal static bool OptimizeTexture2DSetData = false;
 
             [Attributes.Comment("Should Texture2D.GetData be optimized?")]
             internal static bool OptimizeTexture2DGetData = true;

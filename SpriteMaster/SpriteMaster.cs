@@ -95,6 +95,11 @@ public sealed class SpriteMaster : Mod {
 
             // Apply fix for lumisteria tilesheets
             Config.Resample.Blacklist = new(Config.Resample.DefaultBlacklist);
+
+            // Apply fix for corrupted original textures
+            Config.Extras.OpenGL.Enabled = false;
+            Config.Extras.OpenGL.OptimizeTexture2DSetData = false;
+
             Config.ConfigVersion = Versioning.CurrentVersion.FileVersion!;
         }
 

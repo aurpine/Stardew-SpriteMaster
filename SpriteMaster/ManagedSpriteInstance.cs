@@ -232,7 +232,7 @@ internal sealed class ManagedSpriteInstance : IByteSize, IDisposable {
 
                     if (!meta.TracePrinted) {
                         meta.TracePrinted = true;
-                        Debug.Trace(
+                        Debug.ForceTrace(
                             $"Not Scaling Texture '{texture.NormalizedName(DrawingColor.LightYellow)}', Is Blacklisted ({blacklistPattern})"
                         );
                     }

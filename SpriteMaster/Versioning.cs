@@ -25,9 +25,7 @@ internal static class Versioning {
     internal static readonly string BuildComputerName = GetAssemblyAttribute<BuildComputerNameAttribute>()?.Value ?? "unknown";
     internal static readonly string FullVersion = GetAssemblyAttribute<FullVersionAttribute>()?.Value ?? CurrentVersion.FileVersion ?? "N/A";
 
-    internal static bool IsOutdated(string configVersion) {
-        string referenceVersion = Config.ClearConfigBefore;
-
+    internal static bool IsOlderThan(string configVersion, string referenceVersion) {
         var configStrArray = configVersion.Split('.');
         var referenceStrArray = referenceVersion.Split('.');
 

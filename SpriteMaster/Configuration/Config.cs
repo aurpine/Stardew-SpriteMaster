@@ -601,18 +601,17 @@ internal static class Config {
             [Attributes.LimitsInt(0, int.MaxValue)]
             internal static int HardAlphaDeviationThreshold = 7;
         }
+
+        internal static readonly IReadOnlyList<string> DefaultBlacklist = [
+            @"LooseSprites\Lighting\",
+            @"@^Maps\\.+[Mm]ist$",
+            @"@^Maps\\.+Shadows?$",
+            @"@^Maps\\.+Fog(Background)?$",
+        ];
         [Attributes.Comment("What spritesheets will absolutely not be resampled or processed?")]
         [Attributes.OptionsAttribute(Attributes.OptionsAttribute.Flag.FlushAllRenderingCaches)]
         [Attributes.GMCMHidden]
-        internal static List<string> Blacklist = new() {
-            @"LooseSprites\Lighting\",
-            @"@^Maps\\.+Mist",
-            @"@^Maps\\.+mist",
-            @"@^Maps\\.+Shadow",
-            @"@^Maps\\.+Shadows",
-            @"@^Maps\\.+Fog",
-            @"@^Maps\\.+FogBackground",
-        };
+        internal static List<string> Blacklist = new(DefaultBlacklist);
         [Attributes.Ignore]
         internal static Regex[] BlacklistPatterns = Array.Empty<Regex>();
         [Attributes.Comment("What spritesheets will absolutely not be treated as gradients?")]

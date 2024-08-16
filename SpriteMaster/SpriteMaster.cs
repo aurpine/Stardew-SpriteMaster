@@ -82,18 +82,26 @@ public sealed class SpriteMaster : Mod {
             Serialize.Load(Config.Path);
         }
 
-        if (Versioning.IsOutdated(Config.ConfigVersion)) {
+        if (Versioning.IsOlderThan(Config.ConfigVersion, Config.ClearConfigBefore)) {
             Debug.Info($"config.toml is out of date ({Config.ConfigVersion} < {Config.ClearConfigBefore}), rewriting it.");
 
             Serialize.Load(Config.DefaultConfig, retain: true);
             Config.DefaultConfig.Position = 0;
-            Config.ConfigVersion = Versioning.CurrentVersion.FileVersion ?? "N/A";
+            Config.ConfigVersion = Versioning.CurrentVersion.FileVersion!;
+        }
+
+        if (Versioning.IsOlderThan(Config.ConfigVersion, "0.3.1")) {
+            Debug.Info($"Applying config hotfix for 0.3.1 (found config {Config.ConfigVersion})");
+
+            // Apply fix for lumisteria tilesheets
+            Config.Resample.Blacklist = new(Config.Resample.DefaultBlacklist);
+            Config.ConfigVersion = Versioning.CurrentVersion.FileVersion!;
         }
 
         static Regex ProcessTexturePattern(string pattern) {
             pattern = pattern.StartsWith('@') ?
                 pattern[1..] :
-                $"^{Regex.Escape(pattern)}.*";
+                $"^{Regex.Escape(pattern)}";
             return new(pattern, RegexOptions.Compiled);
         }
 

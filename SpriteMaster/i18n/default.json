@@ -259,13 +259,6 @@
   "extras.strokeshadowedtext.name": "Stroke text shadows",
   "extras.strokeshadowedtext.comment": "Should shadowed text be stroked instead?",
 
-  "extras.pathfinding.title": "Pathfinding",
-  "extras.pathfinding.optimizewarppoints.name": "Optimize warp points",
-  "extras.pathfinding.optimizewarppoints.comment": "Should NPC Warp Points code be optimized?",
-  "extras.pathfinding.enablecrossthreadoptimizations.name": "Enable cross-thread optimizations",
-  "extras.pathfinding.enablecrossthreadoptimizations.comment": "Should cross-thread optimizations be enabled?",
-  "extras.pathfinding.honorgenderlocking.name": "Honour gender locking",
-  "extras.pathfinding.honorgenderlocking.comment": "Should gender-locked locations be honored?",
   "extras.stablesort.name": "Stable sort",
   "extras.stablesort.comment": "Should the default batch sort be replaced with a stable sort? Stable sort keeps the original order of items that are considered equal.",
   "extras.preventunresponsive.name": "Prevent unresponsive",

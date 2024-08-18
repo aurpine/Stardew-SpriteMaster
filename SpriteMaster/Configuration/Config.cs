@@ -819,18 +819,6 @@ internal static class Config {
         [Attributes.Experimental]
         internal static bool StrokeShadowedText = false;
 
-        [Attributes.Advanced]
-        internal static class Pathfinding {
-            [Attributes.Comment("Should NPC Warp Points code be optimized?")]
-            internal static bool OptimizeWarpPoints = true;
-
-            [Attributes.Comment("Should cross-thread optimizations be enabled?")]
-            internal static bool EnableCrossThreadOptimizations = true;
-
-            [Attributes.Comment("Should gender-locked locations be honored?")]
-            internal static bool HonorGenderLocking = true;
-        }
-
         [Attributes.Comment("Should the default batch sort be replaced with a stable sort?")]
         internal static bool StableSort = true;
 

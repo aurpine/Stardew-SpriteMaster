@@ -16,7 +16,7 @@ namespace SpriteMaster.Harmonize.Patches.Game;
 internal static class Threading {
     private static readonly Func<List<Action>> ThreadingActionsGet =
         typeof(Microsoft.Xna.Framework.Threading).
-        GetFieldGetter<List<Action>>("actions") ??
+        GetFieldGetter<List<Action>>("_queuedActions") ??
             throw new NullReferenceException(nameof(ThreadingActionsGet));
 
     // TODO : find a nice, generic way to do this without [ModuleInitializer]

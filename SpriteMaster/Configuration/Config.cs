@@ -746,7 +746,7 @@ internal static class Config {
         [Attributes.Comment("Should synchronous stores always be used?")]
         internal static bool ForceSynchronousStores = !Runtime.Capabilities.AsyncStores;
         [Attributes.Comment("Should synchronous stores be throttled?")]
-        internal static bool ThrottledSynchronousLoads = true;
+        internal static bool ThrottledSynchronousLoads = false;
         [Attributes.Comment("Should we fetch and load texture data within the same frame?")]
         internal static bool CanFetchAndLoadSameFrame = true;
         [Attributes.Comment("What is the minimum number of texels in a sprite to be considered for asynchronous scaling?")]

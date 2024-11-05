@@ -30,7 +30,27 @@ manifest_json = {
 	"UniqueID": "aurpine.ClearGlasses",
 	"EntryDll": "ClearGlasses.dll",
 	"MinimumApiVersion": "4.0.0",
-	"UpdateKeys": ["Nexus:21090", "GitHub:aurpine/Stardew-SpriteMaster"]
+	"UpdateKeys": ["Nexus:21090", "GitHub:aurpine/Stardew-SpriteMaster"],
+	"PrivateAssemblies": [
+		{
+			"Name": "CommunityToolkit.HighPerformance",
+		},
+		{
+			"Name": "FastExpressionCompiler.LightExpression",
+		},
+		{
+			"Name": "LinqFasterer",
+		},
+		{
+			"Name": "Pastel",
+		},
+		{
+			"Name": "Tomlyn",
+		},
+		{
+			"Name": "ZstdNet",
+		}
+	],
 }
 
 with open('manifest.json', 'w') as manifest_file:

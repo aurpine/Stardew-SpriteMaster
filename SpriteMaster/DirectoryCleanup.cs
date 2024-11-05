@@ -17,7 +17,6 @@ internal static class DirectoryCleanup {
             "LinqFasterer",
             "CommunityToolkit.HighPerformance",
             "Pastel",
-            "PriorityQueue",
             "ClearGlasses",
             "Tomlyn",
             "ZstdNet"

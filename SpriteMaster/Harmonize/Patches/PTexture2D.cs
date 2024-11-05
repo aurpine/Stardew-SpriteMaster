@@ -1,6 +1,7 @@
-﻿using HarmonyLib;
+﻿using CommunityToolkit.HighPerformance;
+using HarmonyLib;
 using LinqFasterer;
-using CommunityToolkit.HighPerformance;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SpriteMaster.Configuration;
 using SpriteMaster.Extensions;
@@ -8,6 +9,7 @@ using SpriteMaster.Extensions.Reflection;
 using SpriteMaster.Metadata;
 using SpriteMaster.Types;
 using SpriteMaster.Types.Reflection;
+using StardewValley;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -20,8 +22,6 @@ using System.Text;
 using System.Threading;
 using static Microsoft.Xna.Framework.Graphics.Texture2D;
 using static SpriteMaster.Harmonize.Harmonize;
-using Microsoft.Xna.Framework;
-using StardewValley;
 
 namespace SpriteMaster.Harmonize.Patches;
 

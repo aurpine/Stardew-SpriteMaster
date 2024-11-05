@@ -1,11 +1,10 @@
-﻿using JetBrains.Annotations;
+﻿using CommunityToolkit.HighPerformance;
+using JetBrains.Annotations;
 using LinqFasterer;
-using CommunityToolkit.HighPerformance;
 using SpriteMaster.Extensions;
 using System;
 using System.IO;
 using System.Runtime.CompilerServices;
-
 using IOC = System.IO.Compression;
 
 namespace SpriteMaster.Compressors;

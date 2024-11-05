@@ -1,5 +1,5 @@
-﻿using JetBrains.Annotations;
-using CommunityToolkit.HighPerformance;
+﻿using CommunityToolkit.HighPerformance;
+using JetBrains.Annotations;
 using SpriteMaster.Extensions;
 using System;
 using System.Diagnostics.CodeAnalysis;

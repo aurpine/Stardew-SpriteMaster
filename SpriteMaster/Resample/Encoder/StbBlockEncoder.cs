@@ -1,8 +1,8 @@
-﻿using JetBrains.Annotations;
-using CommunityToolkit.HighPerformance;
+﻿using CommunityToolkit.HighPerformance;
+using JetBrains.Annotations;
 using SpriteMaster.Extensions;
-using SpriteMaster.Types.Spans;
 using SpriteMaster.Types;
+using SpriteMaster.Types.Spans;
 using System;
 using System.Numerics;
 using System.Runtime.CompilerServices;

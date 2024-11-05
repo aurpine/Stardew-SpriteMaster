@@ -5,11 +5,11 @@ using SpriteMaster.Extensions;
 using SpriteMaster.Extensions.Reflection;
 using System;
 using System.Collections.Generic;
-using static SpriteMaster.Harmonize.Harmonize;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
+using static SpriteMaster.Harmonize.Harmonize;
 
 namespace SpriteMaster.Harmonize.Patches.Game;
 

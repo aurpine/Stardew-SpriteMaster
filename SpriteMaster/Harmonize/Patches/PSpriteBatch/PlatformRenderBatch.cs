@@ -3,21 +3,20 @@ using LinqFasterer;
 using Microsoft.Xna.Framework.Graphics;
 using SpriteMaster.Configuration;
 using SpriteMaster.Extensions;
+using SpriteMaster.Extensions.Reflection;
 using SpriteMaster.Harmonize.Patches.Game;
 using SpriteMaster.Harmonize.Patches.PSpriteBatch.Patch;
 using SpriteMaster.Resample;
 using SpriteMaster.Types;
+using StardewValley;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Reflection.Emit;
+using System.Linq;
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using static SpriteMaster.Harmonize.Harmonize;
-
-using SpriteMaster.Extensions.Reflection;
-using StardewValley;
-using System.Linq;
 
 namespace SpriteMaster.Harmonize.Patches.PSpriteBatch;
 

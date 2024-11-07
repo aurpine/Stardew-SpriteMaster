@@ -105,7 +105,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.HighPerformance" Version="8.0.0" />
-		<PackageReference Include="FastExpressionCompiler.LightExpression" Version="4.2.2" />
+		<PackageReference Include="FastExpressionCompiler.LightExpression" Version="[3.3.3,)" />
 		<PackageReference Include="IgnoresAccessChecksToGenerator" Version="0.7.0">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

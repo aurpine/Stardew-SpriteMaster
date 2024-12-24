@@ -433,7 +433,7 @@ internal static class FileCache {
     }
 
     private static void BuildCache() {
-        if (Config.FileCache.Enabled) {
+        if (!Directory.Exists(LocalDataPath)) {
             try {
                 // Create the directory path
                 Directory.CreateDirectory(LocalDataPath);
@@ -441,13 +441,13 @@ internal static class FileCache {
             catch (Exception ex) {
                 ex.PrintWarning();
             }
+        }
+        if (Config.FileCache.Enabled && Runtime.IsWindows) {
             try {
-                if (Runtime.IsWindows) {
-                    // Use System compression if it is preferred and no other compression algorithm is supported for some reason.
-                    // https://stackoverflow.com/questions/624125/compress-a-folder-using-ntfs-compression-in-net
-                    if (Config.FileCache.PreferSystemCompression || (int)Config.FileCache.Compress <= (int)Compression.Algorithm.Deflate) {
-                        SystemCompression = DirectoryExt.CompressDirectory(LocalDataPath);
-                    }
+                // Use System compression if it is preferred and no other compression algorithm is supported for some reason.
+                // https://stackoverflow.com/questions/624125/compress-a-folder-using-ntfs-compression-in-net
+                if (Config.FileCache.PreferSystemCompression || (int)Config.FileCache.Compress <= (int)Compression.Algorithm.Deflate) {
+                    SystemCompression = DirectoryExt.CompressDirectory(LocalDataPath);
                 }
             }
             catch (Exception ex) {
@@ -456,7 +456,6 @@ internal static class FileCache {
         }
 
         try {
-            Directory.CreateDirectory(LocalDataPath);
             if (Config.Debug.Sprite.DumpReference || Config.Debug.Sprite.DumpResample) {
                 Directory.CreateDirectory(DumpPath);
             }

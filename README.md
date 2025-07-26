@@ -7,6 +7,7 @@ Compatible with almost any content-modifying mod.
 ## Requirements
 * [Visual Studio 2022](https://visualstudio.microsoft.com/vs/)
 * Windows 10 or higher
+* [gitversion (.NET global tool)](https://gitversion.net/docs/usage/cli/installation)
 
 ## Credit
 * Platonymous - ScaledTexture2D and SpriteBatchFix Harmony patch classes - [PyTK mod](https://github.com/Platonymous/Stardew-Valley-Mods/blob/master/PyTK)

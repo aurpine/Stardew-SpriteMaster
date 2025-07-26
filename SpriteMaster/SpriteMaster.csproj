@@ -52,7 +52,6 @@
 		<DebugType>embedded</DebugType>
 		<EmbedAllSources>false</EmbedAllSources>
 
-		<RestoreAdditionalProjectSources>$(RestoreSources);$(SolutionDir)Ext\SMAPI\src\SMAPI.ModBuildConfig\bin\Release;https://api.nuget.org/v3/index.json</RestoreAdditionalProjectSources>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

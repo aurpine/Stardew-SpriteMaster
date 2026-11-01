@@ -904,8 +904,8 @@ internal static class Config {
         internal const bool Purge = false;
         [Attributes.Comment("Should the file cache be enabled?")]
         [Attributes.OptionsAttribute(Attributes.OptionsAttribute.Flag.FlushFileCache)]
-        internal static bool Enabled = DevEnabled && true;
-        private const bool DevEnabled = false;
+        internal static bool Enabled = DevEnabled && false;
+        private const bool DevEnabled = true;
         internal const int LockRetries = 32;
         internal const int LockSleepMilliseconds = 32;
         [Attributes.Comment("What compression algorithm should be used?")]

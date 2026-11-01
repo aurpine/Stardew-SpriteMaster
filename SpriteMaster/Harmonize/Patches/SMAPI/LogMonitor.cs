@@ -28,7 +28,8 @@ internal static class LogMonitor {
     }
 
     [Harmonize(
-        typeof(StardewModdingAPI.Framework.ModLoading.Rewriters.StardewValley_1_5.AccessToolsFacade),
+        typeof(StardewModdingAPI.Framework.ModLoading.Rewriters.StardewValley_1_6.AbigailGameFacade),
+        //typeof(StardewModdingAPI.Framework.ModLoading.Rewriters.StardewValley_1_5.AccessToolsFacade),
         "StardewModdingAPI.Framework.Monitor",
         "LogImpl",
         Harmonize.Fixation.Prefix,
@@ -56,7 +57,7 @@ internal static class LogMonitor {
     }
 
     [Harmonize(
-        typeof(StardewModdingAPI.Framework.ModLoading.Rewriters.StardewValley_1_5.AccessToolsFacade),
+        typeof(StardewModdingAPI.Framework.ModLoading.Rewriters.StardewValley_1_6.AbigailGameFacade),
         "StardewModdingAPI.Framework.Monitor",
         "LogImpl",
         Harmonize.Fixation.Finalizer,
